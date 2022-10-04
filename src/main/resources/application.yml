@@ -7,7 +7,11 @@ spring:
     activate:
       on-profile: prod
   datasource:
-    jndi-name: GADS
+    url: jdbc:postgresql://${POSTGRESQL_HOSTNAME}:${POSTGRESQL_PORT}/${POSTGRESQL_DB_NAME}
+    username: ${POSTGRESQL_DB_USER}
+    password: ${POSTGRESQL_DB_PASSWORD}
+    driver-class-name: ${POSTGRESQL_DRIVER_CLASSNAME}
+
   jpa:
     hibernate:
       ddl-auto: none

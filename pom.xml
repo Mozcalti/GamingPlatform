@@ -11,7 +11,7 @@
     <groupId>com.mozcalti.gaming</groupId>
     <artifactId>gaming-app</artifactId>
     <version>1.0.0</version>
-    <packaging>war</packaging>
+
     <name>gaming-app</name>
     <description>Plataforma de Juegos de Mozcalti</description>
     <properties>
