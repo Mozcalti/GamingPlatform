@@ -1,0 +1,13 @@
+spring:
+  profiles:
+    active: prod
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    jndi-name: GADS
+  jpa:
+    hibernate:
+      ddl-auto: none
