@@ -2,16 +2,19 @@ spring:
   profiles:
     active: prod
 ---
+
 spring:
   config:
     activate:
       on-profile: prod
   datasource:
-    url: jdbc:postgresql://${POSTGRESQL_HOSTNAME}:${POSTGRESQL_PORT}/${POSTGRESQL_DB_NAME}
-    username: ${POSTGRESQL_DB_USER}
-    password: ${POSTGRESQL_DB_PASSWORD}
-    driver-class-name: ${POSTGRESQL_DRIVER_CLASSNAME}
+    url: jdbc:postgresql://${POSTGRESQL_HOSTNAME:localhost}:${POSTGRESQL_PORT:5432}/${POSTGRESQL_DB_NAME:gaming_platform}
+    username: ${POSTGRESQL_DB_USER:user}
+    password: ${POSTGRESQL_DB_PASSWORD:pass}
 
   jpa:
     hibernate:
       ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
