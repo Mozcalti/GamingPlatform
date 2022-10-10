@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS usuarios
     apellidos character varying(150),
     correo character varying(150),
     id_perfil integer,
+    id_institucion integer,
     PRIMARY KEY (id_usuario)
 );
 
@@ -25,18 +26,7 @@ CREATE TABLE IF NOT EXISTS instituciones
     fecha_creacion date,
     correo character varying(150),
     logo bytea,
-    id_usuario integer,
-    id_archivo integer,
     PRIMARY KEY (id_institucion)
-);
-
-CREATE TABLE IF NOT EXISTS archivos_carga
-(
-    id_archivo serial NOT NULL,
-    archivo bytea,
-    fecha_carga date,
-    proceso character varying(200),
-    PRIMARY KEY (id_archivo)
 );
 
 CREATE TABLE IF NOT EXISTS participantes
@@ -65,6 +55,7 @@ CREATE TABLE IF NOT EXISTS torneos
 CREATE TABLE IF NOT EXISTS etapas
 (
     id_etapa serial NOT NULL,
+    numero_etapa integer,
     fecha_inicio character varying(30),
     fecha_fin character varying(30),
     id_torneo integer,
@@ -111,17 +102,9 @@ ALTER TABLE IF EXISTS usuarios
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS instituciones
-    ADD FOREIGN KEY (id_usuario)
-    REFERENCES usuarios (id_usuario) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS instituciones
-    ADD FOREIGN KEY (id_archivo)
-    REFERENCES archivos_carga (id_archivo) MATCH SIMPLE
+ALTER TABLE IF EXISTS usuarios
+    ADD FOREIGN KEY (id_institucion)
+    REFERENCES instituciones (id_institucion) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;

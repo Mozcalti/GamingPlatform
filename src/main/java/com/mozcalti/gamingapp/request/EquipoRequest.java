@@ -11,12 +11,9 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class EtapaRequest {
+public class EquipoRequest {
 
-    private int numeroEtapa;
-    private String fechaInicio;
-    private String fechaFin;
-    private ReglasRequest reglasRequest;
-    private List<EquipoRequest> equiposRequest;
+    private String nombreEquipo;
+    private List<Integer> participantes;
 
 }
