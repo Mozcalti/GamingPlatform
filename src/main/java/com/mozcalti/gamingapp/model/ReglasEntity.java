@@ -1,12 +1,16 @@
 package com.mozcalti.gamingapp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mozcalti.gamingapp.request.ReglasRequest;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Objects;
 
 @Entity
 @Table(name = "reglas")
+@Data
+@NoArgsConstructor
 public class ReglasEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -26,56 +30,9 @@ public class ReglasEntity {
     @JsonIgnore
     private EtapasEntity etapas;
 
-    public int getIdRegla() {
-        return idRegla;
-    }
-
-    public void setIdRegla(int idRegla) {
-        this.idRegla = idRegla;
-    }
-
-    public Integer getNumCompetidores() {
-        return numCompetidores;
-    }
-
-    public void setNumCompetidores(Integer numCompetidores) {
-        this.numCompetidores = numCompetidores;
-    }
-
-    public Integer getNumRondas() {
-        return numRondas;
-    }
-
-    public void setNumRondas(Integer numRondas) {
-        this.numRondas = numRondas;
-    }
-
-    public Integer getIdEtapa() {
-        return idEtapa;
-    }
-
-    public void setIdEtapa(Integer idEtapa) {
-        this.idEtapa = idEtapa;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ReglasEntity that = (ReglasEntity) o;
-        return idRegla == that.idRegla && Objects.equals(numCompetidores, that.numCompetidores) && Objects.equals(numRondas, that.numRondas) && Objects.equals(idEtapa, that.idEtapa);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(idRegla, numCompetidores, numRondas, idEtapa);
-    }
-
-    public EtapasEntity getEtapas() {
-        return etapas;
-    }
-
-    public void setEtapas(EtapasEntity etapas) {
-        this.etapas = etapas;
+    public ReglasEntity(ReglasRequest reglasRequest, EtapasEntity etapasEntity) {
+        this.numCompetidores = reglasRequest.getNumCompetidores();
+        this.numRondas = reglasRequest.getNumRondas();
+        this.idEtapa = etapasEntity.getIdEtapa();
     }
 }

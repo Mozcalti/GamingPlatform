@@ -30,6 +30,7 @@ public class EtapasEntity {
     @Column(name = "id_torneo")
     private Integer idTorneo;
     @OneToMany(mappedBy = "etapasByIdEtapa", fetch = FetchType.LAZY)
+    @JsonIgnore
     private Collection<EtapaEquipoEntity> etapaEquiposByIdEtapa;
     @ManyToOne
     @JoinColumn(name = "id_torneo", referencedColumnName = "id_torneo", insertable = false, updatable = false)
@@ -37,7 +38,6 @@ public class EtapasEntity {
     private TorneosEntity torneosByIdTorneo;
 
     @OneToOne(mappedBy = "etapas")
-    @JsonIgnore
     private ReglasEntity reglasEntity;
 
     public EtapasEntity(EtapaRequest etapaRequest, TorneosEntity torneosEntity) {

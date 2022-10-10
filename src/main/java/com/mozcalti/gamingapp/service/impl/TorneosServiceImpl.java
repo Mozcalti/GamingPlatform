@@ -3,8 +3,10 @@ package com.mozcalti.gamingapp.service.impl;
 import com.mozcalti.gamingapp.commons.GenericServiceImpl;
 import com.mozcalti.gamingapp.exceptions.ValidacionException;
 import com.mozcalti.gamingapp.model.EtapasEntity;
+import com.mozcalti.gamingapp.model.ReglasEntity;
 import com.mozcalti.gamingapp.model.TorneosEntity;
 import com.mozcalti.gamingapp.repository.EtapasDao;
+import com.mozcalti.gamingapp.repository.ReglasDao;
 import com.mozcalti.gamingapp.repository.TorneosDao;
 import com.mozcalti.gamingapp.request.EtapaRequest;
 import com.mozcalti.gamingapp.request.TorneoRequest;
@@ -23,6 +25,9 @@ public class TorneosServiceImpl extends GenericServiceImpl<TorneosEntity, Intege
     private TorneosDao torneosDao;
     @Autowired
     private EtapasDao etapasDao;
+
+    @Autowired
+    private ReglasDao reglasDao;
 
     @Override
     public CrudRepository<TorneosEntity, Integer> getDao() {
@@ -45,6 +50,7 @@ public class TorneosServiceImpl extends GenericServiceImpl<TorneosEntity, Intege
         torneosEntity = torneosDao.save(torneosEntity);
 
         EtapasEntity etapasEntity = null;
+        ReglasEntity reglasEntity = null;
         for (EtapaRequest etapaRequest : torneoRequest.getEtapasRequest()) {
             DateUtils.isValidDate(etapaRequest.getFechaInicio(),
                     Constantes.FECHA_PATTERN,
@@ -55,7 +61,10 @@ public class TorneosServiceImpl extends GenericServiceImpl<TorneosEntity, Intege
                     "Fecha de fin de la etapa no válido");
 
             etapasEntity = new EtapasEntity(etapaRequest, torneosEntity);
-            etapasDao.save(etapasEntity);
+            etapasEntity = etapasDao.save(etapasEntity);
+
+            reglasEntity = new ReglasEntity(etapaRequest.getReglasRequest(), etapasEntity);
+            reglasDao.save(reglasEntity);
         }
 
     }

@@ -14,5 +14,6 @@ public class EtapaRequest {
     private int numeroEtapa;
     private String fechaInicio;
     private String fechaFin;
+    private ReglasRequest reglasRequest;
 
 }

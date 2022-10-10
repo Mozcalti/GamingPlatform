@@ -5,19 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TorneoRequest {
+public class ReglasRequest {
 
-    private String fechaInicio;
-    private String fechaFin;
-    private Integer numEtapas;
-    private List<EtapaRequest> etapasRequest;
-
+    private Integer numCompetidores;
+    private Integer numRondas;
 
 }
-
