@@ -7,6 +7,7 @@ import com.mozcalti.gamingapp.service.InstitucionService;
 import com.mozcalti.gamingapp.utils.Numeros;
 import com.mozcalti.gamingapp.utils.Validaciones;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,7 @@ public class InstitucionServiceImp implements InstitucionService {
         try {
             List<InstitucionDTO> listadoInstituciones = new ArrayList<>();
             XSSFWorkbook workbook = Validaciones.getWorkbook(file.getOriginalFilename(),file.getInputStream());
-            Sheet firstSheet = workbook.getSheetAt(Numeros.CERO.retornarNumero());
+            Sheet firstSheet = workbook.getSheetAt(Numeros.CERO.getNumero());
             Iterator<Row> iterator = firstSheet.iterator();
             iterator.next();
             while (iterator.hasNext()) {
@@ -35,9 +36,9 @@ public class InstitucionServiceImp implements InstitucionService {
 
                 while (cellIterator.hasNext()) {
                     Cell nextCell = cellIterator.next();
-                    if (nextCell.getColumnIndex() == Numeros.UNO.retornarNumero())
+                    if (nextCell.getColumnIndex() == Numeros.UNO.getNumero())
                         institucion.setNombre(Validaciones.validaStringCellValue(nextCell));
-                    if (nextCell.getColumnIndex() == Numeros.DOS.retornarNumero())
+                    if (nextCell.getColumnIndex() == Numeros.DOS.getNumero())
                         institucion.setCorreo(Validaciones.validaEmailCellValue(nextCell));
                 }
                 if (institucionRepository.findByNombre(institucion.getNombre()) != null)

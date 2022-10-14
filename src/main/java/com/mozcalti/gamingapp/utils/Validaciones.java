@@ -21,7 +21,7 @@ public class Validaciones {
     }
 
     public static String validaStringCellValue(Cell cell) {
-        if (cell.getCellType() == CellType.STRING && cell.getStringCellValue().length() >= Numeros.TRES.retornarNumero())
+        if (cell.getCellType() == CellType.STRING && cell.getStringCellValue().length() >= Numeros.TRES.getNumero())
             return cell.getStringCellValue();
         else
             throw new IllegalArgumentException(String.format("El valor ubicado en la columna %s fila %s no es una cadena de texto", CellReference.convertNumToColString(cell.getColumnIndex()), cell.getRowIndex() + 1));
