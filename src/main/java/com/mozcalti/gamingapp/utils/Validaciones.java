@@ -33,9 +33,7 @@ public class Validaciones {
             throw new IllegalArgumentException(String.format("El valor ubicado en la columna %s fila %s no es un correo valido", CellReference.convertNumToColString(cell.getColumnIndex()), cell.getRowIndex() + 1));
     }
     public static boolean patternMatches(String emailAddress) {
-        return Pattern.compile("^(.+)@(.+)$")
-                .matcher(emailAddress)
-                .matches();
+        return Pattern.matches("([a-z].+[a-z])@([a-z].+[a-z])$",emailAddress);
     }
     public static XSSFWorkbook getWorkbook(String nombre, InputStream inputStream) throws IOException {
         if (inputStream == null || nombre == null)
