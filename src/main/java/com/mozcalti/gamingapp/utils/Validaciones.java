@@ -2,19 +2,29 @@ package com.mozcalti.gamingapp.utils;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.IOException;
-import java.io.InputStream;
+
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Pattern;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Validaciones {
+
+
+    public static String encodeToString() {
+        try(FileInputStream file = new FileInputStream(Constantes.LOGODEFAUL)){
+            return Base64.encodeBase64String(file.readAllBytes());
+        }catch (IOException exception){
+            throw new IllegalArgumentException(String.format("La imagen no es correcta %s", exception));
+        }
+    }
 
     public static String formatoFecha(){
         return new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date());
