@@ -1,13 +1,13 @@
 package com.mozcalti.gamingapp.exceptions;
 
 
+import com.mozcalti.gamingapp.utils.Validaciones;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import java.util.Date;
 import java.util.NoSuchElementException;
 
 @ControllerAdvice
@@ -39,11 +39,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     private ResponseEntity<ErrorResponse> buildResponseEntity(HttpStatus httpStatus, Exception exception, String err){
-        ErrorResponse error = new ErrorResponse();
-        error.setStatus(httpStatus.value());
-        error.setMessage("GPA-" + exception.getLocalizedMessage());
-        error.setTimestamp(new Date());
-        error.setError(err);
-        return new ResponseEntity<>(error,httpStatus);
+        return new ResponseEntity<>(new ErrorResponse(httpStatus.value(),err,"GPA-" + exception.getLocalizedMessage(), Validaciones.formatoFecha()),httpStatus);
     }
 }
