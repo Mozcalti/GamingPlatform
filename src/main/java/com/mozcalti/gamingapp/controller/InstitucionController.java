@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.UUID;
 
+
 @RestController
 @RequestMapping("/institucion")
 @AllArgsConstructor
@@ -29,6 +30,7 @@ public class InstitucionController {
         institucionService.guardarInstituciones(instituciones);
     }
 
+
     @GetMapping("/todas")
     public TablaDTO<TablaInstitucionDTO> todasInstituciones(@RequestParam String texto, @RequestParam Integer indice){
         return institucionService.listaInstituciones(texto,indice);
@@ -38,6 +40,5 @@ public class InstitucionController {
     public TablaInstitucionDTO obtenerInstitucion(@PathVariable UUID id){
         return institucionService.obtenerInstitucion(id);
     }
-
 
 }

@@ -10,6 +10,7 @@ public class InstitucionDTO {
 
     private final String nombre;
     private final String correo;
+    private final String fechaCreacion;
 
 
 }
