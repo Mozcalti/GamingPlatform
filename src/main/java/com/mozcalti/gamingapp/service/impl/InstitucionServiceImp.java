@@ -48,7 +48,6 @@ public class InstitucionServiceImp implements InstitucionService, TablaInterface
                         institucion.setNombre(Validaciones.validaStringCellValue(nextCell));
                     if (nextCell.getColumnIndex() == Numeros.DOS.getNumero())
                         institucion.setCorreo(Validaciones.validaEmailCellValue(nextCell));
-                    institucion.setFechaCreacion(Validaciones.formatoFecha());
                 }
                 if (institucionRepository.findByNombre(institucion.getNombre()) != null)
                     throw new DuplicateKeyException(String.format("La institución '%s' ya esta registrada en el sistema", institucion.getNombre()));
