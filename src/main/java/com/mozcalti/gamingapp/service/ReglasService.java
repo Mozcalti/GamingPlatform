@@ -1,7 +1,7 @@
 package com.mozcalti.gamingapp.service;
 
 import com.mozcalti.gamingapp.commons.GenericServiceAPI;
-import com.mozcalti.gamingapp.model.ReglasEntity;
+import com.mozcalti.gamingapp.model.Reglas;
 
-public interface ReglasService extends GenericServiceAPI<ReglasEntity, Integer> {
+public interface ReglasService extends GenericServiceAPI<Reglas, Integer> {
 }

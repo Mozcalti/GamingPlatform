@@ -1,6 +1,6 @@
 package com.mozcalti.gamingapp.controller;
 
-import com.mozcalti.gamingapp.model.PerfilesEntity;
+import com.mozcalti.gamingapp.model.Perfiles;
 import com.mozcalti.gamingapp.service.PerfilesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,13 +15,13 @@ public class PerfilesController {
     private PerfilesService perfilesService;
 
     @GetMapping(value = "/all")
-    public List<PerfilesEntity> getAll() {
+    public List<Perfiles> getAll() {
         return perfilesService.getAll();
     }
 
     @PostMapping(value = "/save")
-    public PerfilesEntity save(@RequestBody PerfilesEntity perfilesEntity) {
-        return perfilesService.save(perfilesEntity);
+    public Perfiles save(@RequestBody Perfiles perfiles) {
+        return perfilesService.save(perfiles);
     }
 
 }

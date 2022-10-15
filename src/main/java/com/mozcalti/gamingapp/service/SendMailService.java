@@ -1,0 +1,16 @@
+package com.mozcalti.gamingapp.service;
+
+import com.mozcalti.gamingapp.exceptions.SendMailException;
+import com.mozcalti.gamingapp.exceptions.UtilsException;
+
+import java.util.Map;
+
+public interface SendMailService {
+
+    void sendMail(String toAddress, String subject, String templateMessage, Map<String, String> imagesMessage)
+            throws SendMailException, UtilsException;
+
+    public String readFileTemplate(String pathname, Map<String, Object> parameters)
+            throws SendMailException, UtilsException;
+
+}

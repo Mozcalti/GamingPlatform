@@ -1,23 +1,22 @@
 package com.mozcalti.gamingapp.service.impl;
 
 import com.mozcalti.gamingapp.commons.GenericServiceImpl;
-import com.mozcalti.gamingapp.model.EtapasEntity;
-import com.mozcalti.gamingapp.model.ReglasEntity;
-import com.mozcalti.gamingapp.repository.ReglasDao;
-import com.mozcalti.gamingapp.service.EtapasService;
 import com.mozcalti.gamingapp.service.ReglasService;
+import com.mozcalti.gamingapp.model.Reglas;
+import com.mozcalti.gamingapp.repository.ReglasRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 @Service
-public class ReglasServiceImpl extends GenericServiceImpl<ReglasEntity, Integer> implements ReglasService {
+public class ReglasServiceImpl extends GenericServiceImpl<Reglas, Integer> implements ReglasService {
 
-    @Autowired
-    private ReglasDao reglasDao;
+    private ReglasRepository reglasRepository;
     @Override
-    public CrudRepository<ReglasEntity, Integer> getDao() {
-        return reglasDao;
+    public CrudRepository<Reglas, Integer> getDao() {
+        return reglasRepository;
     }
 
 }
