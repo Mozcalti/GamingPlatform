@@ -33,6 +33,10 @@ public class Batallas {
     @Column(name = "rondas")
     private Integer rondas;
 
+    @Basic
+    @Column(name = "bnd_envio_correo")
+    private Integer bndEnvioCorreo;
+
     @OneToMany(mappedBy = "batallasByIdBatalla", fetch = FetchType.EAGER)
     private Collection<BatallaParticipantes> batallaParticipantesByIdBatalla;
 
@@ -44,5 +48,6 @@ public class Batallas {
         this.horaInicio = batallaResponse.getHoraInicio();
         this.horaFin = batallaResponse.getHoraFin();
         this.rondas = batallaResponse.getRondas();
+        this.bndEnvioCorreo = 0;
     }
 }

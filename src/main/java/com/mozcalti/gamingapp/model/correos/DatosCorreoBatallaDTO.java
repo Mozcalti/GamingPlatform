@@ -14,9 +14,11 @@ public class DatosCorreoBatallaDTO {
     private String fecha;
     private String horaInicio;
     private String horaFin;
+    private Integer rondas;
+
+    private String mailToParticipantes;
 
     private List<String> participantes;
-    private Integer rondas;
 
     public DatosCorreoBatallaDTO(String fecha, String horaInicio, String horaFin, Integer rondas) {
         this.fecha = fecha;

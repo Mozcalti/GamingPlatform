@@ -3,6 +3,7 @@ package com.mozcalti.gamingapp.service.impl;
 import com.mozcalti.gamingapp.exceptions.ValidacionException;
 
 import com.mozcalti.gamingapp.model.*;
+import com.mozcalti.gamingapp.model.correos.DatosCorreoBatallaDTO;
 import com.mozcalti.gamingapp.request.torneo.*;
 import com.mozcalti.gamingapp.response.batalla.BatallaResponse;
 import com.mozcalti.gamingapp.response.batalla.BatallasResponse;
@@ -13,12 +14,14 @@ import com.mozcalti.gamingapp.utils.Constantes;
 import com.mozcalti.gamingapp.utils.DateUtils;
 import com.mozcalti.gamingapp.validations.CalendarizarEtapasTorneoValidation;
 import lombok.AllArgsConstructor;
+import org.apache.commons.math3.analysis.function.Cos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 @Service
@@ -73,7 +76,7 @@ public class CalendarizarEtapasTorneoServiceImpl implements CalendarizarEtapasTo
             reglasService.save(new Reglas(etapaRequest.getReglasRequest(), etapas));
 
             // Participantes
-            if(etapaRequest.getReglasRequest().getTrabajo().equals("INDIVIDUAL")) {
+            if(etapaRequest.getReglasRequest().getTrabajo().equals(Constantes.INDIVIDUAL)) {
                 for(ParticipanteRequest participanteRequest : etapaRequest.getParticipantesRequest()) {
                     equipos = new Equipos();
                     equipos = equiposService.save(equipos);
@@ -82,7 +85,7 @@ public class CalendarizarEtapasTorneoServiceImpl implements CalendarizarEtapasTo
 
                     participanteEquipoService.save(new ParticipanteEquipo(participanteRequest.getParticipante(), equipos.getIdEquipo()));
                 }
-            } else if(etapaRequest.getReglasRequest().getTrabajo().equals("EQUIPO")) {
+            } else if(etapaRequest.getReglasRequest().getTrabajo().equals(Constantes.EQUIPO)) {
                 for(EquipoRequest equipoRequest : etapaRequest.getEquiposRequest()) {
                     equipos = new Equipos(equipoRequest);
                     equipos = equiposService.save(equipos);
@@ -131,7 +134,7 @@ public class CalendarizarEtapasTorneoServiceImpl implements CalendarizarEtapasTo
                 //System.out.println("----> " + randomNumber);
                 equiposRandom = equiposService.get(randomNumber);
 
-                if(etapas.getReglas().getTrabajo().equals("INDIVIDUAL")) {
+                if(etapas.getReglas().getTrabajo().equals(Constantes.INDIVIDUAL)) {
                     for(ParticipanteEquipo participanteEquipo : equiposRandom.getParticipanteEquiposByIdEquipo()) {
 
                         if(numCompetidores == 0) {
@@ -183,7 +186,7 @@ public class CalendarizarEtapasTorneoServiceImpl implements CalendarizarEtapasTo
 
                     }
 
-                } else if(etapas.getReglas().getTrabajo().equals("EQUIPO")) {
+                } else if(etapas.getReglas().getTrabajo().equals(Constantes.EQUIPO)) {
 
                     if(numCompetidores == 0) {
                         batallaResponse = new BatallaResponse();
@@ -277,6 +280,52 @@ public class CalendarizarEtapasTorneoServiceImpl implements CalendarizarEtapasTo
         }
 
         return batallasResponse;
+
+    }
+
+    @Override
+    public List<DatosCorreoBatallaDTO> getDatosCorreoBatalla() throws ValidacionException {
+
+        List<DatosCorreoBatallaDTO> mailsbatallas = new ArrayList<>();
+        DatosCorreoBatallaDTO mailBatallasDTO;
+        List<String> participante;
+        Batallas batallas;
+        Equipos equipos;
+        StringBuilder mailToParticipantes = new StringBuilder("");
+
+        String fechaSistema = DateUtils.getDateFormat(Calendar.getInstance().getTime(), Constantes.FECHA_PATTERN);
+
+        for(EtapaBatalla etapaBatalla : etapaBatallaService.getAll()) {
+
+            batallas = batallasService.get(etapaBatalla.getIdBatalla());
+
+            if(fechaSistema.equals(batallas.getFecha()) && batallas.getBndEnvioCorreo().equals(0)) {
+                mailBatallasDTO = new DatosCorreoBatallaDTO(batallas.getFecha(),
+                        batallas.getHoraInicio(), batallas.getHoraFin(),
+                        batallas.getRondas());
+
+                participante = new ArrayList<>();
+                for(BatallaParticipantes batallaParticipantes : batallas.getBatallaParticipantesByIdBatalla()) {
+
+                    participante.add(batallaParticipantes.getNombre());
+
+                    equipos = equiposService.get(batallaParticipantes.getIdParticipanteEquipo());
+
+                    for(ParticipanteEquipo participanteEquipo : equipos.getParticipanteEquiposByIdEquipo()) {
+                        mailToParticipantes.append(participantesService.get(participanteEquipo.getIdParticipante()).getCorreo()).append(",");
+                    }
+                    mailBatallasDTO.setMailToParticipantes(mailToParticipantes.substring(0, mailToParticipantes.length()-1));
+                }
+                mailBatallasDTO.setParticipantes(participante);
+                mailsbatallas.add(mailBatallasDTO);
+
+                batallas.setBndEnvioCorreo(1);
+                batallasService.save(batallas);
+            }
+
+        }
+
+        return mailsbatallas;
 
     }
 

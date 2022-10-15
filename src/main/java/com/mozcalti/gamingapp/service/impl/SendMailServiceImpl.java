@@ -3,6 +3,7 @@ package com.mozcalti.gamingapp.service.impl;
 import com.mozcalti.gamingapp.exceptions.SendMailException;
 import com.mozcalti.gamingapp.exceptions.UtilsException;
 import com.mozcalti.gamingapp.service.SendMailService;
+import com.mozcalti.gamingapp.utils.Constantes;
 import com.mozcalti.gamingapp.utils.FileUtils;
 import com.mozcalti.gamingapp.utils.ObjectUtils;
 import com.mozcalti.gamingapp.utils.StackTraceUtils;
@@ -77,7 +78,7 @@ public class SendMailServiceImpl implements SendMailService {
 
             // set html message
             MimeBodyPart messageBodyPart = new MimeBodyPart();
-            messageBodyPart.setContent(templateMessage, "text/html");
+            messageBodyPart.setContent(templateMessage, Constantes.MAIL_MESSAGE_TYPE);
             MimeMultipart multiParte = new MimeMultipart();
             multiParte.addBodyPart(messageBodyPart);
 
@@ -85,7 +86,7 @@ public class SendMailServiceImpl implements SendMailService {
                 DataSource imageDs = new URLDataSource(SendMailServiceImpl.class.getResource(imagesMessage.get(key)));
                 MimeBodyPart imagePart = new MimeBodyPart();
                 imagePart.setDataHandler(new DataHandler(imageDs));
-                imagePart.setHeader("Content-ID", "<" + key + ">");
+                imagePart.setHeader(Constantes.MAIL_IMAGE_HEADER, "<" + key + ">");
                 multiParte.addBodyPart(imagePart);
             }
 
@@ -93,16 +94,16 @@ public class SendMailServiceImpl implements SendMailService {
 
             Transport.send(msg);
         } catch (Exception e) {
-            System.out.println("Error en el servicio readFileTemplate():\n"
+            System.out.println("Error en el servicio sendMail():\n"
                     + StackTraceUtils.getCustomStackTrace(e));
-            throw new SendMailException("Error en el servicio readFileTemplate():\n"
+            throw new SendMailException("Error en el servicio sendMail():\n"
                     + StackTraceUtils.getCustomStackTrace(e), e);
         }
 
     }
 
     @Override
-    public String readFileTemplate(String pathname, Map<String, Object> parameters) throws SendMailException, UtilsException {
+    public String readMailTemplate(String pathname, Map<String, Object> parameters) throws SendMailException, UtilsException {
 
         Configuration configuration;
         TemplateLoader templateLoader;
@@ -114,8 +115,6 @@ public class SendMailServiceImpl implements SendMailService {
         String salida;
 
         try {
-            System.out.println("Cargando archivo desde una ruta externa...");
-
             configuration = new Configuration(Configuration.VERSION_2_3_23);
 
             if (!ObjectUtils.isEmpty(pathname)) {
@@ -123,7 +122,7 @@ public class SendMailServiceImpl implements SendMailService {
                 ruta = FileUtils.getFileRuta(pathname);
                 templateLoader = new ClassTemplateLoader(SendMailServiceImpl.class, ruta);
                 configuration.setTemplateLoader(templateLoader);
-                configuration.setDefaultEncoding("UTF-8");
+                configuration.setDefaultEncoding(Constantes.MAIL_ENCODING);
                 configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
 
                 template = configuration.getTemplate(nomArchivo);
@@ -138,7 +137,7 @@ public class SendMailServiceImpl implements SendMailService {
                 template.process(parameters, templateSalida);
                 templateSalida.flush();
 
-                salida = new String(out.toByteArray(), "UTF-8");
+                salida = new String(out.toByteArray(), Constantes.MAIL_ENCODING);
 
                 out.close();
                 templateSalida.close();

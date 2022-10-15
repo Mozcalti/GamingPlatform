@@ -10,7 +10,7 @@ public interface SendMailService {
     void sendMail(String toAddress, String subject, String templateMessage, Map<String, String> imagesMessage)
             throws SendMailException, UtilsException;
 
-    public String readFileTemplate(String pathname, Map<String, Object> parameters)
+    public String readMailTemplate(String pathname, Map<String, Object> parameters)
             throws SendMailException, UtilsException;
 
 }
