@@ -1,6 +1,6 @@
 package com.mozcalti.gamingapp.model;
 
-import com.mozcalti.gamingapp.request.torneo.TorneoRequest;
+import com.mozcalti.gamingapp.model.torneos.TorneoDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -32,9 +32,13 @@ public class Torneos {
     @OneToMany(mappedBy = "horasHabilesByIdTorneo")
     private Collection<TorneoHorasHabiles> torneoHorasHabilesByIdTorneo;
 
-    public Torneos(TorneoRequest torneoRequest) {
-        this.fechaInicio = torneoRequest.getFechaInicio();
-        this.fechaFin = torneoRequest.getFechaFin();
-        this.numEtapas = torneoRequest.getNumEtapas();
+    public Torneos(TorneoDTO torneoDTO) {
+        if(torneoDTO.getIdTorneo() != null) {
+            this.idTorneo = torneoDTO.getIdTorneo();
+        }
+        this.fechaInicio = torneoDTO.getFechaInicio();
+        this.fechaFin = torneoDTO.getFechaFin();
+        this.numEtapas = torneoDTO.getNumEtapas();
     }
+
 }

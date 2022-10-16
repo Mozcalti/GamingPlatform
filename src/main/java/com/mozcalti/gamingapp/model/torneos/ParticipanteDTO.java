@@ -1,4 +1,4 @@
-package com.mozcalti.gamingapp.request.torneo;
+package com.mozcalti.gamingapp.model.torneos;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ParticipanteRequest {
+public class ParticipanteDTO {
 
     private Integer participante;
 

@@ -1,7 +1,7 @@
 package com.mozcalti.gamingapp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.mozcalti.gamingapp.response.batalla.ParticipanteResponse;
+import com.mozcalti.gamingapp.model.batallas.ParticipanteDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -34,9 +34,9 @@ public class BatallaParticipantes {
     @JsonIgnore
     private Batallas batallasByIdBatalla;
 
-    public BatallaParticipantes(ParticipanteResponse participanteResponse, Integer idBatalla) {
-        this.idParticipanteEquipo = participanteResponse.getIdParticipante();
-        this.nombre = participanteResponse.getNombre();
+    public BatallaParticipantes(ParticipanteDTO participanteDTO, Integer idBatalla) {
+        this.idParticipanteEquipo = participanteDTO.getIdParticipante();
+        this.nombre = participanteDTO.getNombre();
         this.idBatalla = idBatalla;
     }
 

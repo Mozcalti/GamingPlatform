@@ -1,7 +1,7 @@
 package com.mozcalti.gamingapp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.mozcalti.gamingapp.request.torneo.ReglasRequest;
+import com.mozcalti.gamingapp.model.torneos.ReglasDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -43,12 +43,15 @@ public class Reglas {
     @JsonIgnore
     private Etapas etapas;
 
-    public Reglas(ReglasRequest reglasRequest, Etapas etapas) {
-        this.numCompetidores = reglasRequest.getNumCompetidores();
-        this.numRondas = reglasRequest.getNumRondas();
-        this.tiempoBatallaAprox = reglasRequest.getTiempoBatallaAprox();
-        this.trabajo = reglasRequest.getTrabajo();
-        this.tiempoEspera = reglasRequest.getTiempoEspera();
-        this.idEtapa = etapas.getIdEtapa();
+    public Reglas(ReglasDTO reglasDTO, Integer idEtapa) {
+        if(reglasDTO.getIdRegla() != null) {
+            this.idRegla = reglasDTO.getIdRegla();
+        }
+        this.numCompetidores = reglasDTO.getNumCompetidores();
+        this.numRondas = reglasDTO.getNumRondas();
+        this.tiempoBatallaAprox = reglasDTO.getTiempoBatallaAprox();
+        this.trabajo = reglasDTO.getTrabajo();
+        this.tiempoEspera = reglasDTO.getTiempoEspera();
+        this.idEtapa = idEtapa;
     }
 }

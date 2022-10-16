@@ -1,6 +1,6 @@
 package com.mozcalti.gamingapp.model;
 
-import com.mozcalti.gamingapp.response.batalla.BatallaResponse;
+import com.mozcalti.gamingapp.model.batallas.BatallaDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -43,11 +43,11 @@ public class Batallas {
     @OneToMany(mappedBy = "batallasByIdBatalla")
     private Collection<EtapaBatalla> etapaBatallasByIdBatalla;
 
-    public Batallas(BatallaResponse batallaResponse) {
-        this.fecha = batallaResponse.getFecha();
-        this.horaInicio = batallaResponse.getHoraInicio();
-        this.horaFin = batallaResponse.getHoraFin();
-        this.rondas = batallaResponse.getRondas();
+    public Batallas(BatallaDTO batallaDTO) {
+        this.fecha = batallaDTO.getFecha();
+        this.horaInicio = batallaDTO.getHoraInicio();
+        this.horaFin = batallaDTO.getHoraFin();
+        this.rondas = batallaDTO.getRondas();
         this.bndEnvioCorreo = 0;
     }
 }

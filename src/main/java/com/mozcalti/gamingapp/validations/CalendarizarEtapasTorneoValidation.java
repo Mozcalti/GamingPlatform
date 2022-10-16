@@ -1,31 +1,35 @@
 package com.mozcalti.gamingapp.validations;
 
 import com.mozcalti.gamingapp.exceptions.ValidacionException;
-import com.mozcalti.gamingapp.request.torneo.EtapaRequest;
-import com.mozcalti.gamingapp.request.torneo.HoraHabilRequest;
-import com.mozcalti.gamingapp.request.torneo.TorneoRequest;
+import com.mozcalti.gamingapp.model.torneos.EtapaDTO;
+import com.mozcalti.gamingapp.model.torneos.HoraHabilDTO;
+import com.mozcalti.gamingapp.model.torneos.TorneoDTO;
 import com.mozcalti.gamingapp.utils.Constantes;
 import com.mozcalti.gamingapp.utils.DateUtils;
 
 public final class CalendarizarEtapasTorneoValidation {
 
-    public static void validaSaveTorneo(TorneoRequest torneoRequest) throws ValidacionException {
+    public static void validaSaveTorneo(TorneoDTO torneoDTO) throws ValidacionException {
         // Datos torneo
-        DateUtils.isValidDate(torneoRequest.getFechaInicio(),
+        DateUtils.isValidDate(torneoDTO.getFechaInicio(),
                 Constantes.FECHA_PATTERN,
                 "Fecha de inicio del torneo no válido");
 
-        DateUtils.isValidDate(torneoRequest.getFechaFin(),
+        DateUtils.isValidDate(torneoDTO.getFechaFin(),
                 Constantes.FECHA_PATTERN,
                 "Fecha de fin del torneo no válido");
 
-        DateUtils.isDatesRangoValid(torneoRequest.getFechaInicio(),
-                torneoRequest.getFechaFin(),
+        DateUtils.isDatesRangoValid(torneoDTO.getFechaInicio(),
+                torneoDTO.getFechaFin(),
                 Constantes.FECHA_PATTERN,
                 "Fecha inicio del torneo no puede ser mayor a la fecha fin");
 
-        String diaSemanaFIT = DateUtils.getDateFormat(DateUtils.getDateFormat(torneoRequest.getFechaInicio(), Constantes.FECHA_PATTERN).getTime(),"E");
-        String diaSemanaFFT = DateUtils.getDateFormat(DateUtils.getDateFormat(torneoRequest.getFechaFin(), Constantes.FECHA_PATTERN).getTime(),"E");
+        String diaSemanaFIT = DateUtils.getDateFormat(
+                DateUtils.getDateFormat(torneoDTO.getFechaInicio(), Constantes.FECHA_PATTERN).getTime(),
+                Constantes.DIA_PATTERN);
+        String diaSemanaFFT = DateUtils.getDateFormat(
+                DateUtils.getDateFormat(torneoDTO.getFechaFin(), Constantes.FECHA_PATTERN).getTime(),
+                Constantes.DIA_PATTERN);
 
         if(diaSemanaFIT.contains("SÁB") || diaSemanaFIT.contains("DOM")) {
             throw new ValidacionException("Fecha de inicio del torneo no puede ser un día inhábil");
@@ -35,43 +39,58 @@ public final class CalendarizarEtapasTorneoValidation {
             throw new ValidacionException("Fecha de fin del torneo no puede ser un día inhábil");
         }
 
-        for(HoraHabilRequest horaHabilRequest : torneoRequest.getHorasHabilesRequest()) {
-            DateUtils.isDatesRangoValid(horaHabilRequest.getHoraIniHabil(),
-                    horaHabilRequest.getHoraFinHabil(),
+        if(torneoDTO.getHorasHabiles().isEmpty()) {
+            throw new ValidacionException("Debe seleccionar por lo menos un horario para el torneo");
+        }
+
+        for(HoraHabilDTO horaHabilDTO : torneoDTO.getHorasHabiles()) {
+            DateUtils.isDatesRangoValid(horaHabilDTO.getHoraIniHabil(),
+                    horaHabilDTO.getHoraFinHabil(),
                     Constantes.HORA_PATTERN,
                     "Horario del torneo no válido");
         }
 
+        if(torneoDTO.getEtapas() != null && !torneoDTO.getEtapas().isEmpty()) {
+            if(torneoDTO.getEtapas().size() != torneoDTO.getNumEtapas()) {
+                throw new ValidacionException("Deben darse de alta " + torneoDTO.getNumEtapas()
+                        + " etapas, de acuerdo a lo configurado en el torneo");
+            }
+        }
+
     }
 
-    public static void validaSaveTorneoEtapas(TorneoRequest torneoRequest, EtapaRequest etapaRequest) throws ValidacionException {
+    public static void validaSaveTorneoEtapas(TorneoDTO torneoDTO, EtapaDTO etapaDTO) throws ValidacionException {
         // Datos torneo etapas
-        DateUtils.isValidDate(etapaRequest.getFechaInicio(),
+        DateUtils.isValidDate(etapaDTO.getFechaInicio(),
                 Constantes.FECHA_PATTERN,
-                "Fecha de inicio de la etapa " + etapaRequest.getNumeroEtapa() + " no válido");
+                "Fecha de inicio de la etapa " + etapaDTO.getNumeroEtapa() + " no válido");
 
-        DateUtils.isValidDate(etapaRequest.getFechaFin(),
+        DateUtils.isValidDate(etapaDTO.getFechaFin(),
                 Constantes.FECHA_PATTERN,
-                "Fecha de fin de la etapa " + etapaRequest.getNumeroEtapa() + " no válido");
+                "Fecha de fin de la etapa " + etapaDTO.getNumeroEtapa() + " no válido");
 
-        DateUtils.isDatesRangoValid(etapaRequest.getFechaInicio(),
-                etapaRequest.getFechaFin(),
+        DateUtils.isDatesRangoValid(etapaDTO.getFechaInicio(),
+                etapaDTO.getFechaFin(),
                 Constantes.FECHA_PATTERN,
-                "Fecha inicio de la etapa " + etapaRequest.getNumeroEtapa() + " no puede ser mayor a la fecha fin");
+                "Fecha inicio de la etapa " + etapaDTO.getNumeroEtapa() + " no puede ser mayor a la fecha fin");
 
-        String diaSemanaFIT = DateUtils.getDateFormat(DateUtils.getDateFormat(etapaRequest.getFechaInicio(), Constantes.FECHA_PATTERN).getTime(),"E");
-        String diaSemanaFFT = DateUtils.getDateFormat(DateUtils.getDateFormat(etapaRequest.getFechaFin(), Constantes.FECHA_PATTERN).getTime(),"E");
+        String diaSemanaFIT = DateUtils.getDateFormat(
+                DateUtils.getDateFormat(etapaDTO.getFechaInicio(), Constantes.FECHA_PATTERN).getTime(),
+                Constantes.DIA_PATTERN);
+        String diaSemanaFFT = DateUtils.getDateFormat(
+                DateUtils.getDateFormat(etapaDTO.getFechaFin(), Constantes.FECHA_PATTERN).getTime(),
+                Constantes.DIA_PATTERN);
 
         if(diaSemanaFIT.contains("SÁB") || diaSemanaFIT.contains("DOM")) {
-            throw new ValidacionException("Fecha de inicio de la etapa " + etapaRequest.getNumeroEtapa() + " no puede ser un día inhábil");
+            throw new ValidacionException("Fecha de inicio de la etapa " + etapaDTO.getNumeroEtapa() + " no puede ser un día inhábil");
         }
 
         if(diaSemanaFFT.contains("SÁB") || diaSemanaFFT.contains("DOM")) {
-            throw new ValidacionException("Fecha de fin de la etapa " + etapaRequest.getNumeroEtapa() + " no puede ser un día inhábil");
+            throw new ValidacionException("Fecha de fin de la etapa " + etapaDTO.getNumeroEtapa() + " no puede ser un día inhábil");
         }
 
         /*int bndHoraValida = 0;
-        for(HoraHabilRequest horaHabilRequest : torneoRequest.getHorasHabilesRequest()) {
+        for(HoraHabilRequest horaHabilRequest : torneoRequest.getHorasHabiles()) {
             if(DateUtils.isHoursRangoValid(etapaRequest.getFechaInicio(), etapaRequest.getFechaFin(),
                     horaHabilRequest.getHoraIniHabil(), horaHabilRequest.getHoraFinHabil(), Constantes.FECHA_PATTERN)
                     && bndHoraValida == 0) {

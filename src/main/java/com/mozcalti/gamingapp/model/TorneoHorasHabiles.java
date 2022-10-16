@@ -1,7 +1,7 @@
 package com.mozcalti.gamingapp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.mozcalti.gamingapp.request.torneo.HoraHabilRequest;
+import com.mozcalti.gamingapp.model.torneos.HoraHabilDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -34,9 +34,12 @@ public class TorneoHorasHabiles {
     @JsonIgnore
     private Torneos horasHabilesByIdTorneo;
 
-    public TorneoHorasHabiles(HoraHabilRequest horaHabilRequest, Integer idTorneo) {
-        this.horaIniHabil = horaHabilRequest.getHoraIniHabil();
-        this.horaFinHabil = horaHabilRequest.getHoraFinHabil();
+    public TorneoHorasHabiles(HoraHabilDTO horaHabilDTO, Integer idTorneo) {
+        if(horaHabilDTO.getIdHoraHabil() != null) {
+            this.idHoraHabil = horaHabilDTO.getIdHoraHabil();
+        }
+        this.horaIniHabil = horaHabilDTO.getHoraIniHabil();
+        this.horaFinHabil = horaHabilDTO.getHoraFinHabil();
         this.idTorneo = idTorneo;
     }
 }

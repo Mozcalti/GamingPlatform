@@ -1,5 +1,6 @@
-package com.mozcalti.gamingapp.request.torneo;
+package com.mozcalti.gamingapp.model.torneos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,9 +12,12 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class EquipoRequest {
+public class EquipoDTO {
 
     private String nombreEquipo;
     private List<Integer> participantes;
+
+    @JsonIgnore
+    private int bndCambioEquipo;
 
 }

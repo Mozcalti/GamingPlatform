@@ -39,4 +39,10 @@ public class ParticipanteEquipo {
         this.idEquipo = idEquipo;
     }
 
+    public ParticipanteEquipo(int idParticipanteEquipo, int idParticipante, int idEquipo) {
+        this.idParticipanteEquipo = idParticipanteEquipo;
+        this.idParticipante = idParticipante;
+        this.idEquipo = idEquipo;
+    }
+
 }

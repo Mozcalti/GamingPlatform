@@ -1,4 +1,4 @@
-package com.mozcalti.gamingapp.response.batalla;
+package com.mozcalti.gamingapp.model.batallas;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ParticipanteResponse {
+public class ParticipanteDTO {
 
     private Integer idParticipante;
     private String nombre;

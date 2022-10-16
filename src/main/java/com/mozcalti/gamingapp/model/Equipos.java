@@ -1,6 +1,6 @@
 package com.mozcalti.gamingapp.model;
 
-import com.mozcalti.gamingapp.request.torneo.EquipoRequest;
+import com.mozcalti.gamingapp.model.torneos.EquipoDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -27,7 +27,7 @@ public class Equipos {
     @OneToMany(mappedBy = "equiposByIdEquipo", fetch = FetchType.EAGER)
     private Collection<ParticipanteEquipo> participanteEquiposByIdEquipo;
 
-    public Equipos(EquipoRequest equipoRequest) {
-        this.nombre = equipoRequest.getNombreEquipo();
+    public Equipos(EquipoDTO equipoDTO) {
+        this.nombre = equipoDTO.getNombreEquipo();
     }
 }

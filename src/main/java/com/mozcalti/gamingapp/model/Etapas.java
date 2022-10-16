@@ -1,7 +1,7 @@
 package com.mozcalti.gamingapp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.mozcalti.gamingapp.request.torneo.EtapaRequest;
+import com.mozcalti.gamingapp.model.torneos.EtapaDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -44,10 +44,13 @@ public class Etapas {
     @OneToMany(mappedBy = "etapasByIdEtapa")
     private Collection<EtapaBatalla> etapaBatallasByIdEtapa;
 
-    public Etapas(EtapaRequest etapaRequest, Torneos torneos) {
-        this.numeroEtapa = etapaRequest.getNumeroEtapa();
-        this.fechaInicio = etapaRequest.getFechaInicio();
-        this.fechaFin = etapaRequest.getFechaFin();
+    public Etapas(EtapaDTO etapaDTO, Torneos torneos) {
+        if(etapaDTO.getIdEtapa() != null) {
+            this.idEtapa = etapaDTO.getIdEtapa();
+        }
+        this.numeroEtapa = etapaDTO.getNumeroEtapa();
+        this.fechaInicio = etapaDTO.getFechaInicio();
+        this.fechaFin = etapaDTO.getFechaFin();
         this.idTorneo = torneos.getIdTorneo();
     }
 }

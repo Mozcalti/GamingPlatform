@@ -1,4 +1,4 @@
-package com.mozcalti.gamingapp.response.batalla;
+package com.mozcalti.gamingapp.model.batallas;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,17 +10,17 @@ import java.util.List;
 @Setter
 @Getter
 @AllArgsConstructor
-public class BatallaResponse {
+public class BatallaDTO {
 
     private Integer idEtapa;
     private Integer idBatalla;
     private String fecha;
     private String horaInicio;
     private String horaFin;
-    private List<ParticipanteResponse> participantes;
+    private List<ParticipanteDTO> participantes;
     private Integer rondas;
 
-    public BatallaResponse() {
+    public BatallaDTO() {
         this.participantes = new ArrayList<>();
     }
 }

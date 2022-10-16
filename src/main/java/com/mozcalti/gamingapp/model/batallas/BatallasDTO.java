@@ -1,4 +1,4 @@
-package com.mozcalti.gamingapp.response.batalla;
+package com.mozcalti.gamingapp.model.batallas;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,11 +10,11 @@ import java.util.List;
 @Setter
 @Getter
 @AllArgsConstructor
-public class BatallasResponse {
+public class BatallasDTO {
 
-    private List<BatallaResponse> batallasResponse;
+    private List<BatallaDTO> batallasResponse;
 
-    public BatallasResponse() {
+    public BatallasDTO() {
         this.batallasResponse = new ArrayList<>();
     }
 }
