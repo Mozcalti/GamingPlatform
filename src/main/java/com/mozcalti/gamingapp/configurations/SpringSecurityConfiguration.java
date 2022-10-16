@@ -1,53 +1,84 @@
 package com.mozcalti.gamingapp.configurations;
 
-import com.mozcalti.gamingapp.secutiry.AccessDeniedHandlerImpl;
-import com.mozcalti.gamingapp.secutiry.AuthencationFailureHandlerImpl;
+import com.mozcalti.gamingapp.security.jwt.AuthEntryPointJwt;
+import com.mozcalti.gamingapp.security.jwt.AuthTokenFilter;
+import com.mozcalti.gamingapp.security.jwt.JwtUtil;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
+@RequiredArgsConstructor
 public class SpringSecurityConfiguration {
+
+    @Value("${security.paths.open-paths}")
+    private String[] openPaths;
+    private final JwtUtil jwtUtil;
+    private final AuthEntryPointJwt unauthorizedHandler;
+    private final UserDetailsService userDetailsService;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf()
+                    .ignoringAntMatchers("/api/login/**")
                     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 .and()
-                    .authorizeRequests()
-                    .mvcMatchers("/api/login", "/api/logout").permitAll()
-                    .anyRequest().authenticated()
-                .and()
-                    .formLogin()
-                    .loginProcessingUrl("/api/login")
-                    .failureUrl("/login_error")
-                    .failureHandler(new AuthencationFailureHandlerImpl())
-                    .defaultSuccessUrl("/miPerfil")
-                .and()
-                    .logout().logoutUrl("/api/logout")
-                    .logoutSuccessUrl("/")
+                    .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                     .exceptionHandling()
-                    .accessDeniedPage("/access_denied")
-                    .accessDeniedHandler(new AccessDeniedHandlerImpl());
+                    .authenticationEntryPoint(unauthorizedHandler)
+                .and()
+                    .authorizeRequests()
+                    .antMatchers(openPaths).permitAll()
+                    .anyRequest().authenticated();
+
+
+        http.authenticationProvider(authenticationProvider());
+
+        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
     @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> web
-                .ignoring()
-                .antMatchers("/css/**", "/js/**", "/img/**", "/lib/**", "/favicon.ico");
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+
+        return authProvider;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
+    }
+
+    @Bean
+    public AuthTokenFilter authenticationJwtTokenFilter() {
+        return new AuthTokenFilter(jwtUtil, userDetailsService);
+    }
 }
