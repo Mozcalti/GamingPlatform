@@ -8,9 +8,9 @@ spring:
     activate:
       on-profile: prod
   datasource:
-    url: jdbc:postgresql://${POSTGRESQL_HOSTNAME:localhost}:${POSTGRESQL_PORT:5432}/${POSTGRESQL_DB_NAME:gaming}
-    username: ${POSTGRESQL_DB_USER:gamer}
-    password: ${POSTGRESQL_DB_PASSWORD:password}
+    url: jdbc:postgresql://${POSTGRESQL_HOSTNAME:localhost}:${POSTGRESQL_PORT:5432}/${POSTGRESQL_DB_NAME:gaming_platform}
+    username: ${POSTGRESQL_DB_USER:user}
+    password: ${POSTGRESQL_DB_PASSWORD:pass}
 
 jpa:
   hibernate:
