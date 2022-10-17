@@ -24,16 +24,6 @@ public class EtapaEquipo {
     @Column(name = "id_equipo")
     private int idEquipo;
 
-    @ManyToOne
-    @JoinColumn(name = "id_etapa", referencedColumnName = "id_etapa", nullable = false, insertable = false, updatable = false)
-    @JsonIgnore
-    private Etapas etapasByIdEtapa;
-
-    @ManyToOne
-    @JoinColumn(name = "id_equipo", referencedColumnName = "id_equipo", nullable = false, insertable = false, updatable = false)
-    @JsonIgnore
-    private Equipos equiposByIdEquipo;
-
     public EtapaEquipo(int idEtapa, int idEquipo) {
         this.idEtapa = idEtapa;
         this.idEquipo = idEquipo;

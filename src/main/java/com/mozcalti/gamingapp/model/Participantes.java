@@ -41,8 +41,5 @@ public class Participantes {
     private Integer idInstitucion;
     @OneToMany(mappedBy = "participantesByIdParticipante")
     private Collection<ParticipanteEquipo> participanteEquiposByIdParticipante;
-    @ManyToOne
-    @JoinColumn(name = "id_institucion", referencedColumnName = "id_institucion", insertable = false, updatable = false)
-    private Instituciones institucionesByIdInstitucion;
 
 }

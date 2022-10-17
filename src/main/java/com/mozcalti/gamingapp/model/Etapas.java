@@ -33,11 +33,6 @@ public class Etapas {
     @OneToMany(mappedBy = "etapasByIdEtapa", fetch = FetchType.LAZY)
     private Collection<EtapaEquipo> etapaEquiposByIdEtapa;
 
-    @ManyToOne
-    @JoinColumn(name = "id_torneo", referencedColumnName = "id_torneo", insertable = false, updatable = false)
-    @JsonIgnore
-    private Torneos torneosByIdTorneo;
-
     @OneToOne(mappedBy = "etapas")
     private Reglas reglas;
 

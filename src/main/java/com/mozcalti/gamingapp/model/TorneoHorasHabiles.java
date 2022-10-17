@@ -29,11 +29,6 @@ public class TorneoHorasHabiles {
     @Column(name = "id_torneo")
     private Integer idTorneo;
 
-    @ManyToOne
-    @JoinColumn(name = "id_torneo", referencedColumnName = "id_torneo", insertable = false, updatable = false)
-    @JsonIgnore
-    private Torneos horasHabilesByIdTorneo;
-
     public TorneoHorasHabiles(HoraHabilDTO horaHabilDTO, Integer idTorneo) {
         if(horaHabilDTO.getIdHoraHabil() != null) {
             this.idHoraHabil = horaHabilDTO.getIdHoraHabil();

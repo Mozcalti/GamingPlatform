@@ -29,11 +29,6 @@ public class BatallaParticipantes {
     @Column(name = "id_batalla")
     private Integer idBatalla;
 
-    @ManyToOne
-    @JoinColumn(name = "id_batalla", referencedColumnName = "id_batalla", insertable = false, updatable = false)
-    @JsonIgnore
-    private Batallas batallasByIdBatalla;
-
     public BatallaParticipantes(BatallaParticipanteDTO batallaParticipanteDTO, Integer idBatalla) {
         this.idParticipanteEquipo = batallaParticipanteDTO.getIdParticipante();
         this.nombre = batallaParticipanteDTO.getNombre();

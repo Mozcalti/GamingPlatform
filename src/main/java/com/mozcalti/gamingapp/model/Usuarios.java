@@ -27,14 +27,6 @@ public class Usuarios {
     @Basic
     @Column(name = "id_institucion")
     private Integer idInstitucion;
-    @ManyToOne
-    @JoinColumn(name = "id_perfil", referencedColumnName = "id_perfil", insertable = false, updatable = false)
-    @JsonIgnore
-    private Perfiles perfilesByIdPerfil;
-    @ManyToOne
-    @JoinColumn(name = "id_institucion", referencedColumnName = "id_institucion", insertable = false, updatable = false)
-    @JsonIgnore
-    private Instituciones institucionesByIdInstitucion;
 
     public int getIdUsuario() {
         return idUsuario;
