@@ -1,6 +1,5 @@
 package com.mozcalti.gamingapp.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mozcalti.gamingapp.model.batallas.BatallaParticipanteDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,6 +27,10 @@ public class BatallaParticipantes {
     @Basic
     @Column(name = "id_batalla")
     private Integer idBatalla;
+
+    @ManyToOne
+    @JoinColumn(name = "id_batalla", referencedColumnName = "id_batalla", insertable = false, updatable = false)
+    private Batallas batallasByIdBatalla;
 
     public BatallaParticipantes(BatallaParticipanteDTO batallaParticipanteDTO, Integer idBatalla) {
         this.idParticipanteEquipo = batallaParticipanteDTO.getIdParticipante();

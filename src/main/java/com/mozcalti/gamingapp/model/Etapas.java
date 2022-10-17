@@ -1,6 +1,5 @@
 package com.mozcalti.gamingapp.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mozcalti.gamingapp.model.torneos.EtapaDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -38,6 +37,10 @@ public class Etapas {
 
     @OneToMany(mappedBy = "etapasByIdEtapa")
     private Collection<EtapaBatalla> etapaBatallasByIdEtapa;
+
+    @ManyToOne
+    @JoinColumn(name = "id_torneo", referencedColumnName = "id_torneo", insertable = false, updatable = false)
+    private Torneos torneosByIdTorneo;
 
     public Etapas(EtapaDTO etapaDTO, Torneos torneos) {
         if(etapaDTO.getIdEtapa() != null) {

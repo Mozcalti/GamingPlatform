@@ -1,6 +1,5 @@
 package com.mozcalti.gamingapp.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mozcalti.gamingapp.model.torneos.HoraHabilDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,6 +27,10 @@ public class TorneoHorasHabiles {
     @Basic
     @Column(name = "id_torneo")
     private Integer idTorneo;
+
+    @ManyToOne
+    @JoinColumn(name = "id_torneo", referencedColumnName = "id_torneo", insertable = false, updatable = false)
+    private Torneos horasHabilesByIdTorneo;
 
     public TorneoHorasHabiles(HoraHabilDTO horaHabilDTO, Integer idTorneo) {
         if(horaHabilDTO.getIdHoraHabil() != null) {
