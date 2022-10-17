@@ -12,9 +12,9 @@ import java.util.List;
 @AllArgsConstructor
 public class BatallasDTO {
 
-    private List<BatallaDTO> batallasResponse;
+    private List<BatallaDTO> batallas;
 
     public BatallasDTO() {
-        this.batallasResponse = new ArrayList<>();
+        this.batallas = new ArrayList<>();
     }
 }

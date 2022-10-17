@@ -4,14 +4,12 @@ import com.mozcalti.gamingapp.exceptions.ValidacionException;
 import com.mozcalti.gamingapp.model.correos.DatosCorreoBatallaDTO;
 import com.mozcalti.gamingapp.model.torneos.TorneoDTO;
 import com.mozcalti.gamingapp.model.batallas.BatallasDTO;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import java.sql.SQLException;
 import java.util.List;
 
 public interface CalendarizarEtapasTorneoService {
 
-    public void saveTorneo(TorneoDTO torneoDTO) throws SQLException, ValidacionException;
+    public void saveTorneo(TorneoDTO torneoDTO) throws ValidacionException;
 
     public TorneoDTO getTorneo(int idTorneo) throws ValidacionException;
 
@@ -21,8 +19,14 @@ public interface CalendarizarEtapasTorneoService {
 
     public BatallasDTO generaBatallas(Integer idEtapa) throws ValidacionException;
 
-    public BatallasDTO saveBatallas(@RequestBody BatallasDTO batallasDTO) throws ValidacionException;
+    public void saveBatallas(BatallasDTO batallasDTO) throws ValidacionException;
 
-    public List<DatosCorreoBatallaDTO> getDatosCorreoBatalla()  throws ValidacionException;
+    public List<DatosCorreoBatallaDTO> getDatosCorreoBatalla() throws ValidacionException;
+
+    public BatallasDTO getBatallas(Integer idEtapa) throws ValidacionException;
+
+    public void updateBatallas(BatallasDTO batallasDTO) throws ValidacionException;
+
+    public void deleteBatallas(Integer idEtapa) throws ValidacionException;
 
 }

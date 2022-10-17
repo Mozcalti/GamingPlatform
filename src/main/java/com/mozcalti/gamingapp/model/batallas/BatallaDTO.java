@@ -17,10 +17,10 @@ public class BatallaDTO {
     private String fecha;
     private String horaInicio;
     private String horaFin;
-    private List<ParticipanteDTO> participantes;
+    private List<BatallaParticipanteDTO> batallaParticipantes;
     private Integer rondas;
 
     public BatallaDTO() {
-        this.participantes = new ArrayList<>();
+        this.batallaParticipantes = new ArrayList<>();
     }
 }
