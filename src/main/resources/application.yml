@@ -8,7 +8,7 @@ security:
       duration: 36000
       prefix: Bearer
   paths:
-    open-paths: /css/**, /js/**, /img/**, /api/login/**
+    open-paths: /, /index.html, /css/**, /js/**, /img/**, /api/login/**
 spring:
   config:
     activate:
