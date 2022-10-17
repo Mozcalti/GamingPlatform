@@ -18,7 +18,7 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-      
+
 cron:
   mail:
     batallas: ${CRON_MAIL_BATTALLAS:0 */1 * * * *}

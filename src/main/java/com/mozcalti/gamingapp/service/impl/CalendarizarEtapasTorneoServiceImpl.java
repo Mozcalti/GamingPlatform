@@ -103,7 +103,7 @@ public class CalendarizarEtapasTorneoServiceImpl implements CalendarizarEtapasTo
     }
 
     @Override
-    public TorneoDTO getTorneo(int idTorneo) throws ValidacionException {
+    public TorneoDTO getTorneo(int idTorneo) {
 
         Torneos torneos = torneosService.get(idTorneo);
 
@@ -301,7 +301,7 @@ public class CalendarizarEtapasTorneoServiceImpl implements CalendarizarEtapasTo
     }
 
     @Override
-    public BatallasDTO generaBatallas(Integer idEtapa) throws ValidacionException {
+    public BatallasDTO generaBatallas(Integer idEtapa) {
 
         Etapas etapas = etapasService.get(idEtapa);
         BatallasDTO batallas = new BatallasDTO();
@@ -509,7 +509,7 @@ public class CalendarizarEtapasTorneoServiceImpl implements CalendarizarEtapasTo
     }
 
     @Override
-    public BatallasDTO getBatallas(Integer idEtapa) throws ValidacionException {
+    public BatallasDTO getBatallas(Integer idEtapa) {
 
         Etapas etapas = etapasService.get(idEtapa);
 

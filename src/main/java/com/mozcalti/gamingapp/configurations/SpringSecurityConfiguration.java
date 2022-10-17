@@ -12,8 +12,8 @@ public class SpringSecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        /*http.csrf().ignoringAntMatchers("/institucion/**");
-        http.csrf().ignoringAntMatchers("/torneo/**");*/
+        http.csrf().ignoringAntMatchers("/institucion/**");
+        http.csrf().ignoringAntMatchers("/torneo/**");
 
         return http.build();
     }

@@ -7,6 +7,7 @@ import com.mozcalti.gamingapp.service.CalendarizarEtapasTorneoService;
 import com.mozcalti.gamingapp.utils.Constantes;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,224 +21,126 @@ public class TorneoControlller {
     private CalendarizarEtapasTorneoService calendarizarEtapasTorneoService;
 
     @PostMapping(value = "/save")
-    public ResponseEntity saveTorneo(@RequestBody TorneoDTO torneoDTO) {
-
-        ResponseEntity responseEntity;
-        HashMap responseObject = new HashMap();
+    public ResponseEntity<String> saveTorneo(@RequestBody TorneoDTO torneoDTO) {
 
         try {
             calendarizarEtapasTorneoService.saveTorneo(torneoDTO);
-            responseObject.put(Constantes.MENSAJE, "Torneo Guardado Correctamente");
-            responseObject.put(Constantes.CODIGO, Constantes.OK);
-            responseEntity = ResponseEntity.ok(responseObject);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body("Torneo Guardado Correctamente");
         } catch (ValidacionException e) {
-            responseObject.put(Constantes.MENSAJE, e.getMessage());
-            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
-            responseEntity = ResponseEntity.status(201).body(responseObject);
+            return ResponseEntity.badRequest()
+                    .body(e.getMessage());
         } catch (Exception e) {
-            responseObject.put(Constantes.MENSAJE, Constantes.OCURRIO_ERROR_INESPERADO);
-            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
-            responseEntity = ResponseEntity.status(201).body(responseObject);
             System.out.println(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
+            return ResponseEntity.badRequest()
+                    .body(Constantes.OCURRIO_ERROR_INESPERADO);
         }
 
-        return responseEntity;
     }
 
     @GetMapping("/batallas/{idEtapa}")
-    public ResponseEntity getBatallasByIdEtapa(@PathVariable Integer idEtapa) {
-
-        ResponseEntity responseEntity;
-        HashMap responseObject = new HashMap();
-        BatallasDTO batallasDTO;
-
-        try {
-            batallasDTO = calendarizarEtapasTorneoService.generaBatallas(idEtapa);
-            responseObject.put(Constantes.MENSAJE, "Generación de Batallas Correcta");
-            responseObject.put(Constantes.CODIGO, Constantes.OK);
-            responseEntity = ResponseEntity.ok(batallasDTO);
-        } catch (ValidacionException e) {
-            responseObject.put(Constantes.MENSAJE, e.getMessage());
-            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
-            responseEntity = ResponseEntity.status(201).body(responseObject);
-        } catch (Exception e) {
-            responseObject.put(Constantes.MENSAJE, Constantes.OCURRIO_ERROR_INESPERADO);
-            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
-            responseEntity = ResponseEntity.status(201).body(responseObject);
-            System.out.println(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
-        }
-
-        return responseEntity;
-
+    public BatallasDTO getBatallasByIdEtapa(@PathVariable Integer idEtapa) {
+        return calendarizarEtapasTorneoService.generaBatallas(idEtapa);
     }
 
     @PostMapping("/batallas/save")
-    public ResponseEntity saveBatallas(@RequestBody BatallasDTO batallasDTO) {
-
-        ResponseEntity responseEntity;
-        HashMap responseObject = new HashMap();
+    public ResponseEntity<String> saveBatallas(@RequestBody BatallasDTO batallasDTO) {
 
         try {
             calendarizarEtapasTorneoService.saveBatallas(batallasDTO);
-            responseObject.put(Constantes.MENSAJE, "Batallas Guardadas Correctamente");
-            responseObject.put(Constantes.CODIGO, Constantes.OK);
-            responseEntity = ResponseEntity.ok(responseObject);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body("Batallas Guardadas Correctamente");
         } catch (ValidacionException e) {
-            responseObject.put(Constantes.MENSAJE, e.getMessage());
-            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
-            responseEntity = ResponseEntity.status(201).body(responseObject);
+            return ResponseEntity.badRequest()
+                    .body(e.getMessage());
         } catch (Exception e) {
-            responseObject.put(Constantes.MENSAJE, Constantes.OCURRIO_ERROR_INESPERADO);
-            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
-            responseEntity = ResponseEntity.status(201).body(responseObject);
             System.out.println(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
+            return ResponseEntity.badRequest()
+                    .body(Constantes.OCURRIO_ERROR_INESPERADO);
         }
 
-        return responseEntity;
     }
 
     @GetMapping("/consulta/{idTorneo}")
-    public ResponseEntity getTorneo(@PathVariable Integer idTorneo) {
-        ResponseEntity responseEntity;
-        HashMap responseObject = new HashMap();
-        TorneoDTO torneoDTO;
-
-        try {
-            torneoDTO = calendarizarEtapasTorneoService.getTorneo(idTorneo);
-            responseEntity = ResponseEntity.ok(torneoDTO);
-        } catch (ValidacionException e) {
-            responseObject.put(Constantes.MENSAJE, e.getMessage());
-            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
-            responseEntity = ResponseEntity.status(201).body(responseObject);
-        } catch (Exception e) {
-            responseObject.put(Constantes.MENSAJE, Constantes.OCURRIO_ERROR_INESPERADO);
-            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
-            responseEntity = ResponseEntity.status(201).body(responseObject);
-            System.out.println(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
-        }
-
-        return responseEntity;
+    public TorneoDTO getTorneo(@PathVariable Integer idTorneo) {
+        return calendarizarEtapasTorneoService.getTorneo(idTorneo);
     }
 
     @PutMapping(value = "/update")
-    public ResponseEntity updateTorneo(@RequestBody TorneoDTO torneoDTO) {
-
-        ResponseEntity responseEntity;
-        HashMap responseObject = new HashMap();
+    public ResponseEntity<String> updateTorneo(@RequestBody TorneoDTO torneoDTO) {
 
         try {
             calendarizarEtapasTorneoService.updateTorneo(torneoDTO);
-            responseObject.put(Constantes.MENSAJE, "Torneo Actualizado Correctamente");
-            responseObject.put(Constantes.MENSAJE, Constantes.OK);
-            responseEntity = ResponseEntity.ok(responseObject);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body("Torneo Actualizado Correctamente");
         } catch (ValidacionException e) {
-            responseObject.put(Constantes.MENSAJE, e.getMessage());
-            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
-            responseEntity = ResponseEntity.status(201).body(responseObject);
+            return ResponseEntity.badRequest()
+                    .body(e.getMessage());
         } catch (Exception e) {
-            responseObject.put(Constantes.MENSAJE, Constantes.OCURRIO_ERROR_INESPERADO);
-            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
-            responseEntity = ResponseEntity.status(201).body(responseObject);
             System.out.println(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
+            return ResponseEntity.badRequest()
+                    .body(Constantes.OCURRIO_ERROR_INESPERADO);
         }
 
-        return responseEntity;
     }
 
     @DeleteMapping("/delete/{idTorneo}")
-    public ResponseEntity deleteTorneo(@PathVariable Integer idTorneo) {
-        ResponseEntity responseEntity;
-        HashMap responseObject = new HashMap();
+    public ResponseEntity<String> deleteTorneo(@PathVariable Integer idTorneo) {
 
         try {
             calendarizarEtapasTorneoService.deleteTorneo(idTorneo);
-            responseObject.put(Constantes.MENSAJE, "Se Elimino el Torneo Correctamente");
-            responseObject.put(Constantes.CODIGO, Constantes.OK);
-            responseEntity = ResponseEntity.ok(responseObject);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body("Se Elimino el Torneo Correctamente");
         } catch (ValidacionException e) {
-            responseObject.put(Constantes.MENSAJE, e.getMessage());
-            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
-            responseEntity = ResponseEntity.status(201).body(responseObject);
+            return ResponseEntity.badRequest()
+                    .body(e.getMessage());
         } catch (Exception e) {
-            responseObject.put(Constantes.MENSAJE, Constantes.OCURRIO_ERROR_INESPERADO);
-            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
-            responseEntity = ResponseEntity.status(201).body(responseObject);
             System.out.println(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
+            return ResponseEntity.badRequest()
+                    .body(Constantes.OCURRIO_ERROR_INESPERADO);
         }
 
-        return responseEntity;
     }
 
     @GetMapping("/batallas/consulta/{idEtapa}")
-    public ResponseEntity getBatallas(@PathVariable Integer idEtapa) {
-        ResponseEntity responseEntity;
-        HashMap responseObject = new HashMap();
-        BatallasDTO batallasDTO;
-
-        try {
-            batallasDTO = calendarizarEtapasTorneoService.getBatallas(idEtapa);
-            responseEntity = ResponseEntity.ok(batallasDTO);
-        } catch (ValidacionException e) {
-            responseObject.put(Constantes.MENSAJE, e.getMessage());
-            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
-            responseEntity = ResponseEntity.status(201).body(responseObject);
-        } catch (Exception e) {
-            responseObject.put(Constantes.MENSAJE, Constantes.OCURRIO_ERROR_INESPERADO);
-            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
-            responseEntity = ResponseEntity.status(201).body(responseObject);
-            System.out.println(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
-        }
-
-        return responseEntity;
+    public BatallasDTO getBatallas(@PathVariable Integer idEtapa) {
+        return calendarizarEtapasTorneoService.getBatallas(idEtapa);
     }
 
     @PutMapping(value = "/batallas/update")
-    public ResponseEntity updateBatallas(@RequestBody BatallasDTO batallasDTO) {
-
-        ResponseEntity responseEntity;
-        HashMap responseObject = new HashMap();
+    public ResponseEntity<String> updateBatallas(@RequestBody BatallasDTO batallasDTO) {
 
         try {
             calendarizarEtapasTorneoService.updateBatallas(batallasDTO);
-            responseObject.put(Constantes.MENSAJE, "Batallas Actualizadas Correctamente");
-            responseObject.put(Constantes.CODIGO, Constantes.OK);
-            responseEntity = ResponseEntity.ok(responseObject);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body("Se Elimino el Torneo Correctamente");
         } catch (ValidacionException e) {
-            responseObject.put(Constantes.MENSAJE, e.getMessage());
-            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
-            responseEntity = ResponseEntity.status(201).body(responseObject);
+            return ResponseEntity.badRequest()
+                    .body(e.getMessage());
         } catch (Exception e) {
-            responseObject.put(Constantes.MENSAJE, Constantes.OCURRIO_ERROR_INESPERADO);
-            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
-            responseEntity = ResponseEntity.status(201).body(responseObject);
             System.out.println(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
+            return ResponseEntity.badRequest()
+                    .body(Constantes.OCURRIO_ERROR_INESPERADO);
         }
 
-        return responseEntity;
     }
 
     @DeleteMapping("/batallas/delete/{idEtapa}")
-    public ResponseEntity deleteBatallas(@PathVariable Integer idEtapa) {
-        ResponseEntity responseEntity;
-        HashMap responseObject = new HashMap();
+    public ResponseEntity<String> deleteBatallas(@PathVariable Integer idEtapa) {
 
         try {
             calendarizarEtapasTorneoService.deleteBatallas(idEtapa);
-            responseObject.put(Constantes.MENSAJE, "Se Eliminarons las batallas Correctamente");
-            responseObject.put(Constantes.CODIGO, Constantes.OK);
-            responseEntity = ResponseEntity.ok(responseObject);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body("Se Eliminarons las batallas Correctamente");
         } catch (ValidacionException e) {
-            responseObject.put(Constantes.MENSAJE, e.getMessage());
-            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
-            responseEntity = ResponseEntity.status(201).body(responseObject);
+            return ResponseEntity.badRequest()
+                    .body(e.getMessage());
         } catch (Exception e) {
-            responseObject.put(Constantes.MENSAJE, Constantes.OCURRIO_ERROR_INESPERADO);
-            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
-            responseEntity = ResponseEntity.status(201).body(responseObject);
             System.out.println(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
+            return ResponseEntity.badRequest()
+                    .body(Constantes.OCURRIO_ERROR_INESPERADO);
         }
 
-        return responseEntity;
     }
 
 }
