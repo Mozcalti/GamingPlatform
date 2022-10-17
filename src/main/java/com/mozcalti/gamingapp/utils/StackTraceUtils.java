@@ -26,9 +26,9 @@ public final class StackTraceUtils {
             }
         } catch (Exception e) {
             throw new UtilsException("Error generado en el servicio: getCause(Throwable aThrowable)", e);
-        } finally {
-            return causeError;
         }
+
+        return causeError;
     }
 
     public static String getCustomStackTrace(Throwable aThrowable) throws UtilsException {

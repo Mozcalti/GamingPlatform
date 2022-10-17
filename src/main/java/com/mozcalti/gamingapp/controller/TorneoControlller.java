@@ -4,6 +4,7 @@ import com.mozcalti.gamingapp.exceptions.ValidacionException;
 import com.mozcalti.gamingapp.model.torneos.TorneoDTO;
 import com.mozcalti.gamingapp.model.batallas.BatallasDTO;
 import com.mozcalti.gamingapp.service.CalendarizarEtapasTorneoService;
+import com.mozcalti.gamingapp.utils.Constantes;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,23 +20,23 @@ public class TorneoControlller {
     private CalendarizarEtapasTorneoService calendarizarEtapasTorneoService;
 
     @PostMapping(value = "/save")
-    public ResponseEntity saveTorneo(@RequestBody TorneoDTO torneoDTO) {
+    public ResponseEntity<?> saveTorneo(@RequestBody TorneoDTO torneoDTO) {
 
         ResponseEntity responseEntity;
         HashMap responseObject = new HashMap();
 
         try {
             calendarizarEtapasTorneoService.saveTorneo(torneoDTO);
-            responseObject.put("mensaje", "Torneo Guardado Correctamente");
-            responseObject.put("codigo", "200");
+            responseObject.put(Constantes.MENSAJE, "Torneo Guardado Correctamente");
+            responseObject.put(Constantes.CODIGO, Constantes.OK);
             responseEntity = ResponseEntity.ok(responseObject);
         } catch (ValidacionException e) {
-            responseObject.put("mensaje", e.getMessage());
-            responseObject.put("codigo", "204");
+            responseObject.put(Constantes.MENSAJE, e.getMessage());
+            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
         } catch (Exception e) {
-            responseObject.put("mensaje", "Ocurrio un error inesperado");
-            responseObject.put("codigo", "204");
+            responseObject.put(Constantes.MENSAJE, "Ocurrio un error inesperado");
+            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
             System.out.println("Ocurrio un error inesperado: " + e.getMessage());
         }
@@ -44,7 +45,7 @@ public class TorneoControlller {
     }
 
     @GetMapping("/batallas/{idEtapa}")
-    public ResponseEntity getBatallasByIdEtapa(@PathVariable Integer idEtapa) {
+    public ResponseEntity<?> getBatallasByIdEtapa(@PathVariable Integer idEtapa) {
 
         ResponseEntity responseEntity;
         HashMap responseObject = new HashMap();
@@ -52,16 +53,16 @@ public class TorneoControlller {
 
         try {
             batallasDTO = calendarizarEtapasTorneoService.generaBatallas(idEtapa);
-            responseObject.put("mensaje", "Generación de Batallas Correcta");
-            responseObject.put("codigo", "200");
+            responseObject.put(Constantes.MENSAJE, "Generación de Batallas Correcta");
+            responseObject.put(Constantes.CODIGO, Constantes.OK);
             responseEntity = ResponseEntity.ok(batallasDTO);
         } catch (ValidacionException e) {
-            responseObject.put("mensaje", e.getMessage());
-            responseObject.put("codigo", "204");
+            responseObject.put(Constantes.MENSAJE, e.getMessage());
+            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
         } catch (Exception e) {
-            responseObject.put("mensaje", "Ocurrio un error inesperado");
-            responseObject.put("codigo", "204");
+            responseObject.put(Constantes.MENSAJE, "Ocurrio un error inesperado");
+            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
             System.out.println("Ocurrio un error inesperado: " + e.getMessage());
         }
@@ -71,23 +72,23 @@ public class TorneoControlller {
     }
 
     @PostMapping("/batallas/save")
-    public ResponseEntity saveBatallas(@RequestBody BatallasDTO batallasDTO) {
+    public ResponseEntity<?> saveBatallas(@RequestBody BatallasDTO batallasDTO) {
 
         ResponseEntity responseEntity;
         HashMap responseObject = new HashMap();
 
         try {
             calendarizarEtapasTorneoService.saveBatallas(batallasDTO);
-            responseObject.put("mensaje", "Batallas Guardadas Correctamente");
-            responseObject.put("codigo", "200");
+            responseObject.put(Constantes.MENSAJE, "Batallas Guardadas Correctamente");
+            responseObject.put(Constantes.CODIGO, Constantes.OK);
             responseEntity = ResponseEntity.ok(responseObject);
         } catch (ValidacionException e) {
-            responseObject.put("mensaje", e.getMessage());
-            responseObject.put("codigo", "204");
+            responseObject.put(Constantes.MENSAJE, e.getMessage());
+            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
         } catch (Exception e) {
-            responseObject.put("mensaje", "Ocurrio un error inesperado");
-            responseObject.put("codigo", "204");
+            responseObject.put(Constantes.MENSAJE, "Ocurrio un error inesperado");
+            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
             System.out.println("Ocurrio un error inesperado: " + e.getMessage());
         }
@@ -96,7 +97,7 @@ public class TorneoControlller {
     }
 
     @GetMapping("/consulta/{idTorneo}")
-    public ResponseEntity getTorneo(@PathVariable Integer idTorneo) {
+    public ResponseEntity<?> getTorneo(@PathVariable Integer idTorneo) {
         ResponseEntity responseEntity;
         HashMap responseObject = new HashMap();
         TorneoDTO torneoDTO;
@@ -105,12 +106,12 @@ public class TorneoControlller {
             torneoDTO = calendarizarEtapasTorneoService.getTorneo(idTorneo);
             responseEntity = ResponseEntity.ok(torneoDTO);
         } catch (ValidacionException e) {
-            responseObject.put("mensaje", e.getMessage());
-            responseObject.put("codigo", "204");
+            responseObject.put(Constantes.MENSAJE, e.getMessage());
+            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
         } catch (Exception e) {
-            responseObject.put("mensaje", "Ocurrio un error inesperado");
-            responseObject.put("codigo", "204");
+            responseObject.put(Constantes.MENSAJE, "Ocurrio un error inesperado");
+            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
             System.out.println("Ocurrio un error inesperado: " + e.getMessage());
         }
@@ -119,23 +120,23 @@ public class TorneoControlller {
     }
 
     @PutMapping(value = "/update")
-    public ResponseEntity updateTorneo(@RequestBody TorneoDTO torneoDTO) {
+    public ResponseEntity<?> updateTorneo(@RequestBody TorneoDTO torneoDTO) {
 
         ResponseEntity responseEntity;
         HashMap responseObject = new HashMap();
 
         try {
             calendarizarEtapasTorneoService.updateTorneo(torneoDTO);
-            responseObject.put("mensaje", "Torneo Actualizado Correctamente");
-            responseObject.put("codigo", "200");
+            responseObject.put(Constantes.MENSAJE, "Torneo Actualizado Correctamente");
+            responseObject.put(Constantes.MENSAJE, Constantes.OK);
             responseEntity = ResponseEntity.ok(responseObject);
         } catch (ValidacionException e) {
-            responseObject.put("mensaje", e.getMessage());
-            responseObject.put("codigo", "204");
+            responseObject.put(Constantes.MENSAJE, e.getMessage());
+            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
         } catch (Exception e) {
-            responseObject.put("mensaje", "Ocurrio un error inesperado");
-            responseObject.put("codigo", "204");
+            responseObject.put(Constantes.MENSAJE, "Ocurrio un error inesperado");
+            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
             System.out.println("Ocurrio un error inesperado: " + e.getMessage());
         }
@@ -144,22 +145,22 @@ public class TorneoControlller {
     }
 
     @DeleteMapping("/delete/{idTorneo}")
-    public ResponseEntity deleteTorneo(@PathVariable Integer idTorneo) {
+    public ResponseEntity<?> deleteTorneo(@PathVariable Integer idTorneo) {
         ResponseEntity responseEntity;
         HashMap responseObject = new HashMap();
 
         try {
             calendarizarEtapasTorneoService.deleteTorneo(idTorneo);
-            responseObject.put("mensaje", "Se Elimino el Torneo Correctamente");
-            responseObject.put("codigo", "200");
+            responseObject.put(Constantes.MENSAJE, "Se Elimino el Torneo Correctamente");
+            responseObject.put(Constantes.CODIGO, Constantes.OK);
             responseEntity = ResponseEntity.ok(responseObject);
         } catch (ValidacionException e) {
-            responseObject.put("mensaje", e.getMessage());
-            responseObject.put("codigo", "204");
+            responseObject.put(Constantes.MENSAJE, e.getMessage());
+            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
         } catch (Exception e) {
-            responseObject.put("mensaje", "Ocurrio un error inesperado");
-            responseObject.put("codigo", "204");
+            responseObject.put(Constantes.MENSAJE, "Ocurrio un error inesperado");
+            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
             System.out.println("Ocurrio un error inesperado: " + e.getMessage());
         }
@@ -168,7 +169,7 @@ public class TorneoControlller {
     }
 
     @GetMapping("/batallas/consulta/{idEtapa}")
-    public ResponseEntity getBatallas(@PathVariable Integer idEtapa) {
+    public ResponseEntity<?> getBatallas(@PathVariable Integer idEtapa) {
         ResponseEntity responseEntity;
         HashMap responseObject = new HashMap();
         BatallasDTO batallasDTO;
@@ -177,12 +178,12 @@ public class TorneoControlller {
             batallasDTO = calendarizarEtapasTorneoService.getBatallas(idEtapa);
             responseEntity = ResponseEntity.ok(batallasDTO);
         } catch (ValidacionException e) {
-            responseObject.put("mensaje", e.getMessage());
-            responseObject.put("codigo", "204");
+            responseObject.put(Constantes.MENSAJE, e.getMessage());
+            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
         } catch (Exception e) {
-            responseObject.put("mensaje", "Ocurrio un error inesperado");
-            responseObject.put("codigo", "204");
+            responseObject.put(Constantes.MENSAJE, "Ocurrio un error inesperado");
+            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
             System.out.println("Ocurrio un error inesperado: " + e.getMessage());
         }
@@ -191,23 +192,23 @@ public class TorneoControlller {
     }
 
     @PutMapping(value = "/batallas/update")
-    public ResponseEntity updateBatallas(@RequestBody BatallasDTO batallasDTO) {
+    public ResponseEntity<?> updateBatallas(@RequestBody BatallasDTO batallasDTO) {
 
         ResponseEntity responseEntity;
         HashMap responseObject = new HashMap();
 
         try {
             calendarizarEtapasTorneoService.updateBatallas(batallasDTO);
-            responseObject.put("mensaje", "Batallas Actualizadas Correctamente");
-            responseObject.put("codigo", "200");
+            responseObject.put(Constantes.MENSAJE, "Batallas Actualizadas Correctamente");
+            responseObject.put(Constantes.CODIGO, Constantes.OK);
             responseEntity = ResponseEntity.ok(responseObject);
         } catch (ValidacionException e) {
-            responseObject.put("mensaje", e.getMessage());
-            responseObject.put("codigo", "204");
+            responseObject.put(Constantes.MENSAJE, e.getMessage());
+            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
         } catch (Exception e) {
-            responseObject.put("mensaje", "Ocurrio un error inesperado");
-            responseObject.put("codigo", "204");
+            responseObject.put(Constantes.MENSAJE, "Ocurrio un error inesperado");
+            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
             System.out.println("Ocurrio un error inesperado: " + e.getMessage());
         }
@@ -216,22 +217,22 @@ public class TorneoControlller {
     }
 
     @DeleteMapping("/batallas/delete/{idEtapa}")
-    public ResponseEntity deleteBatallas(@PathVariable Integer idEtapa) {
+    public ResponseEntity<?> deleteBatallas(@PathVariable Integer idEtapa) {
         ResponseEntity responseEntity;
         HashMap responseObject = new HashMap();
 
         try {
             calendarizarEtapasTorneoService.deleteBatallas(idEtapa);
-            responseObject.put("mensaje", "Se Eliminarons las batallas Correctamente");
-            responseObject.put("codigo", "200");
+            responseObject.put(Constantes.MENSAJE, "Se Eliminarons las batallas Correctamente");
+            responseObject.put(Constantes.CODIGO, Constantes.OK);
             responseEntity = ResponseEntity.ok(responseObject);
         } catch (ValidacionException e) {
-            responseObject.put("mensaje", e.getMessage());
-            responseObject.put("codigo", "204");
+            responseObject.put(Constantes.MENSAJE, e.getMessage());
+            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
         } catch (Exception e) {
-            responseObject.put("mensaje", "Ocurrio un error inesperado");
-            responseObject.put("codigo", "204");
+            responseObject.put(Constantes.MENSAJE, "Ocurrio un error inesperado");
+            responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
             System.out.println("Ocurrio un error inesperado: " + e.getMessage());
         }

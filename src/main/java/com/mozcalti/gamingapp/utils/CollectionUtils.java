@@ -1,5 +1,7 @@
 package com.mozcalti.gamingapp.utils;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -7,7 +9,7 @@ import java.util.Random;
 
 public final class CollectionUtils {
 
-    public static List<Integer> getRandomNumbers(List<Integer> idEquipos) {
+    public static List<Integer> getRandomNumbers(List<Integer> idEquipos) throws NoSuchAlgorithmException {
 
         Collections.sort(idEquipos);
 
@@ -27,8 +29,8 @@ public final class CollectionUtils {
         return randomNumbers;
     }
 
-    private static int getRandomInt(int min, int max) {
-        Random random = new Random();
+    private static int getRandomInt(int min, int max) throws NoSuchAlgorithmException {
+        Random random = SecureRandom.getInstanceStrong();
         return random.nextInt((max - min) + 1) + min;
     }
 

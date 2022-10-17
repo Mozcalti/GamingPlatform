@@ -11,8 +11,6 @@ import java.util.Locale;
 
 public final class DateUtils {
 
-    //private static final String LOCALE = "es_ES";
-
     public static void isValidDate(String fecha, String pattern, String msjError) throws ValidacionException {
         try {
             DateTimeFormatter fmt = DateTimeFormat.forPattern(pattern).withLocale(Locale.ENGLISH);
@@ -42,8 +40,6 @@ public final class DateUtils {
             fechaCalendar.setTime(fmt.parseDateTime(fecha).toDate());
         } catch (Exception e) {
             throw new ValidacionException("Error en el metodo getDateFormat(String fecha, String pattern)\n: " + e.getStackTrace());
-        } finally {
-            fmt = null;
         }
 
         return fechaCalendar;

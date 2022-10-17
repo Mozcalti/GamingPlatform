@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
@@ -316,7 +317,12 @@ public class CalendarizarEtapasTorneoServiceImpl implements CalendarizarEtapasTo
                 idEquipos.add(etapaEquipo.getIdEquipo());
             }
 
-            List<Integer> randomNumbers = CollectionUtils.getRandomNumbers(idEquipos);
+            List<Integer> randomNumbers = null;
+            try {
+                randomNumbers = CollectionUtils.getRandomNumbers(idEquipos);
+            } catch (NoSuchAlgorithmException e) {
+                throw new ValidacionException(e);
+            }
 
             BatallaDTO batallaDTO = null;
             BatallaParticipanteDTO batallaParticipanteDTO;
