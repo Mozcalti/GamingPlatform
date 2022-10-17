@@ -4,12 +4,29 @@ import com.mozcalti.gamingapp.exceptions.ValidacionException;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-
-import java.util.Calendar;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
+import java.util.Calendar;
 import java.util.Locale;
 
+@NoArgsConstructor(access = AccessLevel.NONE)
 public final class DateUtils {
+
+    public static Date toDate(LocalDateTime dateToConvert) {
+        return Date
+                .from(dateToConvert.atZone(ZoneId.systemDefault())
+                        .toInstant());
+    }
+
+    public static LocalDateTime toLocalDateTime(Date dateToConvert){
+        return Instant.ofEpochMilli(dateToConvert.getTime())
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+    }
 
     public static void isValidDate(String fecha, String pattern, String msjError) throws ValidacionException {
         try {
@@ -20,6 +37,7 @@ public final class DateUtils {
         }
 
     }
+    
     public static void isDatesRangoValid(String fechaIni, String fechaFin, String pattern, String msjError) throws ValidacionException {
 
         Calendar calendarIni = getDateFormat(fechaIni, pattern);
@@ -30,6 +48,7 @@ public final class DateUtils {
         }
 
     }
+    
     public static Calendar getDateFormat(String fecha, String pattern) throws ValidacionException {
 
         DateTimeFormatter fmt;
@@ -44,6 +63,7 @@ public final class DateUtils {
 
         return fechaCalendar;
     }
+    
     public static String getDateFormat(Date date, String pattern) throws ValidacionException {
         try {
             if(date != null) {
@@ -57,6 +77,7 @@ public final class DateUtils {
                     + "\nMensaje de error: " + e.getMessage(), e);
         }
     }
+    
     public static boolean isHoursRangoValid(String horaIni, String horaFin,
                                          String horaIniValid, String horaFinValid,
                                          String formato) {
@@ -98,5 +119,5 @@ public final class DateUtils {
             throw new ValidacionException("El parametro date no puede ser null");
         }
     }
-
+    
 }
