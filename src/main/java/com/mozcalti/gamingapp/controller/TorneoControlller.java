@@ -20,7 +20,7 @@ public class TorneoControlller {
     private CalendarizarEtapasTorneoService calendarizarEtapasTorneoService;
 
     @PostMapping(value = "/save")
-    public ResponseEntity<?> saveTorneo(@RequestBody TorneoDTO torneoDTO) {
+    public ResponseEntity saveTorneo(@RequestBody TorneoDTO torneoDTO) {
 
         ResponseEntity responseEntity;
         HashMap responseObject = new HashMap();
@@ -35,17 +35,17 @@ public class TorneoControlller {
             responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
         } catch (Exception e) {
-            responseObject.put(Constantes.MENSAJE, "Ocurrio un error inesperado");
+            responseObject.put(Constantes.MENSAJE, Constantes.OCURRIO_ERROR_INESPERADO);
             responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
-            System.out.println("Ocurrio un error inesperado: " + e.getMessage());
+            System.out.println(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
         }
 
         return responseEntity;
     }
 
     @GetMapping("/batallas/{idEtapa}")
-    public ResponseEntity<?> getBatallasByIdEtapa(@PathVariable Integer idEtapa) {
+    public ResponseEntity getBatallasByIdEtapa(@PathVariable Integer idEtapa) {
 
         ResponseEntity responseEntity;
         HashMap responseObject = new HashMap();
@@ -61,10 +61,10 @@ public class TorneoControlller {
             responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
         } catch (Exception e) {
-            responseObject.put(Constantes.MENSAJE, "Ocurrio un error inesperado");
+            responseObject.put(Constantes.MENSAJE, Constantes.OCURRIO_ERROR_INESPERADO);
             responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
-            System.out.println("Ocurrio un error inesperado: " + e.getMessage());
+            System.out.println(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
         }
 
         return responseEntity;
@@ -72,7 +72,7 @@ public class TorneoControlller {
     }
 
     @PostMapping("/batallas/save")
-    public ResponseEntity<?> saveBatallas(@RequestBody BatallasDTO batallasDTO) {
+    public ResponseEntity saveBatallas(@RequestBody BatallasDTO batallasDTO) {
 
         ResponseEntity responseEntity;
         HashMap responseObject = new HashMap();
@@ -87,17 +87,17 @@ public class TorneoControlller {
             responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
         } catch (Exception e) {
-            responseObject.put(Constantes.MENSAJE, "Ocurrio un error inesperado");
+            responseObject.put(Constantes.MENSAJE, Constantes.OCURRIO_ERROR_INESPERADO);
             responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
-            System.out.println("Ocurrio un error inesperado: " + e.getMessage());
+            System.out.println(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
         }
 
         return responseEntity;
     }
 
     @GetMapping("/consulta/{idTorneo}")
-    public ResponseEntity<?> getTorneo(@PathVariable Integer idTorneo) {
+    public ResponseEntity getTorneo(@PathVariable Integer idTorneo) {
         ResponseEntity responseEntity;
         HashMap responseObject = new HashMap();
         TorneoDTO torneoDTO;
@@ -110,17 +110,17 @@ public class TorneoControlller {
             responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
         } catch (Exception e) {
-            responseObject.put(Constantes.MENSAJE, "Ocurrio un error inesperado");
+            responseObject.put(Constantes.MENSAJE, Constantes.OCURRIO_ERROR_INESPERADO);
             responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
-            System.out.println("Ocurrio un error inesperado: " + e.getMessage());
+            System.out.println(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
         }
 
         return responseEntity;
     }
 
     @PutMapping(value = "/update")
-    public ResponseEntity<?> updateTorneo(@RequestBody TorneoDTO torneoDTO) {
+    public ResponseEntity updateTorneo(@RequestBody TorneoDTO torneoDTO) {
 
         ResponseEntity responseEntity;
         HashMap responseObject = new HashMap();
@@ -135,17 +135,17 @@ public class TorneoControlller {
             responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
         } catch (Exception e) {
-            responseObject.put(Constantes.MENSAJE, "Ocurrio un error inesperado");
+            responseObject.put(Constantes.MENSAJE, Constantes.OCURRIO_ERROR_INESPERADO);
             responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
-            System.out.println("Ocurrio un error inesperado: " + e.getMessage());
+            System.out.println(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
         }
 
         return responseEntity;
     }
 
     @DeleteMapping("/delete/{idTorneo}")
-    public ResponseEntity<?> deleteTorneo(@PathVariable Integer idTorneo) {
+    public ResponseEntity deleteTorneo(@PathVariable Integer idTorneo) {
         ResponseEntity responseEntity;
         HashMap responseObject = new HashMap();
 
@@ -159,17 +159,17 @@ public class TorneoControlller {
             responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
         } catch (Exception e) {
-            responseObject.put(Constantes.MENSAJE, "Ocurrio un error inesperado");
+            responseObject.put(Constantes.MENSAJE, Constantes.OCURRIO_ERROR_INESPERADO);
             responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
-            System.out.println("Ocurrio un error inesperado: " + e.getMessage());
+            System.out.println(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
         }
 
         return responseEntity;
     }
 
     @GetMapping("/batallas/consulta/{idEtapa}")
-    public ResponseEntity<?> getBatallas(@PathVariable Integer idEtapa) {
+    public ResponseEntity getBatallas(@PathVariable Integer idEtapa) {
         ResponseEntity responseEntity;
         HashMap responseObject = new HashMap();
         BatallasDTO batallasDTO;
@@ -182,17 +182,17 @@ public class TorneoControlller {
             responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
         } catch (Exception e) {
-            responseObject.put(Constantes.MENSAJE, "Ocurrio un error inesperado");
+            responseObject.put(Constantes.MENSAJE, Constantes.OCURRIO_ERROR_INESPERADO);
             responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
-            System.out.println("Ocurrio un error inesperado: " + e.getMessage());
+            System.out.println(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
         }
 
         return responseEntity;
     }
 
     @PutMapping(value = "/batallas/update")
-    public ResponseEntity<?> updateBatallas(@RequestBody BatallasDTO batallasDTO) {
+    public ResponseEntity updateBatallas(@RequestBody BatallasDTO batallasDTO) {
 
         ResponseEntity responseEntity;
         HashMap responseObject = new HashMap();
@@ -207,17 +207,17 @@ public class TorneoControlller {
             responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
         } catch (Exception e) {
-            responseObject.put(Constantes.MENSAJE, "Ocurrio un error inesperado");
+            responseObject.put(Constantes.MENSAJE, Constantes.OCURRIO_ERROR_INESPERADO);
             responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
-            System.out.println("Ocurrio un error inesperado: " + e.getMessage());
+            System.out.println(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
         }
 
         return responseEntity;
     }
 
     @DeleteMapping("/batallas/delete/{idEtapa}")
-    public ResponseEntity<?> deleteBatallas(@PathVariable Integer idEtapa) {
+    public ResponseEntity deleteBatallas(@PathVariable Integer idEtapa) {
         ResponseEntity responseEntity;
         HashMap responseObject = new HashMap();
 
@@ -231,10 +231,10 @@ public class TorneoControlller {
             responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
         } catch (Exception e) {
-            responseObject.put(Constantes.MENSAJE, "Ocurrio un error inesperado");
+            responseObject.put(Constantes.MENSAJE, Constantes.OCURRIO_ERROR_INESPERADO);
             responseObject.put(Constantes.CODIGO, Constantes.ERROR);
             responseEntity = ResponseEntity.status(201).body(responseObject);
-            System.out.println("Ocurrio un error inesperado: " + e.getMessage());
+            System.out.println(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
         }
 
         return responseEntity;
