@@ -28,7 +28,7 @@ public class TorneoHorasHabiles {
     @Column(name = "id_torneo")
     private Integer idTorneo;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_torneo", referencedColumnName = "id_torneo", insertable = false, updatable = false)
     private Torneos horasHabilesByIdTorneo;
 

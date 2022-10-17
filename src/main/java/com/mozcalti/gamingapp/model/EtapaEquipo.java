@@ -23,11 +23,11 @@ public class EtapaEquipo {
     @Column(name = "id_equipo")
     private int idEquipo;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_etapa", referencedColumnName = "id_etapa", nullable = false, insertable = false, updatable = false)
     private Etapas etapasByIdEtapa;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_equipo", referencedColumnName = "id_equipo", nullable = false, insertable = false, updatable = false)
     private Equipos equiposByIdEquipo;
 

@@ -28,7 +28,7 @@ public class BatallaParticipantes {
     @Column(name = "id_batalla")
     private Integer idBatalla;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_batalla", referencedColumnName = "id_batalla", insertable = false, updatable = false)
     private Batallas batallasByIdBatalla;
 

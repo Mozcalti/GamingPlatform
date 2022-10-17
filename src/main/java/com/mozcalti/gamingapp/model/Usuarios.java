@@ -30,11 +30,11 @@ public class Usuarios {
     @Column(name = "id_institucion")
     private Integer idInstitucion;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_perfil", referencedColumnName = "id_perfil", insertable = false, updatable = false)
     private Perfiles perfilesByIdPerfil;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_institucion", referencedColumnName = "id_institucion", insertable = false, updatable = false)
     private Instituciones institucionesByIdInstitucion;
 

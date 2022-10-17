@@ -38,7 +38,7 @@ public class Etapas {
     @OneToMany(mappedBy = "etapasByIdEtapa")
     private Collection<EtapaBatalla> etapaBatallasByIdEtapa;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_torneo", referencedColumnName = "id_torneo", insertable = false, updatable = false)
     private Torneos torneosByIdTorneo;
 

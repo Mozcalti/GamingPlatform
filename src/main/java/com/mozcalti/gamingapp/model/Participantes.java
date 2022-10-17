@@ -43,7 +43,7 @@ public class Participantes {
     @OneToMany(mappedBy = "participantesByIdParticipante")
     private Collection<ParticipanteEquipo> participanteEquiposByIdParticipante;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_institucion", referencedColumnName = "id_institucion", insertable = false, updatable = false)
     private Instituciones institucionesByIdInstitucion;
 
