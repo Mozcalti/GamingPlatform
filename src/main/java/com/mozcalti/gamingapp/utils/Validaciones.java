@@ -7,18 +7,12 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.io.*;
 import java.util.regex.Pattern;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Validaciones {
 
-    public static String formatoFecha(){
-        return new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date());
-    }
 
     public static String validaStringCellValue(Cell cell) {
         if (cell.getCellType() == CellType.STRING && cell.getStringCellValue().length() >= Numeros.TRES.getNumero())
