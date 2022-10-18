@@ -1,0 +1,243 @@
+@font-face {
+    font-family: nutmeg;
+    src: url('../public/fonts/Nutmeg/Nutmeg-Regular.ttf');
+}
+
+:root{
+	--main-blue-color: #1d3c87;
+    --secondary-blue-color: #1e2d50;
+    --main-pink-color: #cf0a61;
+    --secondary-pink-color: #c03e76;
+    --main-green-color:  #009294;
+    --secondary-green-color: #08393a;
+    --main-lime-color: #b1cc42;
+    --secondary-lime-color: #8aac04;
+    --main-gray-color: #868f96;
+    --secondary-gray-color: #596164;
+    --main-font-color: white;
+}
+
+*{
+    box-sizing: border-box;
+}
+
+body{
+    background-image: linear-gradient(to right, var(--main-blue-color), var(--secondary-blue-color));
+    font-family: nutmeg;
+   
+}
+
+.containerItem{
+    display: flex;
+}
+
+/*LOADING SCREENS*/
+
+#stateScreen{
+    background-image: linear-gradient(to right,var(--main-blue-color), var(--secondary-blue-color));
+    margin: 0 auto;
+    width: 100%;
+    height: 90vh;
+    background-color: white;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#stateMsg{
+    align-self: center;
+    justify-self: center;
+    font-size: 24px;
+    text-align: center;
+    color: white;
+}
+
+
+#streamMsg{
+    margin-bottom: 25px;
+    text-align: center;
+    color: white;
+}
+
+
+/*GAME UI*/
+
+#gameContainer{
+    margin: auto;
+    margin-top: 75px;
+    display: none;
+    flex-direction: column;
+    width: 1200px;
+    height: 700px;
+    justify-content: center;
+    align-items: center;
+    color: var(--main-font-color);
+}
+
+#canvasContainer{
+    width: 100%;
+    height: 100%;
+    border-radius: 15px;
+    flex-direction: row;
+    justify-content: center;
+}
+
+
+#dataContainer{
+    width: 20%;
+    height: 100%;
+    padding: 20px;   
+    flex-direction: column; 
+    background-image: linear-gradient(to right, var(--main-pink-color), var(--secondary-pink-color));
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;   
+    overflow: auto;
+    align-self: flex-start;
+}
+
+#animationContainer{
+    width: 80%;
+    height: 100%;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    justify-content: center;
+    background: linear-gradient(to right, var(--main-gray-color), var(--secondary-gray-color));
+}
+
+#canvas1{
+    background-image: url('../images/ground/suelo.png');                   
+}
+
+.playerBox{
+    font-size: 16px;
+    margin-bottom: 4px;
+   
+}
+
+.playerBox > div{
+    word-wrap: break-word;
+}
+
+#repeatInfoDiv{
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: 20px;
+    align-items: center;
+}
+
+#repeatInfoMsg, #streamMsg, #roundNumber{
+    font-size: 18px;   
+}
+
+#roundNumber{
+    margin-top: -20px;
+}
+
+#participantsInfo{
+    margin-top: 20px;
+    font-size: 18px;
+    text-align: center;
+}
+
+#resultsButton{
+    display: none;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 16px;
+    font-family: nutmeg ;
+    background-image: linear-gradient(to right,var(--main-lime-color), var(--secondary-lime-color));  
+    margin-top: 20px;
+    margin-bottom: 20px;  
+}
+
+#resultsButton:hover{
+    color: white;
+    border-color: var(--main-green-color);
+}
+
+#resultsButton:active{
+    scale: 0.95;
+}
+
+/*TABLA DE RESULTADOS*/
+
+#resultsTable{
+
+    display: table;
+    width: 100%;
+    height: fit-content;
+    text-align: center;
+    background-color: var(--secondary-green-color);
+}
+
+.resultTableHeader{
+    font-size: 16px;
+    padding: 10px;
+    background-color: var(--secondary-green-color);
+    border: 1px solid black;
+   
+}
+
+.resultTableCell{
+    padding: 5px;
+    font-size: 14px;
+    background-color: var(--main-green-color);
+}
+
+#tableContainer{
+    display: none;
+    width: 70%;
+    justify-content: center;
+    align-items: center;
+    align-self: center;
+    justify-self: center;
+    position: absolute;
+    flex-direction: column;
+}
+
+#closeIcon{
+    width: 20px;
+    height: 20px;
+    align-self: flex-end;
+}
+
+
+/*
+.flex {
+min-height: 60pt;
+}
+
+@keyframes loading {
+0% {
+    width: 50pt;
+    height: 50pt;
+    margin-top: 0;
+}
+25% {
+    height: 4pt;
+    margin-top: 23pt;
+}
+50% {
+    width: 4pt;
+}
+75% {
+    width: 50pt;
+}
+100% {
+    width: 50pt;
+    height: 50pt;
+    margin-top: 0;
+}
+}
+
+.loader {
+width: 50pt;
+height: 50pt;
+border-radius: 100%;
+border: #cf0a61 4pt solid;
+margin-left: auto;
+margin-right: auto;
+background-color: transparent;
+animation: loading 1s infinite;
+}*/
