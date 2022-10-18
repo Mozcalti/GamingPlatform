@@ -9,6 +9,7 @@ import java.util.UUID;
 
 @Repository
 public interface InstitucionRepository extends PagingAndSortingRepository<Institucion, UUID>, JpaSpecificationExecutor<Institucion> {
+
     Institucion findByNombre(String nombre);
 
 }

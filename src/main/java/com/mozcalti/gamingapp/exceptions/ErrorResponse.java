@@ -13,4 +13,5 @@ public class ErrorResponse {
     private final String timestamp;
 
 
+public record ErrorResponse(int status, String error, String message, String timestamp) {
 }

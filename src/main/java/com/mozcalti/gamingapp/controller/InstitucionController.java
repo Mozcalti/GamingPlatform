@@ -40,5 +40,4 @@ public class InstitucionController {
     public TablaInstitucionDTO obtenerInstitucion(@PathVariable UUID id){
         return institucionService.obtenerInstitucion(id);
     }
-
 }

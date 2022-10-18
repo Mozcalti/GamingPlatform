@@ -19,4 +19,5 @@ public class Institucion {
     @Column(name = "correo") private String correo;
     @Column(name = "fecha_creacion") private String fechaCreacion;
     @Column(name = "logo") private String logo;
+
 }

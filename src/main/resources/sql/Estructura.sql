@@ -6,5 +6,11 @@ create table cat_institucion(
     logo varchar not null
 );
 
-
-drop table cat_institucion;
+CREATE TABLE usuarios
+(
+    id         SERIAL PRIMARY KEY,
+    email      VARCHAR(50)  NOT NULL,
+    password   VARCHAR(100) NOT NULL,
+    habilitado BOOL DEFAULT false,
+    rol        VARCHAR(10)  NOT NULL
+);
