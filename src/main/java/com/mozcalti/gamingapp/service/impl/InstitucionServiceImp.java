@@ -7,11 +7,11 @@ import com.mozcalti.gamingapp.model.dto.TablaDTO;
 import com.mozcalti.gamingapp.model.dto.TablaInstitucionDTO;
 import com.mozcalti.gamingapp.repository.InstitucionRepository;
 import com.mozcalti.gamingapp.service.InstitucionService;
-import com.mozcalti.gamingapp.utils.Numeros;
-import com.mozcalti.gamingapp.utils.TablaInterface;
-import com.mozcalti.gamingapp.utils.Validaciones;
-import lombok.AllArgsConstructor;
+import com.mozcalti.gamingapp.utils.*;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.poi.ss.usermodel.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,9 +25,12 @@ import java.io.*;
 import java.util.*;
 
 @Service
-@AllArgsConstructor
-public class InstitucionServiceImp implements InstitucionService, TablaInterface {
-    private InstitucionRepository institucionRepository;
+@RequiredArgsConstructor
+public class InstitucionServiceImp implements InstitucionService, Utils, TablaInterface {
+    private final InstitucionRepository institucionRepository;
+
+    @Value("${resources.static.instituciones}")
+    private String pathInstituciones;
 
 
     @Override
@@ -68,8 +71,8 @@ public class InstitucionServiceImp implements InstitucionService, TablaInterface
     @Override
     public List<Institucion> guardarInstituciones(List<Institucion> instituciones) {
         for (Institucion institucion : instituciones) {
-            institucion.setFechaCreacion(Validaciones.formatoFecha());
-            institucion.setLogo(Validaciones.encodeToString());
+            institucion.setFechaCreacion(FORMATTER.format(LOCAL_DATE_TIME));
+            institucion.setLogo(encodeImageToString(pathInstituciones));
         }
         return (List<Institucion>) institucionRepository.saveAll(instituciones);
     }
@@ -100,11 +103,10 @@ public class InstitucionServiceImp implements InstitucionService, TablaInterface
     @Override
     public TablaInstitucionDTO obtenerInstitucion(UUID id) {
         Optional<Institucion> institucion = institucionRepository.findById(id);
-        if (institucion.isEmpty()){
+        if (institucion.isEmpty()) {
             throw new NoSuchElementException("La institución no se encuentra en el sistema");
-        }
-        else
-            return new TablaInstitucionDTO(institucion.get().getId(), institucion.get().getNombre(), institucion.get().getCorreo(), institucion.get().getFechaCreacion(),institucion.get().getLogo());
+        } else
+            return new TablaInstitucionDTO(institucion.get().getId(), institucion.get().getNombre(), institucion.get().getCorreo(), institucion.get().getFechaCreacion(), institucion.get().getLogo());
 
     }
 
@@ -117,4 +119,12 @@ public class InstitucionServiceImp implements InstitucionService, TablaInterface
     }
 
 
+    @Override
+    public String encodeImageToString(String path) {
+        try (FileInputStream file = new FileInputStream(path + "/institucionLogoDefaul.png")) {
+            return Base64.encodeBase64String(file.readAllBytes());
+        } catch (IOException exception) {
+            throw new IllegalArgumentException(String.format("La imagen no es correcta %s", exception));
+        }
+    }
 }
