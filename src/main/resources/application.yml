@@ -2,15 +2,21 @@ spring:
   profiles:
     active: prod
 ---
-
+security:
+  jwt:
+    token:
+      duration: 36000
+      prefix: Bearer
+  paths:
+    open-paths: /, /index.html, /css/**, /js/**, /img/**, /api/login/**
 spring:
   config:
     activate:
       on-profile: prod
   datasource:
-    url: jdbc:postgresql://${POSTGRESQL_HOSTNAME:localhost}:${POSTGRESQL_PORT:5432}/${POSTGRESQL_DB_NAME:gaming}
-    username: ${POSTGRESQL_DB_USER:gamer}
-    password: ${POSTGRESQL_DB_PASSWORD:password}
+    url: jdbc:postgresql://${POSTGRESQL_HOSTNAME:localhost}:${POSTGRESQL_PORT:5432}/${POSTGRESQL_DB_NAME:gaming_platform}
+    username: ${POSTGRESQL_DB_USER:user}
+    password: ${POSTGRESQL_DB_PASSWORD:pass}
 
   jpa:
     hibernate:
@@ -18,6 +24,12 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: off
+    
+server:
+  error:
+    whitelabel:
+      enabled: false
 
 cron:
   mail:
@@ -29,5 +41,4 @@ mail:
   user: ${MAIL_USER:juceruta3x@gmail.com}
   password: ${MAIL_PASSWORD:ptkjhwpeupkfwodi}
   from: ${MAIL_FROM:juceruta3x@gmail.com}
-
-
+  
