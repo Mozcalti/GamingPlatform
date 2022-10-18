@@ -14,13 +14,12 @@ hitVictimSound.src = "sounds/bullet.wav";
 hitVictimSound.autoplay = true;
 
 const hitWallSound = new Audio();
-hitWallSound.autoplay = true;
 hitWallSound.src = "sounds/wall.wav";
+hitWallSound.autoplay = true;
 
 const explodedSound = new Audio();
-explodedSound.autoplay = true;
 explodedSound.src = "sounds/explode.wav";
-
+explodedSound.autoplay = true;
 /*
     Prevents user accidentally leaving or refreshing tab
     Will show pop up asking for confirmation
@@ -37,6 +36,10 @@ window.addEventListener('beforeunload', function (e) {
  * @return
  */
 function showResults(resultsArray){
+    if (document.getElementById("resultsTable") === null) {
+        let tableContainer = createCustomElement("TABLE", "", "resultsTable", "");
+        document.getElementById("tableContainer").appendChild(tableContainer);
+    }
     if (document.getElementById("tableContainer").style.display.localeCompare("flex") !== 0) {
 
         document.getElementById("dataContainer").style.opacity = "0.6";
@@ -50,8 +53,8 @@ function showResults(resultsArray){
         document.getElementById("animationContainer").style.opacity = "1";
         document.getElementById("tableContainer").style.display = "none";
     }
-
 }
+
 
 /**
  * Creates a table, headers and cells based on the battle results
@@ -94,14 +97,9 @@ function createResults(resultsArray){
     refTbody.appendChild(refTrH);
 
     //create cells
-
-    console.log(resultsArray);
-
     for (let result of resultsArray){
-        console.log(result);
         let refTr = createCustomElement("TR", "", "", "");
         for(const prop in result){
-            console.log(prop);
             let data = result[prop];
             let refCell = createCustomElement("TD", data, "", "resultTableCell");
             refTr.appendChild(refCell);
@@ -199,7 +197,7 @@ function initBattle() {
  */
 function getResponse(callback) {
 
-    const battleFiles = ['battles/team.xml'];
+    const battleFiles = ['../../../test/resources/battles/melee.xml'];
 
     let battleNumber = 0;
     let xhr = new XMLHttpRequest();
@@ -297,7 +295,7 @@ function getRecordArray(xmlDoc) {
 
     let robotDataArray = [];
     let debrisImage = new Image();
-    debrisImage.src = "images/ground/explode_debris.png";
+    debrisImage.src = "../public/img/ground/explode_debris.png";
 
     //iterate through all the turns
     for (i = 0; i < turnsDom.children.length; i++) {
@@ -408,11 +406,11 @@ function prepareAnimation(xmlDoc, callback) {
 
     //images related
     let bulletImage = new Image();
-    bulletImage.src = "images/bullets/bullet.png";
+    bulletImage.src = "../public/img/bullets/bullet.png";
     let goneImage = new Image();
     goneImage.src = "";
-    let explosionFramesArr = createFramesArr("images/explosion/explosion2-", 68);
-    let hitTargetFramesArr = createFramesArr("images/explosion/explosion1-", 16);
+    let explosionFramesArr = createFramesArr("../public/img/explosion/explosion2-", 68);
+    let hitTargetFramesArr = createFramesArr("../public/img/explosion/explosion1-", 16);
     let attackImagesArray = [];
     attackImagesArray.push(bulletImage);
     attackImagesArray.push(goneImage);
@@ -422,6 +420,7 @@ function prepareAnimation(xmlDoc, callback) {
         animate(record, control, ctx, attackImagesArray, callback);
 
     });
+
 }
 
 /**
@@ -447,7 +446,6 @@ function animate(record, control, ctx, attackImagesArray, callback){
 
     //finish battle
     if (control.getCurrentTurn() === control.getTotalTurns()) {
-
         callback(record.getRecordInfo().getResults());
     } else {
 
@@ -587,7 +585,6 @@ function createPlayerBox(name, maxEnergy){
  * @return
  */
 function resetRobotImage(robotDataArray) {
-    console.log(typeof robotDataArray, robotDataArray);
     for (let robotData of robotDataArray) {
         robotData.getRobotImages().setCurrentBodyImage(robotData.getRobotImages().getBodyImage());
         robotData.getRobotImages().setCurrentGunImage(robotData.getRobotImages().getGunImage());
@@ -698,45 +695,45 @@ function selectPartImage(color, part) {
 
     switch (color) {
         case "FFFF0000":
-            image.src = "images/tanks/" + part + "Red.png";
+            image.src = "../public/img/tanks/" + part + "Red.png";
             break;
 
         case "FF00C800":
-            image.src = "images/tanks/" + part + "Green.png";
+            image.src = "../public/img/tanks/" + part + "Green.png";
             break;
 
 
         case "FFC0C0C0":
-            image.src = "images/tanks/" + part + "Gray.png";
+            image.src = "../public/img/tanks/" + part + "Gray.png";
             break;
 
 
         case "FF000000":
-            image.src = "images/tanks/" + part + "Black.png";
+            image.src = "../public/img/tanks/" + part + "Black.png";
             break;
 
         //debería ser pink
         case "FFFFAFAF":
-            image.src = "images/tanks/" + part + "Orange.png";
+            image.src = "../public/img/tanks/" + part + "Orange.png";
             break;
 
 
         case "FF808032":
-            image.src = "images/tanks/" + part + "Brown.png";
+            image.src = "../public/img/tanks/" + part + "Brown.png";
             break;
 
 
         case "FFFFFF00":
-            image.src = "images/tanks/" + part + "Yellow.png";
+            image.src = "../public/img/tanks/" + part + "Yellow.png";
             break;
 
 
         case "FF0000FF":
-            image.src = "images/tanks/" + part + "Blue.png";
+            image.src = "../public/img/tanks/" + part + "Blue.png";
             break;
 
         default:
-            image.src = "images/tanks/" + part + "Blue.png";
+            image.src = "../public/img/tanks/" + part + "Blue.png";
             break;
     }
 
