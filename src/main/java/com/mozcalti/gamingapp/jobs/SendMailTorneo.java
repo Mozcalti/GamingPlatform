@@ -5,8 +5,7 @@ import com.mozcalti.gamingapp.model.correos.DatosCorreoBatallaDTO;
 import com.mozcalti.gamingapp.service.*;
 import com.mozcalti.gamingapp.utils.StackTraceUtils;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -17,9 +16,8 @@ import java.util.Map;
 
 @Component
 @AllArgsConstructor(onConstructor = @__(@Autowired))
+@Slf4j
 public class SendMailTorneo {
-
-    private static Logger LOGGER = LoggerFactory.getLogger(SendMailTorneo.class);
 
     private SendMailService sendMailService;
 
@@ -28,7 +26,7 @@ public class SendMailTorneo {
     @Scheduled(cron = "${cron.mail.batallas}")
     public void mailInicioBatallas() throws UtilsException {
 
-        LOGGER.info("Se buscan correos para el envio a los participantes");
+        log.info("Se buscan correos para el envio a los participantes");
 
         try {
 
@@ -49,14 +47,14 @@ public class SendMailTorneo {
 
                     sendMailService.sendMail(mailTo, subject, templateMessage, imagesMessage);
 
-                    LOGGER.info("Se hace el envio de email a los participantes indicados");
+                    log.info("Se hace el envio de email a los participantes indicados");
                 }
             } else {
-                LOGGER.info("No se encontraron correos a enviar");
+                log.info("No se encontraron correos a enviar");
             }
 
         } catch (Exception e) {
-            LOGGER.error("Error en el job mailInicioBatallas(): {}", StackTraceUtils.getCustomStackTrace(e));
+            log.error("Error en el job mailInicioBatallas(): {}", StackTraceUtils.getCustomStackTrace(e));
         }
 
     }

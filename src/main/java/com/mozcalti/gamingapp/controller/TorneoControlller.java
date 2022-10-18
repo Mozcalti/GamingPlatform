@@ -6,8 +6,7 @@ import com.mozcalti.gamingapp.model.batallas.BatallasDTO;
 import com.mozcalti.gamingapp.service.CalendarizarEtapasTorneoService;
 import com.mozcalti.gamingapp.utils.Constantes;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +15,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "/torneo")
 @AllArgsConstructor(onConstructor = @__(@Autowired))
+@Slf4j
 public class TorneoControlller {
-
-    private static Logger LOGGER = LoggerFactory.getLogger(TorneoControlller.class);
 
     private CalendarizarEtapasTorneoService calendarizarEtapasTorneoService;
 
@@ -33,7 +31,7 @@ public class TorneoControlller {
             return ResponseEntity.badRequest()
                     .body(e.getMessage());
         } catch (Exception e) {
-            LOGGER.error(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
+            log.error(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
             return ResponseEntity.badRequest()
                     .body(Constantes.OCURRIO_ERROR_INESPERADO);
         }
@@ -56,7 +54,7 @@ public class TorneoControlller {
             return ResponseEntity.badRequest()
                     .body(e.getMessage());
         } catch (Exception e) {
-            LOGGER.error(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
+            log.error(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
             return ResponseEntity.badRequest()
                     .body(Constantes.OCURRIO_ERROR_INESPERADO);
         }
@@ -79,7 +77,7 @@ public class TorneoControlller {
             return ResponseEntity.badRequest()
                     .body(e.getMessage());
         } catch (Exception e) {
-            LOGGER.error(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
+            log.error(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
             return ResponseEntity.badRequest()
                     .body(Constantes.OCURRIO_ERROR_INESPERADO);
         }
@@ -97,7 +95,7 @@ public class TorneoControlller {
             return ResponseEntity.badRequest()
                     .body(e.getMessage());
         } catch (Exception e) {
-            LOGGER.error(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
+            log.error(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
             return ResponseEntity.badRequest()
                     .body(Constantes.OCURRIO_ERROR_INESPERADO);
         }
@@ -120,7 +118,7 @@ public class TorneoControlller {
             return ResponseEntity.badRequest()
                     .body(e.getMessage());
         } catch (Exception e) {
-            LOGGER.error(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
+            log.error(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
             return ResponseEntity.badRequest()
                     .body(Constantes.OCURRIO_ERROR_INESPERADO);
         }
@@ -138,7 +136,7 @@ public class TorneoControlller {
             return ResponseEntity.badRequest()
                     .body(e.getMessage());
         } catch (Exception e) {
-            LOGGER.error(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
+            log.error(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
             return ResponseEntity.badRequest()
                     .body(Constantes.OCURRIO_ERROR_INESPERADO);
         }
