@@ -1,15 +1,13 @@
 package com.mozcalti.gamingapp.model.dto;
 
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-@Getter
 @RequiredArgsConstructor
-public class InstitucionDTO {
+@Getter
+public class PaginadoDTO {
 
-    private final String nombre;
-    private final String correo;
-
+    private final int paginas;
+    private final int pagina;
 
 }
