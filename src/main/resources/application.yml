@@ -21,4 +21,4 @@ spring:
 
 resources:
   static:
-    instituciones: ${PATH_INSTITUCIONES}
+    instituciones: ${PATH_INSTITUCIONES:path}
