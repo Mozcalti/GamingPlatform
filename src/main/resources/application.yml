@@ -17,6 +17,7 @@ spring:
     url: jdbc:postgresql://${POSTGRESQL_HOSTNAME:localhost}:${POSTGRESQL_PORT:5432}/${POSTGRESQL_DB_NAME:gaming_platform}
     username: ${POSTGRESQL_DB_USER:user}
     password: ${POSTGRESQL_DB_PASSWORD:pass}
+
   jpa:
     hibernate:
       ddl-auto: none
@@ -28,8 +29,21 @@ resources:
   static:
     instituciones: ${PATH_INSTITUCIONES:path}
     open-in-view: off
-
+    
 server:
   error:
     whitelabel:
       enabled: false
+
+cron:
+  mail:
+    batallas: ${CRON_MAIL_BATTALLAS:0 */1 * * * *}
+
+mail:
+  host: ${MAIL_HOST:smtp.gmail.com}
+  port: ${MAIL_PORT:587}
+  user: ${MAIL_USER:juceruta3x@gmail.com}
+  password: ${MAIL_PASSWORD:ptkjhwpeupkfwodi}
+  from: ${MAIL_FROM:juceruta3x@gmail.com}
+  
+
