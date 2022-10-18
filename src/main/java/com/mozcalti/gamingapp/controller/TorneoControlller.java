@@ -133,7 +133,7 @@ public class TorneoControlller {
         try {
             calendarizarEtapasTorneoService.deleteBatallas(idEtapa);
             return ResponseEntity.status(HttpStatus.OK)
-                    .body("Se Eliminarons las batallas Correctamente");
+                    .body("Se Eliminaron las batallas Correctamente");
         } catch (ValidacionException e) {
             return ResponseEntity.badRequest()
                     .body(e.getMessage());
