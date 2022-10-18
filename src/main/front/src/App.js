@@ -1,8 +1,8 @@
 import './App.css';
-import Login from './componentes/login';
+import Login from './components/login';
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-import Protected from "./componentes/protected";
-import MiPerfil from "./componentes/perfil";
+import Protected from "./components/protected";
+import MiPerfil from "./components/perfil";
 
 function App() {
     return (

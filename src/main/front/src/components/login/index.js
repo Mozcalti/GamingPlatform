@@ -12,9 +12,9 @@ import {
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import React, {useState} from "react";
-import axios from "axios";
 import {LoadingButton} from "@mui/lab";
 import {useNavigate} from "react-router-dom";
+import AuthService from "../../services/auth.service";
 
 function SendIcon() {
     return null;
@@ -38,28 +38,25 @@ const Login = () => {
             loading: true,
         });
 
-        axios
-            .post("/api/login", {
-                username: values.email,
-                password: values.pass,
-            })
-            .then((res) => {
-                sessionStorage.setItem("token", res.headers["authorization"]);
+        AuthService.login(values.email, values.pass)
+            .then(
+            () => {
                 setValues({
                     ...values,
                     error: false,
                     loading: false,
                 });
                 navigate("/mi-perfil")
-            })
-            .catch((err) => {
+            },
+            error => {
                 setValues({
                     ...values,
                     error: true,
                     loading: false,
                 });
-                console.error(err)
-            });
+                console.error(error)
+            }
+        );
     };
 
     const handlePassVisibilty = () => {
