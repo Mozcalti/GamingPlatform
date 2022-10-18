@@ -11,11 +11,6 @@ public interface Constantes {
     String MAIL_ENCODING = "UTF-8";
     String INDIVIDUAL = "INDIVIDUAL";
     String EQUIPO = "EQUIPO";
-    String MENSAJE = "mensaje";
-    String CODIGO = "codigo";
-    String OK = "200";
-    String ERROR = "204";
-
     String OCURRIO_ERROR_INESPERADO = "Ocurrio un error inesperado";
 
 }
