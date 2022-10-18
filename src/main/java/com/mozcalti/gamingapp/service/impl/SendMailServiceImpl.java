@@ -12,6 +12,8 @@ import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateExceptionHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +32,8 @@ import java.util.Properties;
 
 @Service
 public class SendMailServiceImpl implements SendMailService {
+
+    private static Logger LOGGER = LoggerFactory.getLogger(SendMailServiceImpl.class);
 
     @Value("${mail.host}")
     private String mailHost;
@@ -94,8 +98,7 @@ public class SendMailServiceImpl implements SendMailService {
 
             Transport.send(msg);
         } catch (Exception e) {
-            System.out.println("Error en el servicio sendMail():\n"
-                    + StackTraceUtils.getCustomStackTrace(e));
+            LOGGER.error("Error en el servicio sendMail(): {}", StackTraceUtils.getCustomStackTrace(e));
             throw new SendMailException("Error en el servicio sendMail():\n"
                     + StackTraceUtils.getCustomStackTrace(e), e);
         }
@@ -146,9 +149,8 @@ public class SendMailServiceImpl implements SendMailService {
                         + "Debe especificar el pathname con la ruta y nombre del archivo");
             }
         } catch (Exception e) {
-            System.out.println("Error en el servicio readFileTemplate():\n"
-                    + StackTraceUtils.getCustomStackTrace(e));
-            throw new SendMailException("Error en el servicio readFileTemplate():\n"
+            LOGGER.error("Error en el servicio readMailTemplate(): {}", StackTraceUtils.getCustomStackTrace(e));
+            throw new SendMailException("Error en el servicio readMailTemplate():\n"
                     + StackTraceUtils.getCustomStackTrace(e), e);
         }
 

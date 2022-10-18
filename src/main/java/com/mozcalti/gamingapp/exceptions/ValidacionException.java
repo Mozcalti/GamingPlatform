@@ -1,9 +1,9 @@
 package com.mozcalti.gamingapp.exceptions;
 
-public class ValidacionException extends RuntimeException {
+import lombok.NoArgsConstructor;
 
-    public ValidacionException() {
-    }
+@NoArgsConstructor
+public class ValidacionException extends RuntimeException {
 
     public ValidacionException(String message) {
         super(message);

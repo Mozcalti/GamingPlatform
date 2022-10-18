@@ -1,9 +1,9 @@
 package com.mozcalti.gamingapp.exceptions;
 
-public class UtilsException extends Exception {
+import lombok.NoArgsConstructor;
 
-    public UtilsException() {
-    }
+@NoArgsConstructor
+public class UtilsException extends Exception {
 
     public UtilsException(String message) {
         super(message);
