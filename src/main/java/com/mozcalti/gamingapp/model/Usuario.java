@@ -1,5 +1,6 @@
 package com.mozcalti.gamingapp.model;
 
+import com.mozcalti.gamingapp.model.dto.UsuarioDTO;
 import lombok.*;
 
 import javax.persistence.*;
@@ -15,12 +16,22 @@ import javax.validation.constraints.NotBlank;
 public class Usuario {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    @Column(nullable=false, updatable=false)
+    @Column(updatable=false)
     private Long id;
 
-    @Column(nullable=false, updatable = false, unique=true)
+    @Column(updatable = false)
     @NotBlank
     private String email;
+
+
+    @Column
+    @NotBlank
+    private String nombre;
+
+    @Column
+    @NotBlank
+    private String apellidos;
+
 
     @Column(nullable=false)
     @NotBlank
@@ -30,4 +41,12 @@ public class Usuario {
 
     @Column(nullable=false)
     private String rol;
+
+    public Usuario(UsuarioDTO usuarioDTO) {
+        this.email = usuarioDTO.email();
+        this.nombre = usuarioDTO.nombre();
+        this.apellidos = usuarioDTO.apellidos();
+        this.rol = usuarioDTO.rol();
+        this.password = "<EMPTY>";
+    }
 }

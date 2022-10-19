@@ -8,7 +8,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 import java.util.List;
-import java.util.UUID;
 
 
 public interface InstitucionService {
@@ -16,7 +15,9 @@ public interface InstitucionService {
     List<InstitucionDTO> cargarArchivo(MultipartFile file) ;
     List<Institucion> guardarInstituciones(List<Institucion> instituciones);
     TablaDTO<TablaInstitucionDTO> listaInstituciones(String cadena, Integer indice);
-    TablaInstitucionDTO obtenerInstitucion(UUID id);
+    TablaInstitucionDTO obtenerInstitucion(Integer id);
+
+    Institucion guardarInstitucion(InstitucionDTO institucionDTO);
 
 
 

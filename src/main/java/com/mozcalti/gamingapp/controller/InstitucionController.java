@@ -11,7 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
-import java.util.UUID;
 
 
 @RestController
@@ -30,14 +29,18 @@ public class InstitucionController {
         institucionService.guardarInstituciones(instituciones);
     }
 
-
     @GetMapping("/todas")
     public TablaDTO<TablaInstitucionDTO> todasInstituciones(@RequestParam String texto, @RequestParam Integer indice){
         return institucionService.listaInstituciones(texto,indice);
     }
 
     @GetMapping("/{id}")
-    public TablaInstitucionDTO obtenerInstitucion(@PathVariable UUID id){
+    public TablaInstitucionDTO obtenerInstitucion(@PathVariable Integer id){
         return institucionService.obtenerInstitucion(id);
+    }
+
+    @PostMapping(value = "/guardarInstitucion")
+    public void guardarInstitucion(@RequestBody InstitucionDTO institucionDTO) {
+        institucionService.guardarInstitucion(institucionDTO);
     }
 }
