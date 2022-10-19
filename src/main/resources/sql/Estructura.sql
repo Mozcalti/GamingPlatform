@@ -1,10 +1,11 @@
-create table cat_institucion(
-    id uuid DEFAULT gen_random_uuid() primary key,
+create table institucion(
+    id serial primary key,
     nombre varchar(255) not null,
     correo varchar(255) null,
     fecha_creacion varchar(20) not null,
     logo varchar not null
 );
+
 
 CREATE TABLE usuarios
 (
@@ -21,10 +22,11 @@ CREATE TABLE participantes
     nombre character varying(100),
     apellidos character varying(150),
     correo character varying(150),
-    carrera character varying(250),
-    foto bytea,
     academia character varying(150),
+    ies varchar(255),
+    carrera character varying(250),
     semestre integer,
+    foto varchar not null,
     id_institucion integer,
     PRIMARY KEY (id_participante)
 );
