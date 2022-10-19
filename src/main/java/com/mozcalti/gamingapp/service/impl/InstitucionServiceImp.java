@@ -26,7 +26,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class InstitucionServiceImp implements InstitucionService, Utils, TablaInterface {
+public class InstitucionServiceImp implements InstitucionService, Utils {
     private final InstitucionRepository institucionRepository;
 
     @Value("${resources.static.instituciones}")
@@ -124,7 +124,7 @@ public class InstitucionServiceImp implements InstitucionService, Utils, TablaIn
         return institucionRepository.save(institucion);
     }
 
-    public Specification<Institucion> containsTextInAttributes(String text, List<String> attributes) {
+    private Specification<Institucion> containsTextInAttributes(String text, List<String> attributes) {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.or(root.getModel().getDeclaredAttributes().stream()
                 .filter(a -> attributes.contains(a.getName()))
                 .map(c -> criteriaBuilder.like(root.get(c.getName()), "%" + text + "%"))
