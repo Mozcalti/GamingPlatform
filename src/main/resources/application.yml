@@ -2,6 +2,10 @@ spring:
   profiles:
     active: prod
 ---
+logging:
+  level:
+    com.mozcalti.gamingapp: DEBUG
+
 security:
   jwt:
     token:
@@ -24,13 +28,13 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: off
 
 resources:
   static:
     instituciones: ${PATH_INSTITUCIONES:path}
     participantes: ${PATH_PARTICIPANTES:path}
-    open-in-view: off
-    
+
 server:
   error:
     whitelabel:

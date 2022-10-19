@@ -30,6 +30,8 @@ const Login = () => {
         loading: false,
     });
 
+    sessionStorage.removeItem("token");
+
     const handleSubmit = (e) => {
         e.preventDefault();
         setValues({
@@ -46,7 +48,7 @@ const Login = () => {
                     error: false,
                     loading: false,
                 });
-                navigate("/mi-perfil")
+                navigate("/usuarios")
             },
             error => {
                 setValues({
