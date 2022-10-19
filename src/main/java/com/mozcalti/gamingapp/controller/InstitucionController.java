@@ -30,7 +30,6 @@ public class InstitucionController {
         institucionService.guardarInstituciones(instituciones);
     }
 
-
     @GetMapping("/todas")
     public TablaDTO<TablaInstitucionDTO> todasInstituciones(@RequestParam String texto, @RequestParam Integer indice){
         return institucionService.listaInstituciones(texto,indice);
@@ -39,5 +38,10 @@ public class InstitucionController {
     @GetMapping("/{id}")
     public TablaInstitucionDTO obtenerInstitucion(@PathVariable UUID id){
         return institucionService.obtenerInstitucion(id);
+    }
+
+    @PostMapping(value = "/guardarInstitucion")
+    public void guardarInstitucion(@RequestBody InstitucionDTO institucionDTO) {
+        institucionService.guardarInstitucion(institucionDTO);
     }
 }

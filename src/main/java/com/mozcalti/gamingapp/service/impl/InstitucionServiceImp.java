@@ -110,6 +110,21 @@ public class InstitucionServiceImp implements InstitucionService, Utils, TablaIn
 
     }
 
+    @Override
+    public Institucion guardarInstitucion(InstitucionDTO institucionDTO) {
+        Institucion institucion = new Institucion();
+        if (institucionRepository.findByNombre(institucionDTO.getNombre()) != null)
+            throw new DuplicateKeyException(String.format("La institución '%s' ya esta registrada en el sistema", institucionDTO.getNombre()));
+
+        institucion.setId(UUID.randomUUID());
+        institucion.setNombre(Validaciones.validaStringValue(institucionDTO.getNombre()));
+        institucion.setCorreo(Validaciones.validaEmailValue(institucionDTO.getCorreo()));
+        institucion.setFechaCreacion(FORMATTER.format(LOCAL_DATE_TIME));
+        institucion.setLogo(encodeImageToString(pathInstituciones));
+
+        return institucionRepository.save(institucion);
+    }
+
     public Specification<Institucion> containsTextInAttributes(String text, List<String> attributes) {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.or(root.getModel().getDeclaredAttributes().stream()
                 .filter(a -> attributes.contains(a.getName()))

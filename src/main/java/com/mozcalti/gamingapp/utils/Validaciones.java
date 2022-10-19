@@ -37,4 +37,18 @@ public class Validaciones {
         throw new IllegalArgumentException(String.format("El formato del Archivo '%s' no es un archivo de Excel o CSV", nombre));
 
     }
+
+    public static String validaStringValue(String stringValue) {
+        if (stringValue.length() >= Numeros.TRES.getNumero())
+            return stringValue;
+        else
+            throw new IllegalArgumentException(String.format("El nombre de la institución '%s' debe ser mayor a 3 caracteres y menor a 255", stringValue));
+    }
+
+    public static String validaEmailValue(String stringValue) {
+        if (patternMatches(stringValue) || stringValue.isBlank())
+            return stringValue;
+        else
+            throw new IllegalArgumentException(String.format("El correo '%s' no es un correo valido", stringValue));
+    }
 }

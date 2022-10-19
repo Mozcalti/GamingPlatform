@@ -18,6 +18,8 @@ public interface InstitucionService {
     TablaDTO<TablaInstitucionDTO> listaInstituciones(String cadena, Integer indice);
     TablaInstitucionDTO obtenerInstitucion(UUID id);
 
+    Institucion guardarInstitucion(InstitucionDTO institucionDTO);
+
 
 
 }
