@@ -2,7 +2,7 @@ package com.mozcalti.gamingapp.service.impl;
 
 import com.mozcalti.gamingapp.commons.GenericServiceImpl;
 import com.mozcalti.gamingapp.model.Participantes;
-import com.mozcalti.gamingapp.model.dto.ParticipanteDTO;
+import com.mozcalti.gamingapp.model.dto.*;
 import com.mozcalti.gamingapp.repository.InstitucionRepository;
 import com.mozcalti.gamingapp.repository.ParticipantesRepository;
 import com.mozcalti.gamingapp.service.ParticipantesService;
@@ -17,10 +17,14 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.criteria.Predicate;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
@@ -106,6 +110,62 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
             participante.setFoto(encodeImageToString(pathParticipantes));
         }
         return (List<Participantes>) participantesRepository.saveAll(participantes);
+    }
+
+    @Override
+    public TablaDTO<TablaParticipantesDTO> listaParticipantes(String cadena, Integer indice) {
+        Specification<Participantes> query = Specification.where(containsTextInAttributes(cadena, Arrays.asList("nombre", "correo","institucion")));
+        Page<Participantes> participantesPages = participantesRepository.findAll(query, PageRequest.of(indice, 50));
+        PaginadoDTO paginadoDTO = new PaginadoDTO(participantesPages.getTotalPages(), participantesPages.getNumber());
+        List<Participantes> participantesParte = participantesPages.toList();
+
+        List<TablaParticipantesDTO> tablaParticipantesDTO = participantesParte.stream()
+                .map(p -> new TablaParticipantesDTO(
+                        p.getIdParticipante(),
+                        p.getNombre(),
+                        p.getApellidos(),
+                        p.getCorreo(),
+                        p.getAcademia(),
+                        p.getIes(),
+                        p.getCarrera(),
+                        p.getSemestre(),
+                        p.getFoto(),
+                        p.getFechaCreacion(),
+                        institucionRepository.findById(p.getIdInstitucion()).get().getNombre()
+                )).toList();
+
+        TablaDTO<TablaParticipantesDTO> tablaDTO = new TablaDTO<>();
+        tablaDTO.setLista(tablaParticipantesDTO);
+        tablaDTO.setPaginadoDTO(paginadoDTO);
+        return tablaDTO;
+    }
+
+    @Override
+    public TablaParticipantesDTO obtenerParticipante(Integer id) {
+        Optional<Participantes> participantes = participantesRepository.findById(id);
+        if (participantes.isEmpty()){
+            throw new NoSuchElementException("No se encontro el participante en el sistema");
+        }else
+            return new TablaParticipantesDTO(
+                    participantes.get().getIdParticipante(),
+                    participantes.get().getNombre(),
+                    participantes.get().getApellidos(),
+                    participantes.get().getCorreo(),
+                    participantes.get().getAcademia(),
+                    participantes.get().getIes(),
+                    participantes.get().getCarrera(),
+                    participantes.get().getSemestre(),
+                    participantes.get().getFoto(),
+                    participantes.get().getFechaCreacion(),
+                    institucionRepository.findById(participantes.get().getIdInstitucion()).get().getNombre());
+    }
+
+    private Specification<Participantes> containsTextInAttributes(String text, List<String> attributes) {
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.or(root.getModel().getDeclaredAttributes().stream()
+                .filter(a -> attributes.contains(a.getName()))
+                .map(c -> criteriaBuilder.like(root.get(c.getName()), "%" + text + "%"))
+                .toArray(Predicate[]::new)
+        ));
     }
 
     @Override
