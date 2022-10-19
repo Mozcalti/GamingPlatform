@@ -16,6 +16,8 @@ import java.util.List;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 class UserDetailsImpl implements UserDetails {
 
+    private static final String ROLE_PREFIX = "ROLE_";
+
     private final String username;
     private final String password;
     private final boolean accountNonExpired;
@@ -26,7 +28,7 @@ class UserDetailsImpl implements UserDetails {
 
     public static UserDetailsImpl build(Usuario usuario) {
 
-        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(usuario.getRol()));
+        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("%s%s".formatted(ROLE_PREFIX, usuario.getRol())));
 
         return new UserDetailsImpl(
                 usuario.getEmail(),
