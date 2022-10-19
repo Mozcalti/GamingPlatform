@@ -101,7 +101,7 @@ public class InstitucionServiceImp implements InstitucionService, Utils, TablaIn
     }
 
     @Override
-    public TablaInstitucionDTO obtenerInstitucion(UUID id) {
+    public TablaInstitucionDTO obtenerInstitucion(Integer id) {
         Optional<Institucion> institucion = institucionRepository.findById(id);
         if (institucion.isEmpty()) {
             throw new NoSuchElementException("La institución no se encuentra en el sistema");

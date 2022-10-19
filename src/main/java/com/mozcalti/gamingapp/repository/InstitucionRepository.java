@@ -5,10 +5,9 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.UUID;
 
 @Repository
-public interface InstitucionRepository extends PagingAndSortingRepository<Institucion, UUID>, JpaSpecificationExecutor<Institucion> {
+public interface InstitucionRepository extends PagingAndSortingRepository<Institucion, Integer>, JpaSpecificationExecutor<Institucion> {
 
     Institucion findByNombre(String nombre);
 
