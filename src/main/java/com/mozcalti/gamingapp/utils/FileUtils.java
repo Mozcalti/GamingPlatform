@@ -4,6 +4,10 @@ import com.mozcalti.gamingapp.exceptions.UtilsException;
 
 public final class FileUtils {
 
+    private FileUtils() {
+        throw new IllegalStateException("Utility FileUtils");
+    }
+
     public static String getFileName(String filePathName) throws UtilsException {
 
         String nombreArchivo = "";

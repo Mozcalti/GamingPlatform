@@ -9,6 +9,10 @@ import java.util.Random;
 
 public final class CollectionUtils {
 
+    private CollectionUtils() {
+        throw new IllegalStateException("Utility CollectionUtils");
+    }
+
     public static List<Integer> getRandomNumbers(List<Integer> idEquipos) throws NoSuchAlgorithmException {
 
         Collections.sort(idEquipos);

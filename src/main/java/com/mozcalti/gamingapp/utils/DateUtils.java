@@ -91,17 +91,18 @@ public final class DateUtils {
         Calendar calendarIniValid = getDateFormat(sHoraIniValid.toString(), formato);
         Calendar calendarFinValid = getDateFormat(sHoraFinValid.toString(), formato);
 
+        boolean resultado = true;
+
         if(calendarIni.before(calendarIniValid) || calendarFin.after(calendarFinValid)) {
-            return false;
-        } else {
-            return true;
+            resultado = false;
         }
+
+        return resultado;
 
     }
 
     public static Date addMinutos(Date date, int minutos) throws ValidacionException {
         if (date != null) {
-            DateTime dateTime = new DateTime();
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(date);
             calendar.add(Calendar.MINUTE, minutos);

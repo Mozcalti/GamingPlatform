@@ -1,13 +1,27 @@
 package com.mozcalti.gamingapp.validations;
 
 import com.mozcalti.gamingapp.exceptions.ValidacionException;
+import com.mozcalti.gamingapp.model.EtapaEquipo;
+import com.mozcalti.gamingapp.model.Etapas;
+import com.mozcalti.gamingapp.model.TorneoHorasHabiles;
+import com.mozcalti.gamingapp.model.Torneos;
 import com.mozcalti.gamingapp.model.torneos.EtapaDTO;
 import com.mozcalti.gamingapp.model.torneos.HoraHabilDTO;
 import com.mozcalti.gamingapp.model.torneos.TorneoDTO;
+import com.mozcalti.gamingapp.utils.CollectionUtils;
 import com.mozcalti.gamingapp.utils.Constantes;
 import com.mozcalti.gamingapp.utils.DateUtils;
 
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
+
+
 public final class CalendarizarEtapasTorneoValidation {
+
+    private CalendarizarEtapasTorneoValidation() {
+        throw new IllegalStateException("Utility CalendarizarEtapasTorneoValidation");
+    }
 
     public static void validaSaveTorneo(TorneoDTO torneoDTO) throws ValidacionException {
         // Datos torneo
@@ -50,16 +64,16 @@ public final class CalendarizarEtapasTorneoValidation {
                     "Horario del torneo no válido");
         }
 
-        if(torneoDTO.getEtapas() != null && !torneoDTO.getEtapas().isEmpty()) {
-            if(torneoDTO.getEtapas().size() != torneoDTO.getNumEtapas()) {
-                throw new ValidacionException("Deben darse de alta " + torneoDTO.getNumEtapas()
-                        + " etapas, de acuerdo a lo configurado en el torneo");
-            }
+        boolean existeEtapas = torneoDTO.getEtapas() != null && !torneoDTO.getEtapas().isEmpty();
+
+        if(existeEtapas && (torneoDTO.getEtapas().size() != torneoDTO.getNumEtapas())) {
+            throw new ValidacionException("Deben darse de alta " + torneoDTO.getNumEtapas()
+                    + " etapas, de acuerdo a lo configurado en el torneo");
         }
 
     }
 
-    public static void validaSaveTorneoEtapas(TorneoDTO torneoDTO, EtapaDTO etapaDTO) throws ValidacionException {
+    public static void validaSaveTorneoEtapas(EtapaDTO etapaDTO) throws ValidacionException {
         // Datos torneo etapas
         DateUtils.isValidDate(etapaDTO.getFechaInicio(),
                 Constantes.FECHA_PATTERN,
@@ -89,18 +103,55 @@ public final class CalendarizarEtapasTorneoValidation {
             throw new ValidacionException("Fecha de fin de la etapa " + etapaDTO.getNumeroEtapa() + " no puede ser un día inhábil");
         }
 
-        /*int bndHoraValida = 0;
-        for(HoraHabilRequest horaHabilRequest : torneoRequest.getHorasHabiles()) {
-            if(DateUtils.isHoursRangoValid(etapaRequest.getFechaInicio(), etapaRequest.getFechaFin(),
-                    horaHabilRequest.getHoraIniHabil(), horaHabilRequest.getHoraFinHabil(), Constantes.FECHA_PATTERN)
-                    && bndHoraValida == 0) {
-                bndHoraValida = 1;
-            }
+    }
+
+    public static void validaGetTorneo(Torneos torneos, int idTorneo) throws ValidacionException {
+
+        if(torneos == null) {
+            throw new ValidacionException("No existe en torneo con el id indicado: " + idTorneo);
         }
 
-        if(bndHoraValida == 0) {
-            throw new ValidacionException("Horario inhábil en la etapa " + etapaRequest.getNumeroEtapa());
-        }*/
+    }
+
+    public static List<HoraHabilDTO> obtieneHorasHabiles(Torneos torneos) throws ValidacionException {
+
+        if(torneos.getTorneoHorasHabilesByIdTorneo().isEmpty()) {
+            throw new ValidacionException("No existe horarios configurados en el torneo");
+        }
+
+        List<HoraHabilDTO> horasHabiles = new ArrayList<>();
+
+        for(TorneoHorasHabiles torneoHorasHabiles : torneos.getTorneoHorasHabilesByIdTorneo()) {
+            horasHabiles.add(new HoraHabilDTO(torneoHorasHabiles));
+        }
+
+        return horasHabiles;
+    }
+
+    public static List<Integer> armaEquipos(Etapas etapas) throws ValidacionException {
+
+        List<Integer> idEquipos = new ArrayList<>();
+        List<Integer> randomNumbers;
+
+        try {
+            for(EtapaEquipo etapaEquipo : etapas.getEtapaEquiposByIdEtapa()) {
+                idEquipos.add(etapaEquipo.getIdEquipo());
+            }
+
+            randomNumbers = CollectionUtils.getRandomNumbers(idEquipos);
+        } catch (NoSuchAlgorithmException e) {
+            throw new ValidacionException(e);
+        }
+
+        return randomNumbers;
+
+    }
+
+    public static void validaGeneraBatallas(Etapas etapas, Integer idEtapa) throws ValidacionException {
+        if(etapas == null) {
+            throw new ValidacionException("No existe la etapa con el id indicado: " + idEtapa);
+        }
+
 
     }
 

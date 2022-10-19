@@ -7,6 +7,9 @@ import java.io.StringWriter;
 import java.io.Writer;
 
 public final class StackTraceUtils {
+    private StackTraceUtils() {
+        throw new IllegalStateException("Utility StackTraceUtils");
+    }
 
     public static String getCause(Throwable aThrowable) throws UtilsException {
         String causeError = "No se detecto la causa del error";

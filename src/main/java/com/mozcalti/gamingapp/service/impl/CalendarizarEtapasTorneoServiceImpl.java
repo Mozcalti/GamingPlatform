@@ -9,7 +9,6 @@ import com.mozcalti.gamingapp.model.torneos.*;
 import com.mozcalti.gamingapp.model.batallas.BatallaDTO;
 import com.mozcalti.gamingapp.model.batallas.BatallasDTO;
 import com.mozcalti.gamingapp.service.*;
-import com.mozcalti.gamingapp.utils.CollectionUtils;
 import com.mozcalti.gamingapp.utils.Constantes;
 import com.mozcalti.gamingapp.utils.DateUtils;
 import com.mozcalti.gamingapp.validations.CalendarizarEtapasTorneoValidation;
@@ -18,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
@@ -67,7 +65,7 @@ public class CalendarizarEtapasTorneoServiceImpl implements CalendarizarEtapasTo
         Equipos equipos;
         // Etapas
         for (EtapaDTO etapaDTO : torneoDTO.getEtapas()) {
-            CalendarizarEtapasTorneoValidation.validaSaveTorneoEtapas(torneoDTO, etapaDTO);
+            CalendarizarEtapasTorneoValidation.validaSaveTorneoEtapas(etapaDTO);
 
             etapas = new Etapas(etapaDTO, torneos);
             etapas = etapasService.save(etapas);
@@ -107,16 +105,10 @@ public class CalendarizarEtapasTorneoServiceImpl implements CalendarizarEtapasTo
 
         Torneos torneos = torneosService.get(idTorneo);
 
-        if(torneos == null) {
-            throw new ValidacionException("No existe en torneo con el id indicado: " + idTorneo);
-        }
+        CalendarizarEtapasTorneoValidation.validaGetTorneo(torneos, idTorneo);
 
         TorneoDTO torneoDTO = new TorneoDTO(torneos, idTorneo);
-        List<HoraHabilDTO> horasHabiles = new ArrayList<>();
-
-        for(TorneoHorasHabiles torneoHorasHabiles : torneos.getTorneoHorasHabilesByIdTorneo()) {
-            horasHabiles.add(new HoraHabilDTO(torneoHorasHabiles));
-        }
+        List<HoraHabilDTO> horasHabiles = CalendarizarEtapasTorneoValidation.obtieneHorasHabiles(torneos);
 
         torneoDTO.setHorasHabiles(horasHabiles);
 
@@ -181,7 +173,7 @@ public class CalendarizarEtapasTorneoServiceImpl implements CalendarizarEtapasTo
 
         // Etapas
         for (EtapaDTO etapaDTO : torneoDTO.getEtapas()) {
-            CalendarizarEtapasTorneoValidation.validaSaveTorneoEtapas(torneoDTO, etapaDTO);
+            CalendarizarEtapasTorneoValidation.validaSaveTorneoEtapas(etapaDTO);
 
             Etapas etapasUpdate = etapasService.get(etapaDTO.getIdEtapa());
 
@@ -194,68 +186,86 @@ public class CalendarizarEtapasTorneoServiceImpl implements CalendarizarEtapasTo
             reglasService.save(new Reglas(etapaDTO.getReglas(), etapasUpdate.getIdEtapa()));
 
             // Participantes
-            if((etapaDTO.getParticipantes() != null && etapaDTO.getParticipantes().size() != etapasUpdate.getEtapaEquiposByIdEtapa().size())
-                    || (etapaDTO.getEquipos() != null)) {
+            boolean existenCambios = (etapaDTO.getParticipantes() != null && etapaDTO.getParticipantes().size() != etapasUpdate.getEtapaEquiposByIdEtapa().size())
+                    || (etapaDTO.getEquipos() != null);
+
+            if(existenCambios) {
                 // Eliminando Participantes
-                Equipos equipos;
-                for(EtapaEquipo etapaEquipo : etapasUpdate.getEtapaEquiposByIdEtapa()) {
-                    equipos = equiposService.get(etapaEquipo.getIdEquipo());
-
-                    if(etapaDTO.getReglas().getTrabajo().equals(Constantes.INDIVIDUAL)) {
-                        for(ParticipanteEquipo participanteEquipo : equipos.getParticipanteEquiposByIdEquipo()) {
-                            participanteEquipoService.delete(participanteEquipo.getIdParticipanteEquipo());
-                        }
-
-                        etapaEquipoService.delete(etapaEquipo.getIdEtapaEquipo());
-                        equiposService.delete(etapaEquipo.getIdEquipo());
-                    } else if(etapaDTO.getReglas().getTrabajo().equals(Constantes.EQUIPO)) {
-
-                        for(EquipoDTO equipoDTO : etapaDTO.getEquipos()) {
-                            if(equipoDTO.getNombreEquipo().equals(equipos.getNombre())) {
-                                if(equipoDTO.getParticipantes().size() != equipos.getParticipanteEquiposByIdEquipo().size()) {
-                                    equipoDTO.setBndCambioEquipo(1);
-
-                                    for(ParticipanteEquipo participanteEquipo : equipos.getParticipanteEquiposByIdEquipo()) {
-                                        participanteEquipoService.delete(participanteEquipo.getIdParticipanteEquipo());
-                                    }
-
-                                    etapaEquipoService.delete(etapaEquipo.getIdEtapaEquipo());
-                                    equiposService.delete(etapaEquipo.getIdEquipo());
-                                } else {
-                                    equipoDTO.setBndCambioEquipo(0);
-                                }
-                            }
-                        }
-                    }
-                }
+                eliminaPaticipantes(etapasUpdate, etapaDTO);
 
                 // Alta Participantes
-                if(etapaDTO.getReglas().getTrabajo().equals(Constantes.INDIVIDUAL)) {
-                    for(ParticipanteDTO participanteDTO : etapaDTO.getParticipantes()) {
-                        equipos = new Equipos();
-                        equipos = equiposService.save(equipos);
+                altaPaticipantes(etapasUpdate, etapaDTO);
+            }
+        }
 
-                        etapaEquipoService.save(new EtapaEquipo(etapasUpdate.getIdEtapa(), equipos.getIdEquipo()));
+    }
 
-                        participanteEquipoService.save(new ParticipanteEquipo(participanteDTO.getParticipante(), equipos.getIdEquipo()));
-                    }
-                } else if(etapaDTO.getReglas().getTrabajo().equals(Constantes.EQUIPO)) {
-                    for(EquipoDTO equipoDTO : etapaDTO.getEquipos()) {
-                        if(equipoDTO.getBndCambioEquipo() == 1) {
-                            equipos = new Equipos(equipoDTO);
-                            equipos = equiposService.save(equipos);
+    private void eliminaPaticipantes(Etapas etapasUpdate, EtapaDTO etapaDTO) {
+        for(EtapaEquipo etapaEquipo : etapasUpdate.getEtapaEquiposByIdEtapa()) {
+            Equipos equipos = equiposService.get(etapaEquipo.getIdEquipo());
 
-                            etapaEquipoService.save(new EtapaEquipo(etapasUpdate.getIdEtapa(), equipos.getIdEquipo()));
+            if(etapaDTO.getReglas().getTrabajo().equals(Constantes.INDIVIDUAL)) {
+                eliminaPaticipantesIndividual(equipos, etapaEquipo);
+            } else if(etapaDTO.getReglas().getTrabajo().equals(Constantes.EQUIPO)) {
+                eliminaParticipantesEquipo(etapaDTO, equipos, etapaEquipo);
+            }
+        }
+    }
 
-                            for(Integer idParticipantes : equipoDTO.getParticipantes()) {
-                                participanteEquipoService.save(new ParticipanteEquipo(idParticipantes, equipos.getIdEquipo()));
-                            }
-                        }
+    private void eliminaPaticipantesIndividual(Equipos equipos, EtapaEquipo etapaEquipo) {
+        for(ParticipanteEquipo participanteEquipo : equipos.getParticipanteEquiposByIdEquipo()) {
+            participanteEquipoService.delete(participanteEquipo.getIdParticipanteEquipo());
+        }
+
+        etapaEquipoService.delete(etapaEquipo.getIdEtapaEquipo());
+        equiposService.delete(etapaEquipo.getIdEquipo());
+    }
+
+    private void eliminaParticipantesEquipo(EtapaDTO etapaDTO, Equipos equipos, EtapaEquipo etapaEquipo) {
+        for(EquipoDTO equipoDTO : etapaDTO.getEquipos()) {
+
+            boolean nombreEquipos = equipoDTO.getNombreEquipo().equals(equipos.getNombre());
+            boolean existeCambioParticipantes = nombreEquipos && equipoDTO.getParticipantes().size() != equipos.getParticipanteEquiposByIdEquipo().size();
+
+            if(existeCambioParticipantes) {
+                equipoDTO.setBndCambioEquipo(1);
+
+                for(ParticipanteEquipo participanteEquipo : equipos.getParticipanteEquiposByIdEquipo()) {
+                    participanteEquipoService.delete(participanteEquipo.getIdParticipanteEquipo());
+                }
+
+                etapaEquipoService.delete(etapaEquipo.getIdEtapaEquipo());
+                equiposService.delete(etapaEquipo.getIdEquipo());
+            } else if(nombreEquipos) {
+                equipoDTO.setBndCambioEquipo(0);
+            }
+        }
+    }
+
+    private void altaPaticipantes(Etapas etapasUpdate, EtapaDTO etapaDTO) {
+        if(etapaDTO.getReglas().getTrabajo().equals(Constantes.INDIVIDUAL)) {
+            for(ParticipanteDTO participanteDTO : etapaDTO.getParticipantes()) {
+                Equipos equipos = new Equipos();
+                equipos = equiposService.save(equipos);
+
+                etapaEquipoService.save(new EtapaEquipo(etapasUpdate.getIdEtapa(), equipos.getIdEquipo()));
+
+                participanteEquipoService.save(new ParticipanteEquipo(participanteDTO.getParticipante(), equipos.getIdEquipo()));
+            }
+        } else if(etapaDTO.getReglas().getTrabajo().equals(Constantes.EQUIPO)) {
+            for(EquipoDTO equipoDTO : etapaDTO.getEquipos()) {
+                if(equipoDTO.getBndCambioEquipo() == 1) {
+                    Equipos equipos = new Equipos(equipoDTO);
+                    equipos = equiposService.save(equipos);
+
+                    etapaEquipoService.save(new EtapaEquipo(etapasUpdate.getIdEtapa(), equipos.getIdEquipo()));
+
+                    for(Integer idParticipantes : equipoDTO.getParticipantes()) {
+                        participanteEquipoService.save(new ParticipanteEquipo(idParticipantes, equipos.getIdEquipo()));
                     }
                 }
             }
         }
-
     }
 
     @Override
@@ -274,7 +284,7 @@ public class CalendarizarEtapasTorneoServiceImpl implements CalendarizarEtapasTo
 
         for(Etapas etapas : torneosDelete.getEtapasByIdTorneo()) {
 
-            if(etapas.getEtapaBatallasByIdEtapa() != null && etapas.getEtapaBatallasByIdEtapa().size() > 0) {
+            if(etapas.getEtapaBatallasByIdEtapa().isEmpty()) {
                 throw new ValidacionException("No es posible eliminar un torneo con batallas relacionadas");
             }
 
@@ -307,90 +317,41 @@ public class CalendarizarEtapasTorneoServiceImpl implements CalendarizarEtapasTo
         BatallasDTO batallas = new BatallasDTO();
         Torneos torneos;
 
-        if(etapas != null) {
+        CalendarizarEtapasTorneoValidation.validaGeneraBatallas(etapas, idEtapa);
 
-            torneos = torneosService.get(etapas.getIdTorneo());
+        torneos = torneosService.get(etapas.getIdTorneo());
 
-            // Armamos equipos
-            List<Integer> idEquipos = new ArrayList<>();
-            for(EtapaEquipo etapaEquipo : etapas.getEtapaEquiposByIdEtapa()) {
-                idEquipos.add(etapaEquipo.getIdEquipo());
-            }
+        // Armamos equipos
+        List<Integer> randomNumbers = CalendarizarEtapasTorneoValidation.armaEquipos(etapas);
 
-            List<Integer> randomNumbers = null;
-            try {
-                randomNumbers = CollectionUtils.getRandomNumbers(idEquipos);
-            } catch (NoSuchAlgorithmException e) {
-                throw new ValidacionException(e);
-            }
+        BatallaDTO batallaDTO = null;
+        BatallaParticipanteDTO batallaParticipanteDTO;
+        Equipos equiposRandom;
+        Participantes participantesEntity;
+        int numCompetidores = 0;
+        int totalParticipantes = etapas.getReglas().getNumCompetidores();
+        String horaIni = torneos.getTorneoHorasHabilesByIdTorneo().stream().toList().get(0).getHoraIniHabil();
+        String horaFin;
+        List<BatallaParticipanteDTO> participantes = null;
+        for(Integer randomNumber : randomNumbers) {
+            equiposRandom = equiposService.get(randomNumber);
 
-            BatallaDTO batallaDTO = null;
-            BatallaParticipanteDTO batallaParticipanteDTO;
-            Equipos equiposRandom;
-            Participantes participantesEntity;
-            int numCompetidores = 0;
-            int totalParticipantes = etapas.getReglas().getNumCompetidores();
-            String horaIni = torneos.getTorneoHorasHabilesByIdTorneo().stream().toList().get(0).getHoraIniHabil();
-            String horaFin;
-            List<BatallaParticipanteDTO> participantes = null;
-            for(Integer randomNumber : randomNumbers) {
-                equiposRandom = equiposService.get(randomNumber);
+            if(etapas.getReglas().getTrabajo().equals(Constantes.INDIVIDUAL)) {
 
-                if(etapas.getReglas().getTrabajo().equals(Constantes.INDIVIDUAL)) {
-                    for(ParticipanteEquipo participanteEquipo : equiposRandom.getParticipanteEquiposByIdEquipo()) {
-
-                        if(numCompetidores == 0) {
-                            batallaDTO = new BatallaDTO();
-                            participantes = new ArrayList<>();
-
-                            batallaDTO.setIdEtapa(idEtapa);
-                            batallaDTO.setHoraInicio(horaIni);
-                            horaFin = DateUtils.addMinutos(horaIni,
-                                    Constantes.HORA_PATTERN,
-                                    etapas.getReglas().getTiempoBatallaAprox());
-                            horaIni = DateUtils.addMinutos(horaFin,
-                                    Constantes.HORA_PATTERN,
-                                    etapas.getReglas().getTiempoEspera());
-                            batallaDTO.setFecha(etapas.getFechaInicio());
-
-                            batallaDTO.setHoraFin(horaFin);
-                            batallaDTO.setRondas(etapas.getReglas().getNumRondas());
-
-                            batallas.getBatallas().add(batallaDTO);
-                        }
-
-                        if(numCompetidores < totalParticipantes) {
-                            participantesEntity = participantesService.get(participanteEquipo.getIdParticipante());
-
-                            batallaParticipanteDTO = new BatallaParticipanteDTO();
-                            batallaParticipanteDTO.setIdParticipante(participanteEquipo.getIdEquipo());
-                            batallaParticipanteDTO.setNombre(participantesEntity.getNombre() + " " +
-                                    participantesEntity.getApellidos());
-                            participantes.add(batallaParticipanteDTO);
-
-                            numCompetidores+=1;
-                        }
-
-                        if(numCompetidores == totalParticipantes) {
-                            batallaDTO.setBatallaParticipantes(participantes);
-                            numCompetidores = 0;
-                        }
-
-                    }
-
-                } else if(etapas.getReglas().getTrabajo().equals(Constantes.EQUIPO)) {
+                for(ParticipanteEquipo participanteEquipo : equiposRandom.getParticipanteEquiposByIdEquipo()) {
 
                     if(numCompetidores == 0) {
                         batallaDTO = new BatallaDTO();
                         participantes = new ArrayList<>();
 
+                        batallaDTO.setIdEtapa(idEtapa);
+                        batallaDTO.setHoraInicio(horaIni);
                         horaFin = DateUtils.addMinutos(horaIni,
                                 Constantes.HORA_PATTERN,
                                 etapas.getReglas().getTiempoBatallaAprox());
                         horaIni = DateUtils.addMinutos(horaFin,
                                 Constantes.HORA_PATTERN,
                                 etapas.getReglas().getTiempoEspera());
-
                         batallaDTO.setFecha(etapas.getFechaInicio());
 
                         batallaDTO.setHoraFin(horaFin);
@@ -400,9 +361,12 @@ public class CalendarizarEtapasTorneoServiceImpl implements CalendarizarEtapasTo
                     }
 
                     if(numCompetidores < totalParticipantes) {
+                        participantesEntity = participantesService.get(participanteEquipo.getIdParticipante());
+
                         batallaParticipanteDTO = new BatallaParticipanteDTO();
-                        batallaParticipanteDTO.setIdParticipante(equiposRandom.getIdEquipo());
-                        batallaParticipanteDTO.setNombre(equiposRandom.getNombre());
+                        batallaParticipanteDTO.setIdParticipante(participanteEquipo.getIdEquipo());
+                        batallaParticipanteDTO.setNombre(participantesEntity.getNombre() + " " +
+                                participantesEntity.getApellidos());
                         participantes.add(batallaParticipanteDTO);
 
                         numCompetidores+=1;
@@ -415,14 +379,47 @@ public class CalendarizarEtapasTorneoServiceImpl implements CalendarizarEtapasTo
 
                 }
 
+            } else if(etapas.getReglas().getTrabajo().equals(Constantes.EQUIPO)) {
+
+                if(numCompetidores == 0) {
+                    batallaDTO = new BatallaDTO();
+                    participantes = new ArrayList<>();
+
+                    horaFin = DateUtils.addMinutos(horaIni,
+                            Constantes.HORA_PATTERN,
+                            etapas.getReglas().getTiempoBatallaAprox());
+                    horaIni = DateUtils.addMinutos(horaFin,
+                            Constantes.HORA_PATTERN,
+                            etapas.getReglas().getTiempoEspera());
+
+                    batallaDTO.setFecha(etapas.getFechaInicio());
+
+                    batallaDTO.setHoraFin(horaFin);
+                    batallaDTO.setRondas(etapas.getReglas().getNumRondas());
+
+                    batallas.getBatallas().add(batallaDTO);
+                }
+
+                if(numCompetidores < totalParticipantes) {
+                    batallaParticipanteDTO = new BatallaParticipanteDTO();
+                    batallaParticipanteDTO.setIdParticipante(equiposRandom.getIdEquipo());
+                    batallaParticipanteDTO.setNombre(equiposRandom.getNombre());
+                    participantes.add(batallaParticipanteDTO);
+
+                    numCompetidores+=1;
+                }
+
+                if(numCompetidores == totalParticipantes) {
+                    batallaDTO.setBatallaParticipantes(participantes);
+                    numCompetidores = 0;
+                }
+
             }
 
-            if(batallaDTO != null) {
-                batallaDTO.setBatallaParticipantes(participantes);
-            }
+        }
 
-        } else {
-            throw new ValidacionException("No existe la etapa con el id indicado: " + idEtapa);
+        if(batallaDTO != null) {
+            batallaDTO.setBatallaParticipantes(participantes);
         }
 
         return batallas;
@@ -513,7 +510,7 @@ public class CalendarizarEtapasTorneoServiceImpl implements CalendarizarEtapasTo
 
         Etapas etapas = etapasService.get(idEtapa);
 
-        if(etapas.getEtapaBatallasByIdEtapa() != null && etapas.getEtapaBatallasByIdEtapa().size() == 0) {
+        if(etapas.getEtapaBatallasByIdEtapa().isEmpty()) {
             throw new ValidacionException("No hay batallas para la estapa indicada");
         }
 
@@ -581,7 +578,7 @@ public class CalendarizarEtapasTorneoServiceImpl implements CalendarizarEtapasTo
 
         Etapas etapas = etapasService.get(idEtapa);
 
-        if(etapas.getEtapaBatallasByIdEtapa() != null && etapas.getEtapaBatallasByIdEtapa().size() == 0) {
+        if(etapas.getEtapaBatallasByIdEtapa().isEmpty()) {
             throw new ValidacionException("No hay batallas que eliminar para la estapa indicada");
         }
 
