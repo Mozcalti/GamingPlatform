@@ -28,6 +28,7 @@ spring:
 resources:
   static:
     instituciones: ${PATH_INSTITUCIONES:path}
+    participantes: ${PATH_PARTICIPANTES:path}
     open-in-view: off
     
 server:

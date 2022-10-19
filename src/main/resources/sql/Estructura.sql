@@ -19,14 +19,15 @@ CREATE TABLE usuarios
 CREATE TABLE participantes
 (
     id_participante serial NOT NULL,
-    nombre character varying(100),
-    apellidos character varying(150),
-    correo character varying(150),
-    academia character varying(150),
-    ies varchar(255),
-    carrera character varying(250),
-    semestre integer,
+    nombre character varying(100) not null,
+    apellidos character varying(150) not null,
+    correo character varying(150) not null,
+    academia character varying(150) not null,
+    ies varchar(255) not null,
+    carrera character varying(250) null,
+    semestre integer null,
     foto varchar not null,
+    fecha_creacion varchar(20) not null,
     id_institucion integer,
     PRIMARY KEY (id_participante)
 );

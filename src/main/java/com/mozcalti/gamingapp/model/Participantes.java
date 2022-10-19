@@ -25,17 +25,22 @@ public class Participantes {
     @Column(name = "correo")
     private String correo;
     @Basic
-    @Column(name = "carrera")
-    private String carrera;
-    @Basic
-    @Column(name = "foto")
-    private byte[] foto;
-    @Basic
     @Column(name = "academia")
     private String academia;
     @Basic
+    @Column(name = "ies")
+    private String ies;
+    @Basic
+    @Column(name = "carrera")
+    private String carrera;
+    @Basic
     @Column(name = "semestre")
     private Integer semestre;
+    @Basic
+    @Column(name = "foto")
+    private String foto;
+    @Column(name = "fecha_creacion")
+    private String fechaCreacion;
     @Basic
     @Column(name = "id_institucion")
     private Integer idInstitucion;
