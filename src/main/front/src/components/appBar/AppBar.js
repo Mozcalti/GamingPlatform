@@ -36,7 +36,7 @@ function ResponsiveAppBar() {
                             display: { xs: 'none', md: 'flex' },
                         }}
                     >
-                        <img src="/img/ui/logo_plai1.png"  width={180} height={80}></img>
+                        <img src="/img/ui/logo_plai1.png" alt="Logo Plai" width={180} height={80}></img>
                     </Typography>
 
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none', color: '#000' } }}>
@@ -102,7 +102,7 @@ function ResponsiveAppBar() {
                         sx={{
                             display: { xs: 'none', md: 'flex' },
                         }}>
-                        <img src="/img/ui/rojo_trans.png"  width={180} height={80}></img>
+                        <img src="/img/ui/rojo_trans.png" alt="Logo MTI" width={180} height={80}></img>
                     </Typography>
 
                 </Toolbar>
