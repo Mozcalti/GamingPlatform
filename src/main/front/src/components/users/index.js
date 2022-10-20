@@ -3,6 +3,7 @@ import {DataGrid} from '@mui/x-data-grid';
 import AddUser from "./AddUser";
 import UsuariosService from "./usuarios.service";
 import {Alert, Snackbar} from "@mui/material";
+import ResponsiveAppBar from "../appBar/AppBar";
 
 
 const UsersList = () => {
@@ -56,6 +57,7 @@ const UsersList = () => {
 
     return (
         <>
+            <ResponsiveAppBar/>
             <Snackbar open={resultado.success} autoHideDuration={6000} onClose={() => {setResultado({...resultado, success: false})}}>
                 <Alert severity="success" variant="filled">El usuario se agregó de forma correcta</Alert>
             </Snackbar>
