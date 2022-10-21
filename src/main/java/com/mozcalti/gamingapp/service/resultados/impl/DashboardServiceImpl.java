@@ -3,13 +3,10 @@ package com.mozcalti.gamingapp.service.resultados.impl;
 import com.mozcalti.gamingapp.exceptions.UtilsException;
 import com.mozcalti.gamingapp.exceptions.ValidacionException;
 import com.mozcalti.gamingapp.model.*;
-import com.mozcalti.gamingapp.model.batallas.resultado.RecordInfo;
-import com.mozcalti.gamingapp.model.batallas.resultado.Result;
-import com.mozcalti.gamingapp.model.batallas.resultado.ResultadosDTO;
+import com.mozcalti.gamingapp.model.batallas.resultado.*;
+import com.mozcalti.gamingapp.model.dto.PaginadoDTO;
 import com.mozcalti.gamingapp.model.dto.TablaDTO;
-import com.mozcalti.gamingapp.repository.EquiposRepository;
-import com.mozcalti.gamingapp.repository.ResultadosRepository;
-import com.mozcalti.gamingapp.repository.RobotsRepository;
+import com.mozcalti.gamingapp.repository.*;
 import com.mozcalti.gamingapp.service.BatallasService;
 import com.mozcalti.gamingapp.service.resultados.DashboardService;
 import com.mozcalti.gamingapp.utils.Constantes;
@@ -19,17 +16,21 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.security.NoTypePermission;
 import com.thoughtworks.xstream.security.NullPermission;
 import com.thoughtworks.xstream.security.PrimitiveTypePermission;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class DashboardServiceImpl implements DashboardService {
 
     @Autowired
@@ -43,6 +44,21 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Autowired
     private ResultadosRepository resultadosRepository;
+
+    @Autowired
+    private EtapasRepository etapasRepository;
+
+    @Autowired
+    private ParticipantesRepository participantesRepository;
+
+    @Autowired
+    private EtapaEquipoRepository etapaEquipoRepository;
+
+    @Autowired
+    private InstitucionRepository institucionRepository;
+
+    @Autowired
+    private BatallasRepository batallasRepository;
 
     @Value("${resources.static.resultados-batalla}")
     private String pathResultadosBatalla;
@@ -113,8 +129,174 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
-    public TablaDTO<ResultadosDTO> listaResultadosBatalla(String cadena, Integer indice) {
-        return null;
+    public TablaDTO<ResultadosDTO> listaResultadosBatalla(Integer indice) {
+        Page<Resultados> resultadosPages = resultadosRepository.findAll(PageRequest.of(indice, 50));
+        PaginadoDTO paginadoDTO = new PaginadoDTO(resultadosPages.getTotalPages(), resultadosPages.getNumber());
+        List<Resultados> resultadosParte = resultadosPages.toList();
+
+        List<ResultadosDTO> resultadosDTO = resultadosParte.stream()
+                .map(i -> new ResultadosDTO(
+                        i.getTeamleadername(),
+                        i.getRank(),
+                        i.getScore(),
+                        i.getSurvival(),
+                        i.getLastsurvivorbonus(),
+                        i.getBulletdamage(),
+                        i.getBulletdamagebonus(),
+                        i.getRamdamage(),
+                        i.getRamdamagebonus(),
+                        i.getFirsts(),
+                        i.getSeconds(),
+                        i.getThirds(),
+                        i.getVer())
+                ).toList();
+
+        TablaDTO<ResultadosDTO> tablaDTO = new TablaDTO<>();
+        tablaDTO.setLista(resultadosDTO);
+        tablaDTO.setPaginadoDTO(paginadoDTO);
+
+        return tablaDTO;
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public List<ResultadosParticipantesDTO> listaResultadosParticipantesBatalla(Integer idEtapa, String nombreInstitucion) {
+
+        Optional<Etapas> etapas = etapasRepository.findById(idEtapa);
+
+        List<ResultadosParticipantesDTO> resultadosParticipantesDTOS = new ArrayList<>();
+
+        for(EtapaBatalla etapaBatalla : etapas.orElseThrow().getEtapaBatallasByIdEtapa()) {
+            Optional<Batallas> batallas = batallasRepository.findById(etapaBatalla.getIdBatalla());
+
+            for(Resultados resultados : batallas.orElseThrow().getResultadosByIdBatalla().stream()
+                        .sorted(Comparator.comparing(Resultados::getScore).reversed()).toList()) {
+
+                Optional<Robots> robot = robotsRepository.findAllByNombre(resultados.getTeamleadername())
+                        .stream()
+                        .findFirst();
+
+                if(robot.isPresent()) {
+                    Optional<Equipos> equipos = equiposRepository.findById(robot.orElseThrow().getIdEquipo());
+
+                    StringBuilder participantes = new StringBuilder();
+                    Optional<Institucion> institucion = Optional.empty();
+                    for(ParticipanteEquipo participanteEquipo : equipos.orElseThrow().getParticipanteEquiposByIdEquipo()) {
+                        Optional<Participantes> participante = participantesRepository.findById(participanteEquipo.getIdParticipante());
+
+                        participantes.append(participante.orElseThrow().getNombre()).append(" ").append(participante.orElseThrow().getApellidos()).append(",");
+
+                        if(!institucion.isPresent()) {
+                            institucion = institucionRepository.findById(participante.orElseThrow().getIdInstitucion());
+                        }
+                    }
+
+                    resultadosParticipantesDTOS.add(new ResultadosParticipantesDTO(
+                            participantes.substring(0 , participantes.length()-1),
+                            institucion.orElseThrow().getNombre(),
+                            robot.orElseThrow().getNombre(),
+                            resultados.getScore()
+                    ));
+
+                }
+            }
+        }
+
+        resultadosParticipantesDTOS = filtraInstituciones(resultadosParticipantesDTOS, nombreInstitucion);
+
+        return resultadosParticipantesDTOS;
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public List<ResultadosInstitucionGpoDTO> gruopResultadosParticipantesBatalla(Integer idEtapa) {
+
+        Optional<Etapas> etapas = etapasRepository.findById(idEtapa);
+
+        List<ResultadosParticipantesDTO> resultadosParticipantesDTOS = new ArrayList<>();
+        List<ResultadosInstitucionGpoDTO> resultadosInstitucionGpoDTOS;
+
+        for(EtapaBatalla etapaBatalla : etapas.orElseThrow().getEtapaBatallasByIdEtapa()) {
+            Optional<Batallas> batallas = batallasRepository.findById(etapaBatalla.getIdBatalla());
+
+            for(Resultados resultados : batallas.orElseThrow().getResultadosByIdBatalla().stream()
+                    .sorted(Comparator.comparing(Resultados::getScore).reversed()).toList()) {
+
+                Optional<Robots> robot = robotsRepository.findAllByNombre(resultados.getTeamleadername())
+                        .stream()
+                        .findFirst();
+
+                if(robot.isPresent()) {
+                    Optional<Equipos> equipos = equiposRepository.findById(robot.orElseThrow().getIdEquipo());
+
+                    StringBuilder participantes = new StringBuilder();
+                    Optional<Institucion> institucion = Optional.empty();
+                    for(ParticipanteEquipo participanteEquipo : equipos.orElseThrow().getParticipanteEquiposByIdEquipo()) {
+                        Optional<Participantes> participante = participantesRepository.findById(participanteEquipo.getIdParticipante());
+
+                        participantes.append(participante.orElseThrow().getNombre()).append(" ").append(participante.orElseThrow().getApellidos()).append(",");
+
+                        if(!institucion.isPresent()) {
+                            institucion = institucionRepository.findById(participante.orElseThrow().getIdInstitucion());
+                        }
+                    }
+
+                    resultadosParticipantesDTOS.add(new ResultadosParticipantesDTO(
+                            participantes.substring(0 , participantes.length()-1),
+                            institucion.orElseThrow().getNombre(),
+                            robot.orElseThrow().getNombre(),
+                            resultados.getScore()
+                    ));
+
+                }
+            }
+        }
+
+        resultadosInstitucionGpoDTOS = groupInstituciones(resultadosParticipantesDTOS);
+
+        return resultadosInstitucionGpoDTOS;
+
+    }
+
+    private List<ResultadosParticipantesDTO> filtraInstituciones(List<ResultadosParticipantesDTO> resultadosParticipantesDTOS,
+                                                                 String nombreInstitucion) {
+        if(!nombreInstitucion.equals("todos")) {
+            return resultadosParticipantesDTOS.stream().filter(o -> o.getNombreInstitucion().equals(nombreInstitucion)).toList();
+        } else {
+            return resultadosParticipantesDTOS;
+        }
+    }
+
+    private List<ResultadosInstitucionGpoDTO> groupInstituciones(List<ResultadosParticipantesDTO> resultadosParticipantesDTOS) {
+
+        List<ResultadosInstitucionGpoDTO> resultadosInstitucionGpoDTOS = new ArrayList<>();
+        Map<String, List<ResultadosParticipantesGpoDTO>> instituciones = new HashMap<>();
+        List<ResultadosParticipantesGpoDTO> participantes = new ArrayList<>();
+        String nombreInstitucion = null;
+
+        for(ResultadosParticipantesDTO resultadosParticipantesDTO : resultadosParticipantesDTOS.stream()
+                .sorted(Comparator.comparing(ResultadosParticipantesDTO::getNombreInstitucion)).toList()) {
+
+            if(nombreInstitucion != null && !nombreInstitucion.equals(resultadosParticipantesDTO.getNombreInstitucion())) {
+                participantes = new ArrayList<>();
+            }
+
+            participantes.add(new ResultadosParticipantesGpoDTO(
+                    resultadosParticipantesDTO.getNombreParticipantes(),
+                    resultadosParticipantesDTO.getNombreRobot(),
+                    resultadosParticipantesDTO.getScore()
+            ));
+
+            instituciones.put(resultadosParticipantesDTO.getNombreInstitucion(), participantes);
+
+            nombreInstitucion = resultadosParticipantesDTO.getNombreInstitucion();
+        }
+
+        for(Map.Entry<String, List<ResultadosParticipantesGpoDTO>> entry : instituciones.entrySet()) {
+            resultadosInstitucionGpoDTOS.add(new ResultadosInstitucionGpoDTO(entry.getKey(), entry.getValue()));
+        }
+
+        return resultadosInstitucionGpoDTOS;
     }
 
 }

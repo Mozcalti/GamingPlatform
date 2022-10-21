@@ -6,8 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -72,9 +71,7 @@ public final class FileUtils {
             if (fileName != null && !fileName.isEmpty()) {
                 File file = new File(fileName);
 
-                if (file.isFile() && file.exists()) {
-                    resultado = true;
-                } else if (file.isDirectory()) {
+                if ((file.isFile() && file.exists()) || file.isDirectory()) {
                     resultado = true;
                 }
             }
@@ -88,7 +85,6 @@ public final class FileUtils {
 
     public static StringBuilder getRecordInfo(String nombreArchivo, String patternInicio, String patternFin) throws UtilsException {
 
-        FileInputStream inputStream;
         Scanner scanner = null;
         StringBuilder lineas = new StringBuilder();
         StringBuilder linea = new StringBuilder();
@@ -96,8 +92,9 @@ public final class FileUtils {
         try {
             int bndSeccionInicio = 0;
             if (FileUtils.isFileValid(nombreArchivo)) {
-                inputStream = new FileInputStream(nombreArchivo);
-                scanner = new Scanner(inputStream, DEFAULT_ENCODING);
+                try (FileInputStream inputStream = new FileInputStream(nombreArchivo)) {
+                    scanner = new Scanner(inputStream, StandardCharsets.UTF_8);
+                }
 
                 while (scanner.hasNextLine()) {
                     linea.delete(0, linea.length());
@@ -120,15 +117,16 @@ public final class FileUtils {
                     }
                 }
             }
+
+            return lineas;
+
         } catch (Exception e) {
-            throw new UtilsException("Error en el servicio readFileToPattern():\n" + StackTraceUtils.getCustomStackTrace(e), e);
+            throw new UtilsException("Error en el servicio readFileToPattern():\n" + e, e);
         } finally {
-            if (scanner != null) {
+            if(scanner != null) {
                 scanner.close();
             }
         }
-
-        return lineas;
 
     }
 

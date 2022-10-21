@@ -1,5 +1,11 @@
 package com.mozcalti.gamingapp.model.batallas.resultado;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@AllArgsConstructor
+@Getter
 public class ResultadosDTO {
 
     private String teamLeaderName;

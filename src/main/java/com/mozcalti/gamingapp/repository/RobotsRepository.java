@@ -9,4 +9,6 @@ public interface RobotsRepository extends CrudRepository<Robots, Integer> {
 
     List<Robots> findAllByIdEquipo(Integer idEquipo);
 
+    List<Robots> findAllByNombre(String nombre);
+
 }
