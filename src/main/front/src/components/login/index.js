@@ -15,6 +15,9 @@ import React, {useState} from "react";
 import {LoadingButton} from "@mui/lab";
 import {useNavigate} from "react-router-dom";
 import AuthService from "../../services/auth.service";
+import {useForm} from "react-hook-form";
+import {yupResolver} from "@hookform/resolvers/yup";
+import * as Yup from "yup";
 
 function SendIcon() {
     return null;
@@ -23,8 +26,6 @@ function SendIcon() {
 const Login = () => {
     const navigate = useNavigate();
     const [values, setValues] = useState({
-        email: "",
-        pass: "",
         showPass: false,
         error: false,
         loading: false,
@@ -32,15 +33,30 @@ const Login = () => {
 
     sessionStorage.removeItem("token");
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const formValidationSchema = Yup.object().shape({
+        email: Yup.string()
+            .required('El email es obligatorio')
+            .email('El formato de email no es correcto'),
+        password: Yup.string()
+            .required('La contraseña es obligatoria')
+    });
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors }
+    } = useForm({
+        resolver: yupResolver(formValidationSchema)
+    });
+
+    const onSubmit = data => {
         setValues({
             ...values,
             error: false,
             loading: true,
         });
 
-        AuthService.login(values.email, values.pass)
+        AuthService.login(data.email, data.password)
             .then(
             () => {
                 setValues({
@@ -85,72 +101,79 @@ const Login = () => {
                             justifyContent="center"
                             alignItems="center"
                         >
-                                <Avatar sx={{ width: 70, height: 70 }} src="/img/robocode.jpg" />
-                                <Typography component="h1" variant="h4" marginBottom={5}>
-                                    Entrar
-                                </Typography>
+                            <Avatar sx={{width: 70, height: 70}} src="/img/robocode.jpg"/>
+                            <Typography component="h1" variant="h4" marginBottom={5}>
+                                Entrar
+                            </Typography>
 
                         </Grid>
-
-                        <form onSubmit={handleSubmit}>
-                            <Grid container direction="column" spacing={2}>
-                                <Grid item>
-                                    <TextField
-                                        type="email"
-                                        required
-                                        autoFocus
-                                        autoComplete="email"
-                                        label="Correo electrónico"
-                                        placeholder="Correo electrónico"
-                                        variant="outlined"
-                                        fullWidth
-                                        onChange={(e) => setValues({...values, email: e.target.value})}
-                                    />
-                                </Grid>
-
-                                <Grid item>
-                                    <TextField
-                                        type={values.showPass ? "text" : "password"}
-                                        fullWidth
-                                        label="Contraseña"
-                                        placeholder="Contraseña"
-                                        variant="outlined"
-                                        required
-                                        onChange={(e) => setValues({...values, pass: e.target.value})}
-                                        InputProps={{
-                                            endAdornment: (
-                                                <InputAdornment position="end">
-                                                    <IconButton
-                                                        onClick={handlePassVisibilty}
-                                                        aria-label="toggle password"
-                                                        edge="end"
-                                                    >
-                                                        {values.showPass ? <VisibilityOffIcon/> : <VisibilityIcon/>}
-                                                    </IconButton>
-                                                </InputAdornment>
-                                            ),
-                                        }}
-                                    />
-                                </Grid>
-
-                                <Grid item>
-                                    <LoadingButton
-                                        type="submit"
-                                        fullWidth
-                                        endIcon={<SendIcon />}
-                                        loading={values.loading}
-                                        loadingPosition="end"
-                                        variant="contained">
-                                        Entrar
-                                    </LoadingButton>
-                                </Grid>
-
-                                {values.error && <Grid item>
-                                    <Alert severity="error">Nombre de usuario o contraseña incorrectos. Favor de verificar.</Alert>
-                                </Grid>}
-
+                        <Grid container direction="column" spacing={3}>
+                            <Grid item>
+                                <TextField
+                                    type="email"
+                                    required
+                                    autoFocus
+                                    autoComplete="email"
+                                    label="Correo electrónico"
+                                    placeholder="Correo electrónico"
+                                    variant="outlined"
+                                    fullWidth
+                                    {...register('email')}
+                                    error={!!errors.email}
+                                />
+                                <Typography variant="subtitle1" color="error.main">
+                                    {errors.email?.message}
+                                </Typography>
                             </Grid>
-                        </form>
+
+                            <Grid item>
+                                <TextField
+                                    type={values.showPass ? "text" : "password"}
+                                    fullWidth
+                                    label="Contraseña"
+                                    placeholder="Contraseña"
+                                    variant="outlined"
+                                    required
+                                    {...register('password')}
+                                    error={!!errors.password}
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    onClick={handlePassVisibilty}
+                                                    aria-label="toggle password"
+                                                    edge="end"
+                                                >
+                                                    {values.showPass ? <VisibilityOffIcon/> : <VisibilityIcon/>}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                />
+                                <Typography variant="subtitle1" color="error.main">
+                                    {errors.password?.message}
+                                </Typography>
+                            </Grid>
+
+                            <Grid item>
+                                <LoadingButton
+                                    type="submit"
+                                    fullWidth
+                                    endIcon={<SendIcon/>}
+                                    loading={values.loading}
+                                    loadingPosition="end"
+                                    variant="contained"
+                                    onClick={handleSubmit(onSubmit)}
+                                >
+                                    Entrar
+                                </LoadingButton>
+                            </Grid>
+
+                            {values.error && <Grid item>
+                                <Alert severity="error">Nombre de usuario o contraseña incorrectos. Favor de
+                                    verificar.</Alert>
+                            </Grid>}
+                        </Grid>
                     </Paper>
                 </Grid>
             </Container>
