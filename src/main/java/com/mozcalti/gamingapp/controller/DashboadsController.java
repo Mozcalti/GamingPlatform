@@ -5,6 +5,7 @@ import com.mozcalti.gamingapp.model.batallas.resultado.ResultadosInstitucionGpoD
 import com.mozcalti.gamingapp.model.batallas.resultado.ResultadosParticipantesDTO;
 import com.mozcalti.gamingapp.model.dto.TablaDTO;
 import com.mozcalti.gamingapp.service.resultados.DashboardService;
+import com.mozcalti.gamingapp.utils.Constantes;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,7 @@ public class DashboadsController {
 
     @GetMapping("/consulta")
     public List<ResultadosParticipantesDTO> getResultadosParticipantes(@RequestParam Integer idEtapas,
-                                                                       @RequestParam(defaultValue = "todos") String nombreInstitucion){
+                                                                       @RequestParam(defaultValue = Constantes.TODOS) String nombreInstitucion){
         return dashboardService.listaResultadosParticipantesBatalla(idEtapas, nombreInstitucion);
     }
 

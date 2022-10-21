@@ -135,6 +135,10 @@ public final class CalendarizarEtapasTorneoValidation {
         }
     }
 
-
+    public static void validaExistenBatallas(Etapas etapas) throws ValidacionException {
+        if(etapas.getEtapaBatallasByIdEtapa().isEmpty()) {
+            throw new ValidacionException("No hay batallas para la estapa indicada");
+        }
+    }
 
 }

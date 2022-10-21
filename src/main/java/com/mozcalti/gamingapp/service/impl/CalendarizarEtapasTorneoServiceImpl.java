@@ -474,9 +474,7 @@ public class CalendarizarEtapasTorneoServiceImpl implements CalendarizarEtapasTo
 
         Etapas etapas = etapasService.get(idEtapa);
 
-        if(etapas.getEtapaBatallasByIdEtapa().isEmpty()) {
-            throw new ValidacionException("No hay batallas para la estapa indicada");
-        }
+        CalendarizarEtapasTorneoValidation.validaExistenBatallas(etapas);
 
         BatallasDTO batallasDTO = new BatallasDTO();
         BatallaDTO batallaDTO;
@@ -544,9 +542,7 @@ public class CalendarizarEtapasTorneoServiceImpl implements CalendarizarEtapasTo
 
         Etapas etapas = etapasService.get(idEtapa);
 
-        if(etapas.getEtapaBatallasByIdEtapa().isEmpty()) {
-            throw new ValidacionException("No hay batallas que eliminar para la estapa indicada");
-        }
+        CalendarizarEtapasTorneoValidation.validaExistenBatallas(etapas);
 
         Batallas batallas;
         for(EtapaBatalla etapaBatalla : etapas.getEtapaBatallasByIdEtapa()) {

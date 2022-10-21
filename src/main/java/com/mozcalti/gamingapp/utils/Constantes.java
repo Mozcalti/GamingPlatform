@@ -16,9 +16,8 @@ public final class Constantes {
     public static final String INDIVIDUAL = "INDIVIDUAL";
     public static final String EQUIPO = "EQUIPO";
     public static final String OCURRIO_ERROR_INESPERADO = "Ocurrio un error inesperado";
-
     public static final String RECORD_INFO_INICIO = "^.+recordInfo.+$";
-
     public static final String RECORD_INFO_FIN = "^.+\\/recordInfo.+$";
 
+    public static final String TODOS = "todos";
 }

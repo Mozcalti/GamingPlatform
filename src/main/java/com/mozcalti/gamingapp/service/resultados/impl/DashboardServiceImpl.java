@@ -211,46 +211,9 @@ public class DashboardServiceImpl implements DashboardService {
     @Transactional(propagation = Propagation.REQUIRED)
     public List<ResultadosInstitucionGpoDTO> gruopResultadosParticipantesBatalla(Integer idEtapa) {
 
-        Optional<Etapas> etapas = etapasRepository.findById(idEtapa);
-
-        List<ResultadosParticipantesDTO> resultadosParticipantesDTOS = new ArrayList<>();
         List<ResultadosInstitucionGpoDTO> resultadosInstitucionGpoDTOS;
 
-        for(EtapaBatalla etapaBatalla : etapas.orElseThrow().getEtapaBatallasByIdEtapa()) {
-            Optional<Batallas> batallas = batallasRepository.findById(etapaBatalla.getIdBatalla());
-
-            for(Resultados resultados : batallas.orElseThrow().getResultadosByIdBatalla().stream()
-                    .sorted(Comparator.comparing(Resultados::getScore).reversed()).toList()) {
-
-                Optional<Robots> robot = robotsRepository.findAllByNombre(resultados.getTeamleadername())
-                        .stream()
-                        .findFirst();
-
-                if(robot.isPresent()) {
-                    Optional<Equipos> equipos = equiposRepository.findById(robot.orElseThrow().getIdEquipo());
-
-                    StringBuilder participantes = new StringBuilder();
-                    Optional<Institucion> institucion = Optional.empty();
-                    for(ParticipanteEquipo participanteEquipo : equipos.orElseThrow().getParticipanteEquiposByIdEquipo()) {
-                        Optional<Participantes> participante = participantesRepository.findById(participanteEquipo.getIdParticipante());
-
-                        participantes.append(participante.orElseThrow().getNombre()).append(" ").append(participante.orElseThrow().getApellidos()).append(",");
-
-                        if(!institucion.isPresent()) {
-                            institucion = institucionRepository.findById(participante.orElseThrow().getIdInstitucion());
-                        }
-                    }
-
-                    resultadosParticipantesDTOS.add(new ResultadosParticipantesDTO(
-                            participantes.substring(0 , participantes.length()-1),
-                            institucion.orElseThrow().getNombre(),
-                            robot.orElseThrow().getNombre(),
-                            resultados.getScore()
-                    ));
-
-                }
-            }
-        }
+        List<ResultadosParticipantesDTO> resultadosParticipantesDTOS = listaResultadosParticipantesBatalla(idEtapa, Constantes.TODOS);
 
         resultadosInstitucionGpoDTOS = groupInstituciones(resultadosParticipantesDTOS);
 
@@ -260,7 +223,7 @@ public class DashboardServiceImpl implements DashboardService {
 
     private List<ResultadosParticipantesDTO> filtraInstituciones(List<ResultadosParticipantesDTO> resultadosParticipantesDTOS,
                                                                  String nombreInstitucion) {
-        if(!nombreInstitucion.equals("todos")) {
+        if(!nombreInstitucion.equals(Constantes.TODOS)) {
             return resultadosParticipantesDTOS.stream().filter(o -> o.getNombreInstitucion().equals(nombreInstitucion)).toList();
         } else {
             return resultadosParticipantesDTOS;
