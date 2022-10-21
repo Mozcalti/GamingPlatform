@@ -27,6 +27,9 @@ public class Equipos {
     @OneToMany(mappedBy = "equiposByIdEquipo", fetch = FetchType.EAGER)
     private Collection<ParticipanteEquipo> participanteEquiposByIdEquipo;
 
+    @OneToMany(mappedBy = "equiposByIdEquipo")
+    private Collection<Robots> robotsByIdEquipo;
+
     public Equipos(EquipoDTO equipoDTO) {
         this.nombre = equipoDTO.getNombreEquipo();
     }
