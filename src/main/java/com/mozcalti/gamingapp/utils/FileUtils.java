@@ -1,12 +1,20 @@
 package com.mozcalti.gamingapp.utils;
 
 import com.mozcalti.gamingapp.exceptions.UtilsException;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class FileUtils {
 
-    private FileUtils() {
-        throw new IllegalStateException("Utility FileUtils");
-    }
+    private static final String UTF8_BOM = "\uFEFF";
+    private static final String DEFAULT_ENCODING = "UTF-8";
 
     public static String getFileName(String filePathName) throws UtilsException {
 
@@ -54,6 +62,86 @@ public final class FileUtils {
         }
 
         return ruta;
+    }
+
+    public static boolean isFileValid(String fileName) throws UtilsException {
+        boolean resultado = false;
+
+        try {
+
+            if (fileName != null && !fileName.isEmpty()) {
+                File file = new File(fileName);
+
+                if (file.isFile() && file.exists()) {
+                    resultado = true;
+                } else if (file.isDirectory()) {
+                    resultado = true;
+                }
+            }
+
+        } catch (Exception e) {
+            throw new UtilsException("Error en el metodo: isFileValid():\n" + StackTraceUtils.getCause(e), e);
+        }
+
+        return resultado;
+    }
+
+    public static StringBuilder getRecordInfo(String nombreArchivo, String patternInicio, String patternFin) throws UtilsException {
+
+        FileInputStream inputStream;
+        Scanner scanner = null;
+        StringBuilder lineas = new StringBuilder();
+        StringBuilder linea = new StringBuilder();
+
+        try {
+            int bndSeccionInicio = 0;
+            if (FileUtils.isFileValid(nombreArchivo)) {
+                inputStream = new FileInputStream(nombreArchivo);
+                scanner = new Scanner(inputStream, DEFAULT_ENCODING);
+
+                while (scanner.hasNextLine()) {
+                    linea.delete(0, linea.length());
+                    linea.append(FileUtils.removeUTF8BOM(scanner.nextLine()));
+
+                    if(bndSeccionInicio == 2) {
+                        break;
+                    }
+
+                    if (StringUtils.isValidPattern(linea.toString(), patternInicio) && bndSeccionInicio == 0) {
+                        bndSeccionInicio = 1;
+                        lineas.append(linea).append("\n");
+                    } else if(bndSeccionInicio == 1 && !StringUtils.isValidPattern(linea.toString(), patternFin)) {
+                        lineas.append(linea).append("\n");
+                    }
+
+                    if (StringUtils.isValidPattern(linea.toString(), patternFin) && bndSeccionInicio == 1) {
+                        bndSeccionInicio = 2;
+                        lineas.append(linea).append("\n");
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new UtilsException("Error en el servicio readFileToPattern():\n" + StackTraceUtils.getCustomStackTrace(e), e);
+        } finally {
+            if (scanner != null) {
+                scanner.close();
+            }
+        }
+
+        return lineas;
+
+    }
+
+    public static String removeUTF8BOM(String s) throws UtilsException {
+        try {
+            if (s.startsWith(UTF8_BOM)) {
+                s = s.substring(1);
+            }
+            return s;
+        } catch (Exception e) {
+            throw new UtilsException("Error generado en el metodo: removeUTF8BOM(String s)"
+                    + "\nMensaje de error: " + e.getMessage(), e);
+        }
     }
 
 }

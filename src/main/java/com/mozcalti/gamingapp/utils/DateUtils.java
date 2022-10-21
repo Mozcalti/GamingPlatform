@@ -77,7 +77,26 @@ public final class DateUtils {
                     + "\nMensaje de error: " + e.getMessage(), e);
         }
     }
-    
+
+    public static boolean isHoursRangoValid(String horaIni, String horaFin,
+                                            String horaValidar, String formato) {
+
+        boolean resultado = false;
+        Calendar calendarIni = getDateFormat(horaIni, formato);
+        Calendar calendarFin = getDateFormat(horaFin, formato);
+        Calendar calendarHoraValidar = getDateFormat(horaValidar, formato);
+
+        boolean isEquals = calendarHoraValidar.equals(calendarIni) || calendarHoraValidar.equals(calendarFin);
+        boolean isValid = calendarHoraValidar.after(calendarIni) && calendarHoraValidar.before(calendarFin);
+
+        if(isEquals || isValid) {
+            resultado = true;
+        }
+
+        return resultado;
+
+    }
+
     public static boolean isHoursRangoValid(String horaIni, String horaFin,
                                          String horaIniValid, String horaFinValid,
                                          String formato) {

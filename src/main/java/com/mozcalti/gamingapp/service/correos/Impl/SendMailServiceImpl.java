@@ -1,8 +1,8 @@
-package com.mozcalti.gamingapp.service.impl;
+package com.mozcalti.gamingapp.service.correos.Impl;
 
 import com.mozcalti.gamingapp.exceptions.SendMailException;
 import com.mozcalti.gamingapp.exceptions.UtilsException;
-import com.mozcalti.gamingapp.service.SendMailService;
+import com.mozcalti.gamingapp.service.correos.SendMailService;
 import com.mozcalti.gamingapp.utils.Constantes;
 import com.mozcalti.gamingapp.utils.FileUtils;
 import com.mozcalti.gamingapp.utils.StackTraceUtils;

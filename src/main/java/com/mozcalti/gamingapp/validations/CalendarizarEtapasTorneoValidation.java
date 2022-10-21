@@ -3,7 +3,6 @@ package com.mozcalti.gamingapp.validations;
 import com.mozcalti.gamingapp.exceptions.ValidacionException;
 import com.mozcalti.gamingapp.model.EtapaEquipo;
 import com.mozcalti.gamingapp.model.Etapas;
-import com.mozcalti.gamingapp.model.TorneoHorasHabiles;
 import com.mozcalti.gamingapp.model.Torneos;
 import com.mozcalti.gamingapp.model.torneos.EtapaDTO;
 import com.mozcalti.gamingapp.model.torneos.HoraHabilDTO;
@@ -11,17 +10,15 @@ import com.mozcalti.gamingapp.model.torneos.TorneoDTO;
 import com.mozcalti.gamingapp.utils.CollectionUtils;
 import com.mozcalti.gamingapp.utils.Constantes;
 import com.mozcalti.gamingapp.utils.DateUtils;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CalendarizarEtapasTorneoValidation {
-
-    private CalendarizarEtapasTorneoValidation() {
-        throw new IllegalStateException("Utility CalendarizarEtapasTorneoValidation");
-    }
 
     public static void validaSaveTorneo(TorneoDTO torneoDTO) throws ValidacionException {
         // Datos torneo
@@ -113,21 +110,6 @@ public final class CalendarizarEtapasTorneoValidation {
 
     }
 
-    public static List<HoraHabilDTO> obtieneHorasHabiles(Torneos torneos) throws ValidacionException {
-
-        if(torneos.getTorneoHorasHabilesByIdTorneo().isEmpty()) {
-            throw new ValidacionException("No existe horarios configurados en el torneo");
-        }
-
-        List<HoraHabilDTO> horasHabiles = new ArrayList<>();
-
-        for(TorneoHorasHabiles torneoHorasHabiles : torneos.getTorneoHorasHabilesByIdTorneo()) {
-            horasHabiles.add(new HoraHabilDTO(torneoHorasHabiles));
-        }
-
-        return horasHabiles;
-    }
-
     public static List<Integer> armaEquipos(Etapas etapas) throws ValidacionException {
 
         List<Integer> idEquipos = new ArrayList<>();
@@ -151,8 +133,8 @@ public final class CalendarizarEtapasTorneoValidation {
         if(etapas == null) {
             throw new ValidacionException("No existe la etapa con el id indicado: " + idEtapa);
         }
-
-
     }
+
+
 
 }

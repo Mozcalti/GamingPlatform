@@ -113,7 +113,7 @@ public class TorneoControlller {
         try {
             calendarizarEtapasTorneoService.updateBatallas(batallasDTO);
             return ResponseEntity.status(HttpStatus.OK)
-                    .body("Se Elimino el Torneo Correctamente");
+                    .body("Se Actualizo la Batalla Correctamente");
         } catch (ValidacionException e) {
             return ResponseEntity.badRequest()
                     .body(e.getMessage());
