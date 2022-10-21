@@ -3,7 +3,6 @@ package com.mozcalti.gamingapp.controller;
 
 import com.mozcalti.gamingapp.model.Participantes;
 import com.mozcalti.gamingapp.model.dto.ParticipanteDTO;
-import com.mozcalti.gamingapp.model.dto.TablaDTO;
 import com.mozcalti.gamingapp.model.dto.TablaParticipantesDTO;
 import com.mozcalti.gamingapp.service.ParticipantesService;
 import lombok.AllArgsConstructor;
@@ -32,12 +31,17 @@ public class ParticipanteController {
     }
 
     @GetMapping("/todos")
-    public TablaDTO<TablaParticipantesDTO> todosParticipantes(@RequestParam String texto, @RequestParam Integer indice){
-        return participantesService.listaParticipantes(texto,indice);
+    public List<TablaParticipantesDTO> todosParticipantes(@RequestParam String texto){
+        return participantesService.listaParticipantes(texto);
     }
 
     @GetMapping("/{id}")
     public TablaParticipantesDTO obtenerParticipante(@PathVariable Integer id){
         return participantesService.obtenerParticipante(id);
+    }
+
+    @PostMapping(value = "/guardarParticipante")
+    public void guardarParticipante(@RequestBody ParticipanteDTO participanteDTO) {
+        participantesService.guardarParticipante(participanteDTO);
     }
 }

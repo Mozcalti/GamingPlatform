@@ -4,6 +4,7 @@ import {BrowserRouter, Route, Routes} from "react-router-dom";
 import Protected from "./components/protected";
 import MiPerfil from "./components/perfil";
 import UsersList from "./components/users";
+import ParticipantesList from "./components/participantes";
 
 function App() {
     return (
@@ -19,6 +20,7 @@ function App() {
                     }
                 />
                 <Route path="/usuarios" element={<UsersList />}/>
+                <Route path="/participantes" element={<ParticipantesList />}/>
             </Routes>
         </BrowserRouter>
     );
