@@ -92,9 +92,8 @@ public final class FileUtils {
         try {
             int bndSeccionInicio = 0;
             if (FileUtils.isFileValid(nombreArchivo)) {
-                try (FileInputStream inputStream = new FileInputStream(nombreArchivo)) {
+                    FileInputStream inputStream = new FileInputStream(nombreArchivo);
                     scanner = new Scanner(inputStream, StandardCharsets.UTF_8);
-                }
 
                 while (scanner.hasNextLine()) {
                     linea.delete(0, linea.length());
