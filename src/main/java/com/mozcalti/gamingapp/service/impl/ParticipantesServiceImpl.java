@@ -17,8 +17,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
@@ -113,13 +111,11 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
     }
 
     @Override
-    public TablaDTO<TablaParticipantesDTO> listaParticipantes(String cadena, Integer indice) {
+    public List<TablaParticipantesDTO> listaParticipantes(String cadena) {
         Specification<Participantes> query = Specification.where(containsTextInAttributes(cadena, Arrays.asList("nombre", "correo","institucion")));
-        Page<Participantes> participantesPages = participantesRepository.findAll(query, PageRequest.of(indice, 50));
-        PaginadoDTO paginadoDTO = new PaginadoDTO(participantesPages.getTotalPages(), participantesPages.getNumber());
-        List<Participantes> participantesParte = participantesPages.toList();
+        List<Participantes> participantesPages = participantesRepository.findAll(query);
 
-        List<TablaParticipantesDTO> tablaParticipantesDTO = participantesParte.stream()
+        List<TablaParticipantesDTO> tablaParticipantesDTO = participantesPages.stream()
                 .map(p -> new TablaParticipantesDTO(
                         p.getIdParticipante(),
                         p.getNombre(),
@@ -133,11 +129,7 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
                         p.getFechaCreacion(),
                         institucionRepository.findById(p.getIdInstitucion()).get().getNombre()
                 )).toList();
-
-        TablaDTO<TablaParticipantesDTO> tablaDTO = new TablaDTO<>();
-        tablaDTO.setLista(tablaParticipantesDTO);
-        tablaDTO.setPaginadoDTO(paginadoDTO);
-        return tablaDTO;
+        return tablaParticipantesDTO;
     }
 
     @Override
@@ -158,6 +150,24 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
                     participantes.get().getFoto(),
                     participantes.get().getFechaCreacion(),
                     institucionRepository.findById(participantes.get().getIdInstitucion()).get().getNombre());
+    }
+
+    @Override
+    public Participantes guardarParticipante(ParticipanteDTO participanteDTO) {
+        Participantes participante = new Participantes();
+        if(participantesRepository.findByCorreo(participanteDTO.getCorreo()) != null)
+            throw new DuplicateKeyException(String.format("El participante '%s' ya esta registrado en el sistema", participanteDTO.getCorreo()));
+        participante.setNombre(participanteDTO.getNombre());
+        participante.setApellidos(participanteDTO.getApellidos());
+        participante.setCorreo(participanteDTO.getCorreo());
+        participante.setAcademia(participanteDTO.getAcademia());
+        participante.setIes(participanteDTO.getIes());
+        participante.setCarrera(participanteDTO.getCarrera());
+        participante.setSemestre(participanteDTO.getSemestre());
+        participante.setFoto(encodeImageToString(pathParticipantes));
+        participante.setFechaCreacion(FORMATTER.format(LOCAL_DATE_TIME));
+        participante.setIdInstitucion(institucionRepository.findById(participanteDTO.getIdInstitucion()).get().getId());
+        return participantesRepository.save(participante);
     }
 
     private Specification<Participantes> containsTextInAttributes(String text, List<String> attributes) {
