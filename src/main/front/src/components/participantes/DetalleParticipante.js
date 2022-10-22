@@ -19,7 +19,6 @@ import {Participante} from "./Participante.model";
 import ParticipantesService from "./Participantes.service";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup/dist/yup";
-import {green} from "@mui/material/colors";
 
 
 function DetalleParticipante(props) {
