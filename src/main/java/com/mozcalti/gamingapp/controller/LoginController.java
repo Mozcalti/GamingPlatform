@@ -22,7 +22,6 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @Slf4j
 public class LoginController {
-
     @Value("${security.jwt.token.prefix}")
     private String prefix;
     private final JwtUtil jwtUtil;
@@ -30,9 +29,8 @@ public class LoginController {
 
     @PostMapping
     public ResponseEntity<Void> getToken(@Valid @RequestBody CredencialesUsuarioDTO credenciales){
-        Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(credenciales.username(), credenciales.password()));
 
-        log.debug("auth {}", auth);
+        Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(credenciales.username(), credenciales.password()));
 
         String jwt = jwtUtil.getToken(auth.getName());
 

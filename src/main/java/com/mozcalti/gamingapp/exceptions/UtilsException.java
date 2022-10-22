@@ -3,7 +3,7 @@ package com.mozcalti.gamingapp.exceptions;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-public class UtilsException extends Exception {
+public class UtilsException extends RuntimeException {
 
     public UtilsException(String message) {
         super(message);
