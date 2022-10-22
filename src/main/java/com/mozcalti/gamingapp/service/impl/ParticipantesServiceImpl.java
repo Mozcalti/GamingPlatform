@@ -115,7 +115,7 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
         Specification<Participantes> query = Specification.where(containsTextInAttributes(cadena, Arrays.asList("nombre", "correo","institucion")));
         List<Participantes> participantesPages = participantesRepository.findAll(query);
 
-        List<TablaParticipantesDTO> tablaParticipantesDTO = participantesPages.stream()
+        return participantesPages.stream()
                 .map(p -> new TablaParticipantesDTO(
                         p.getIdParticipante(),
                         p.getNombre(),
@@ -129,7 +129,6 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
                         p.getFechaCreacion(),
                         institucionRepository.findById(p.getIdInstitucion()).get().getNombre()
                 )).toList();
-        return tablaParticipantesDTO;
     }
 
     @Override
@@ -172,7 +171,7 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
 
     @Override
     public Participantes actualizarParticipante(Participantes participante) {
-        if (participantesRepository.findById(participante.getIdParticipante()) == null)
+        if (participantesRepository.findById(participante.getIdParticipante()).isEmpty())
             throw new NoSuchElementException("No existe el participante con el en el sistema");
         return participantesRepository.save(participante);
     }
