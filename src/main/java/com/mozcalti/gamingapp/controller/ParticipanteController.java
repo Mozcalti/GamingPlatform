@@ -48,7 +48,7 @@ public class ParticipanteController {
 
 
     @PostMapping(value = "/actualizarParticipante")
-    public void actualizarParticipante(@RequestBody Participantes participante) {
-        participantesService.actualizarParticipante(participante);
+    public void actualizarParticipante(@RequestBody DetalleParticipanteDTO participanteDTO) {
+        participantesService.actualizarParticipante(participanteDTO);
     }
 }

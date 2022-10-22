@@ -112,7 +112,7 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
 
     @Override
     public List<TablaParticipantesDTO> listaParticipantes(String cadena) {
-        Specification<Participantes> query = Specification.where(containsTextInAttributes(cadena, Arrays.asList("nombre", "correo","institucion")));
+        Specification<Participantes> query = Specification.where(containsTextInAttributes(cadena, Arrays.asList("nombre", "correo", "institucion")));
         List<Participantes> participantesPages = participantesRepository.findAll(query);
 
         return participantesPages.stream()
@@ -134,9 +134,9 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
     @Override
     public DetalleParticipanteDTO obtenerParticipante(Integer id) {
         Optional<Participantes> participantes = participantesRepository.findById(id);
-        if (participantes.isEmpty()){
+        if (participantes.isEmpty()) {
             throw new NoSuchElementException("No se encontro el participante en el sistema");
-        }else
+        } else
             return new DetalleParticipanteDTO(
                     participantes.get().getIdParticipante(),
                     participantes.get().getNombre(),
@@ -154,7 +154,7 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
     @Override
     public Participantes guardarParticipante(ParticipanteDTO participanteDTO) {
         Participantes participante = new Participantes();
-        if(participantesRepository.findByCorreo(participanteDTO.getCorreo()) != null)
+        if (participantesRepository.findByCorreo(participanteDTO.getCorreo()) != null)
             throw new DuplicateKeyException(String.format("El participante '%s' ya esta registrado en el sistema", participanteDTO.getCorreo()));
         participante.setNombre(participanteDTO.getNombre());
         participante.setApellidos(participanteDTO.getApellidos());
@@ -170,10 +170,23 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
     }
 
     @Override
-    public Participantes actualizarParticipante(Participantes participante) {
-        if (participantesRepository.findById(participante.getIdParticipante()).isEmpty())
+    public Participantes actualizarParticipante(DetalleParticipanteDTO participanteDTO) {
+        Participantes participanteDB = participantesRepository.findById(participanteDTO.getIdParticipante()).get();
+        participanteDB.setNombre(participanteDTO.getNombre());
+        participanteDB.setApellidos(participanteDTO.getApellidos());
+        participanteDB.setCorreo(participanteDTO.getCorreo());
+        participanteDB.setAcademia(participanteDTO.getAcademia());
+        participanteDB.setIes(participanteDTO.getIes());
+        participanteDB.setCarrera(participanteDTO.getCarrera());
+        participanteDB.setSemestre(participanteDTO.getSemestre());
+        participanteDB.setFoto(participanteDTO.getFoto());
+        participanteDB.setFechaCreacion(participanteDTO.getFechaCreacion());
+        participanteDB.setIdInstitucion(participanteDTO.getIdInstitucion());
+
+        if (participanteDB == null)
             throw new NoSuchElementException("No existe el participante con el en el sistema");
-        return participantesRepository.save(participante);
+
+        return participantesRepository.save(participanteDB);
     }
 
     private Specification<Participantes> containsTextInAttributes(String text, List<String> attributes) {
