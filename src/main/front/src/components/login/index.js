@@ -18,10 +18,7 @@ import AuthService from "../../services/auth.service";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-
-function SendIcon() {
-    return null;
-}
+import {Send} from "@mui/icons-material";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -44,7 +41,7 @@ const Login = () => {
     const {
         register,
         handleSubmit,
-        formState: { errors }
+        formState: {errors}
     } = useForm({
         resolver: yupResolver(formValidationSchema)
     });
@@ -58,23 +55,23 @@ const Login = () => {
 
         AuthService.login(data.email, data.password)
             .then(
-            () => {
-                setValues({
-                    ...values,
-                    error: false,
-                    loading: false,
-                });
-                navigate("/usuarios")
-            },
-            error => {
-                setValues({
-                    ...values,
-                    error: true,
-                    loading: false,
-                });
-                console.error(error)
-            }
-        );
+                () => {
+                    setValues({
+                        ...values,
+                        error: false,
+                        loading: false,
+                    });
+                    navigate("/usuarios")
+                },
+                error => {
+                    setValues({
+                        ...values,
+                        error: true,
+                        loading: false,
+                    });
+                    console.error(error)
+                }
+            );
     };
 
     const handlePassVisibilty = () => {
@@ -107,73 +104,75 @@ const Login = () => {
                             </Typography>
 
                         </Grid>
-                        <Grid container direction="column" spacing={3}>
-                            <Grid item>
-                                <TextField
-                                    type="email"
-                                    required
-                                    autoFocus
-                                    autoComplete="email"
-                                    label="Correo electrónico"
-                                    placeholder="Correo electrónico"
-                                    variant="outlined"
-                                    fullWidth
-                                    {...register('email')}
-                                    error={!!errors.email}
-                                />
-                                <Typography variant="subtitle1" color="error.main">
-                                    {errors.email?.message}
-                                </Typography>
-                            </Grid>
+                        <form onSubmit={handleSubmit(onSubmit)}>
+                            <Grid container direction="column" spacing={3}>
+                                <Grid item>
+                                    <TextField
+                                        type="email"
+                                        required
+                                        autoFocus
+                                        autoComplete="email"
+                                        label="Correo electrónico"
+                                        placeholder="Correo electrónico"
+                                        variant="outlined"
+                                        fullWidth
+                                        {...register('email')}
+                                        error={!!errors.email}
+                                    />
+                                    <Typography variant="subtitle1" color="error.main">
+                                        {errors.email?.message}
+                                    </Typography>
+                                </Grid>
 
-                            <Grid item>
-                                <TextField
-                                    type={values.showPass ? "text" : "password"}
-                                    fullWidth
-                                    label="Contraseña"
-                                    placeholder="Contraseña"
-                                    variant="outlined"
-                                    required
-                                    {...register('password')}
-                                    error={!!errors.password}
-                                    InputProps={{
-                                        endAdornment: (
-                                            <InputAdornment position="end">
-                                                <IconButton
-                                                    onClick={handlePassVisibilty}
-                                                    aria-label="toggle password"
-                                                    edge="end"
-                                                >
-                                                    {values.showPass ? <VisibilityOffIcon/> : <VisibilityIcon/>}
-                                                </IconButton>
-                                            </InputAdornment>
-                                        ),
-                                    }}
-                                />
-                                <Typography variant="subtitle1" color="error.main">
-                                    {errors.password?.message}
-                                </Typography>
-                            </Grid>
+                                <Grid item>
+                                    <TextField
+                                        type={values.showPass ? "text" : "password"}
+                                        fullWidth
+                                        label="Contraseña"
+                                        placeholder="Contraseña"
+                                        variant="outlined"
+                                        required
+                                        {...register('password')}
+                                        error={!!errors.password}
+                                        InputProps={{
+                                            endAdornment: (
+                                                <InputAdornment position="end">
+                                                    <IconButton
+                                                        onClick={handlePassVisibilty}
+                                                        aria-label="toggle password"
+                                                        edge="end"
+                                                    >
+                                                        {values.showPass ? <VisibilityOffIcon/> : <VisibilityIcon/>}
+                                                    </IconButton>
+                                                </InputAdornment>
+                                            ),
+                                        }}
+                                    />
+                                    <Typography variant="subtitle1" color="error.main">
+                                        {errors.password?.message}
+                                    </Typography>
+                                </Grid>
 
-                            <Grid item>
-                                <LoadingButton
-                                    type="submit"
-                                    fullWidth
-                                    endIcon={<SendIcon/>}
-                                    loading={values.loading}
-                                    loadingPosition="end"
-                                    variant="contained"
-                                    onClick={handleSubmit(onSubmit)}
-                                >
-                                    Entrar
-                                </LoadingButton>
-                            </Grid>
+                                <Grid item>
+                                    <LoadingButton
+                                        type="submit"
+                                        fullWidth
+                                        endIcon={<Send/>}
+                                        loading={values.loading}
+                                        loadingPosition="end"
+                                        variant="contained"
+                                        onClick={handleSubmit(onSubmit)}
+                                    >
+                                        Entrar
+                                    </LoadingButton>
+                                </Grid>
 
-                            {values.error && <Grid item>
-                                <Alert severity="error">Nombre de usuario o contraseña incorrectos. Favor de
-                                    verificar.</Alert>
-                            </Grid>}
-                        </Grid>
+                                {values.error && <Grid item>
+                                    <Alert severity="error">Nombre de usuario o contraseña incorrectos. Favor de
+                                        verificar.</Alert>
+                                </Grid>}
+                            </Grid>
+                        </form>
                     </Paper>
                 </Grid>
             </Container>

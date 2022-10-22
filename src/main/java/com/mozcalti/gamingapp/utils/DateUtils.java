@@ -6,6 +6,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -22,10 +23,14 @@ public final class DateUtils {
                         .toInstant());
     }
 
-    public static LocalDateTime toLocalDateTime(Date dateToConvert){
+    public static LocalDateTime toLocalDateTime(Date dateToConvert) {
         return Instant.ofEpochMilli(dateToConvert.getTime())
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
+    }
+
+    public static LocalDateTime now() {
+        return LocalDateTime.now();
     }
 
     public static void isValidDate(String fecha, String pattern, String msjError) throws ValidacionException {
@@ -33,22 +38,22 @@ public final class DateUtils {
             DateTimeFormatter fmt = DateTimeFormat.forPattern(pattern).withLocale(Locale.ENGLISH);
             fmt.parseDateTime(fecha);
         } catch (Exception e) {
-           throw new ValidacionException(msjError);
+            throw new ValidacionException(msjError);
         }
 
     }
-    
+
     public static void isDatesRangoValid(String fechaIni, String fechaFin, String pattern, String msjError) throws ValidacionException {
 
         Calendar calendarIni = getDateFormat(fechaIni, pattern);
         Calendar calendarFin = getDateFormat(fechaFin, pattern);
 
-        if(calendarIni.after(calendarFin)) {
+        if (calendarIni.after(calendarFin)) {
             throw new ValidacionException(msjError);
         }
 
     }
-    
+
     public static Calendar getDateFormat(String fecha, String pattern) throws ValidacionException {
 
         DateTimeFormatter fmt;
@@ -63,10 +68,10 @@ public final class DateUtils {
 
         return fechaCalendar;
     }
-    
+
     public static String getDateFormat(Date date, String pattern) throws ValidacionException {
         try {
-            if(date != null) {
+            if (date != null) {
                 DateTimeFormatter fmt = DateTimeFormat.forPattern(pattern).withLocale(Locale.ENGLISH);
                 return fmt.print(new DateTime(date));
             } else {
@@ -77,13 +82,13 @@ public final class DateUtils {
                     + "\nMensaje de error: " + e.getMessage(), e);
         }
     }
-    
-    public static boolean isHoursRangoValid(String horaIni, String horaFin,
-                                         String horaIniValid, String horaFinValid,
-                                         String formato) {
 
-        StringBuilder sHoraIniValid = new StringBuilder("");
-        StringBuilder sHoraFinValid = new StringBuilder("");
+    public static boolean isHoursRangoValid(String horaIni, String horaFin,
+                                            String horaIniValid, String horaFinValid,
+                                            String formato) {
+
+        StringBuilder sHoraIniValid = new StringBuilder();
+        StringBuilder sHoraFinValid = new StringBuilder();
         Calendar calendarIni = getDateFormat(horaIni, formato);
         Calendar calendarFin = getDateFormat(horaFin, formato);
         sHoraIniValid.append(horaIni, 0, 11).append(horaIniValid);
@@ -91,17 +96,12 @@ public final class DateUtils {
         Calendar calendarIniValid = getDateFormat(sHoraIniValid.toString(), formato);
         Calendar calendarFinValid = getDateFormat(sHoraFinValid.toString(), formato);
 
-        if(calendarIni.before(calendarIniValid) || calendarFin.after(calendarFinValid)) {
-            return false;
-        } else {
-            return true;
-        }
+        return !calendarIni.before(calendarIniValid) && !calendarFin.after(calendarFinValid);
 
     }
 
     public static Date addMinutos(Date date, int minutos) throws ValidacionException {
         if (date != null) {
-            DateTime dateTime = new DateTime();
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(date);
             calendar.add(Calendar.MINUTE, minutos);
@@ -119,5 +119,5 @@ public final class DateUtils {
             throw new ValidacionException("El parametro date no puede ser null");
         }
     }
-    
+
 }

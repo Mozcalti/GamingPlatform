@@ -7,12 +7,16 @@ logging:
     com.mozcalti.gamingapp: DEBUG
 
 security:
+  account:
+    activation:
+      token-validity: 3 #3 dias
   jwt:
     token:
       duration: 36000
       prefix: Bearer
   paths:
-    open-paths: /, /index.html, /css/**, /js/**, /img/**, /api/login/**
+    open-paths: /, /index.html, /css/**, /js/**, /img/**, /api/login/**, /users/verifyToken/**, /users/registrationConfirm/**
+
 spring:
   config:
     activate:
