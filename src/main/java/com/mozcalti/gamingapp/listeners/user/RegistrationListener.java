@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -46,8 +47,8 @@ public class RegistrationListener implements ApplicationListener<OnUsuarioRegist
 
         String mailTo = usuario.getEmail();
 
-        String subject = mailMessageSource.getMessage("%s.subject".formatted(MAIL_PROPERTIES_KEY), null, "Registro confirmado",null);
-        String mailTemplate = mailMessageSource.getMessage("%s.template".formatted(MAIL_PROPERTIES_KEY), null, "/template/mail/Registro.html",null);
+        String subject = mailMessageSource.getMessage("%s.subject".formatted(MAIL_PROPERTIES_KEY), null, "Registro confirmado", Locale.getDefault());
+        String mailTemplate = mailMessageSource.getMessage("%s.template".formatted(MAIL_PROPERTIES_KEY), null, "/template/mail/Registro.html",Locale.getDefault());
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("token", token);
