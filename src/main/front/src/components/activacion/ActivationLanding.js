@@ -7,8 +7,6 @@ import {Undo} from "@mui/icons-material";
 
 
 const ActivationLanding = () => {
-    const queryParams = new URLSearchParams(window.location.search)
-    const navigate = useNavigate();
     const [message, setMessage] = useState("");
 
     useEffect(() => {
@@ -23,6 +21,8 @@ const ActivationLanding = () => {
                     })
         };
 
+        const queryParams = new URLSearchParams(window.location.search)
+        const navigate = useNavigate();
         validaToken(queryParams.get("token"))
     }, []);
 
