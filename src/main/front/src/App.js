@@ -6,6 +6,7 @@ import MiPerfil from "./components/perfil";
 import UsersList from "./components/users";
 import ActivationLanding from "./components/activacion/ActivationLanding";
 import ActivationForm from "./components/activacion";
+import ParticipantesList from "./components/participantes";
 
 function App() {
     return (
