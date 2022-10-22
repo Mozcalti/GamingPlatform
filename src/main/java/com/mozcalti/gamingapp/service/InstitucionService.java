@@ -19,6 +19,8 @@ public interface InstitucionService {
 
     Institucion guardarInstitucion(InstitucionDTO institucionDTO);
 
+    Iterable<Institucion> instituciones();
+
 
 
 }

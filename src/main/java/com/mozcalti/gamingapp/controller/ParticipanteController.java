@@ -2,6 +2,7 @@ package com.mozcalti.gamingapp.controller;
 
 
 import com.mozcalti.gamingapp.model.Participantes;
+import com.mozcalti.gamingapp.model.dto.DetalleParticipanteDTO;
 import com.mozcalti.gamingapp.model.dto.ParticipanteDTO;
 import com.mozcalti.gamingapp.model.dto.TablaParticipantesDTO;
 import com.mozcalti.gamingapp.service.ParticipantesService;
@@ -36,12 +37,18 @@ public class ParticipanteController {
     }
 
     @GetMapping("/{id}")
-    public TablaParticipantesDTO obtenerParticipante(@PathVariable Integer id){
+    public DetalleParticipanteDTO obtenerParticipante(@PathVariable Integer id){
         return participantesService.obtenerParticipante(id);
     }
 
     @PostMapping(value = "/guardarParticipante")
     public void guardarParticipante(@RequestBody ParticipanteDTO participanteDTO) {
         participantesService.guardarParticipante(participanteDTO);
+    }
+
+
+    @PostMapping(value = "/actualizarParticipante")
+    public void actualizarParticipante(@RequestBody Participantes participante) {
+        participantesService.actualizarParticipante(participante);
     }
 }

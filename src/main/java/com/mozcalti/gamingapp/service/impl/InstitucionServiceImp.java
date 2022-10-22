@@ -124,6 +124,11 @@ public class InstitucionServiceImp implements InstitucionService, Utils {
         return institucionRepository.save(institucion);
     }
 
+    @Override
+    public Iterable<Institucion> instituciones() {
+       return institucionRepository.findAll();
+    }
+
     private Specification<Institucion> containsTextInAttributes(String text, List<String> attributes) {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.or(root.getModel().getDeclaredAttributes().stream()
                 .filter(a -> attributes.contains(a.getName()))

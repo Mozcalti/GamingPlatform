@@ -2,6 +2,7 @@ package com.mozcalti.gamingapp.service;
 
 import com.mozcalti.gamingapp.commons.GenericServiceAPI;
 import com.mozcalti.gamingapp.model.Participantes;
+import com.mozcalti.gamingapp.model.dto.DetalleParticipanteDTO;
 import com.mozcalti.gamingapp.model.dto.ParticipanteDTO;
 import com.mozcalti.gamingapp.model.dto.TablaParticipantesDTO;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,7 +13,9 @@ public interface ParticipantesService extends GenericServiceAPI<Participantes, I
     List<ParticipanteDTO> cargarArchivo(MultipartFile file) ;
     List<Participantes> guardarParticipantes(List<Participantes> participantes);
     List<TablaParticipantesDTO> listaParticipantes(String cadena);
-    TablaParticipantesDTO obtenerParticipante(Integer id);
+    DetalleParticipanteDTO obtenerParticipante(Integer id);
     Participantes guardarParticipante(ParticipanteDTO participanteDTO);
+
+    Participantes actualizarParticipante(Participantes participantes);
 
 }

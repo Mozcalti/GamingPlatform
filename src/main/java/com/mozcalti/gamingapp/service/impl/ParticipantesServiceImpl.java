@@ -133,12 +133,12 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
     }
 
     @Override
-    public TablaParticipantesDTO obtenerParticipante(Integer id) {
+    public DetalleParticipanteDTO obtenerParticipante(Integer id) {
         Optional<Participantes> participantes = participantesRepository.findById(id);
         if (participantes.isEmpty()){
             throw new NoSuchElementException("No se encontro el participante en el sistema");
         }else
-            return new TablaParticipantesDTO(
+            return new DetalleParticipanteDTO(
                     participantes.get().getIdParticipante(),
                     participantes.get().getNombre(),
                     participantes.get().getApellidos(),
@@ -149,7 +149,7 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
                     participantes.get().getSemestre(),
                     participantes.get().getFoto(),
                     participantes.get().getFechaCreacion(),
-                    institucionRepository.findById(participantes.get().getIdInstitucion()).get().getNombre());
+                    institucionRepository.findById(participantes.get().getIdInstitucion()).get().getId());
     }
 
     @Override
@@ -170,6 +170,13 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
         return participantesRepository.save(participante);
     }
 
+    @Override
+    public Participantes actualizarParticipante(Participantes participante) {
+        if (participantesRepository.findById(participante.getIdParticipante()) == null)
+            throw new NoSuchElementException("No existe el participante con el en el sistema");
+        return participantesRepository.save(participante);
+    }
+
     private Specification<Participantes> containsTextInAttributes(String text, List<String> attributes) {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.or(root.getModel().getDeclaredAttributes().stream()
                 .filter(a -> attributes.contains(a.getName()))
@@ -181,7 +188,7 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
     @Override
     public String encodeImageToString(String path) {
         try (FileInputStream file = new FileInputStream(path + "/participanteFotoDefaul.png")) {
-            return Base64.encodeBase64String(file.readAllBytes());
+            return "data:image/png;base64," + Base64.encodeBase64String(file.readAllBytes());
         } catch (IOException exception) {
             throw new IllegalArgumentException(String.format("La imagen no es correcta %s", exception));
         }
