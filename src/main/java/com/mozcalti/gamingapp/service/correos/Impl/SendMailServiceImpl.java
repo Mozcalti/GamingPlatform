@@ -1,11 +1,10 @@
-package com.mozcalti.gamingapp.service.impl;
+package com.mozcalti.gamingapp.service.correos.Impl;
 
 import com.mozcalti.gamingapp.exceptions.SendMailException;
 import com.mozcalti.gamingapp.exceptions.UtilsException;
-import com.mozcalti.gamingapp.service.SendMailService;
+import com.mozcalti.gamingapp.service.correos.SendMailService;
 import com.mozcalti.gamingapp.utils.Constantes;
 import com.mozcalti.gamingapp.utils.FileUtils;
-import com.mozcalti.gamingapp.utils.ObjectUtils;
 import com.mozcalti.gamingapp.utils.StackTraceUtils;
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.cache.TemplateLoader;
@@ -24,6 +23,7 @@ import javax.mail.internet.*;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -84,11 +84,11 @@ public class SendMailServiceImpl implements SendMailService {
             MimeMultipart multiParte = new MimeMultipart();
             multiParte.addBodyPart(messageBodyPart);
 
-            for(String key : imagesMessage.keySet()) {
-                DataSource imageDs = new URLDataSource(SendMailServiceImpl.class.getResource(imagesMessage.get(key)));
+            for(Map.Entry<String, String> entry : imagesMessage.entrySet()) {
+                DataSource imageDs = new URLDataSource(SendMailServiceImpl.class.getResource(entry.getValue()));
                 MimeBodyPart imagePart = new MimeBodyPart();
                 imagePart.setDataHandler(new DataHandler(imageDs));
-                imagePart.setHeader(Constantes.MAIL_IMAGE_HEADER, "<" + key + ">");
+                imagePart.setHeader(Constantes.MAIL_IMAGE_HEADER, "<" + entry.getKey() + ">");
                 multiParte.addBodyPart(imagePart);
             }
 
@@ -118,7 +118,7 @@ public class SendMailServiceImpl implements SendMailService {
         try {
             configuration = new Configuration(Configuration.VERSION_2_3_23);
 
-            if (!ObjectUtils.isEmpty(pathname)) {
+            if (!pathname.isEmpty()) {
                 nomArchivo = FileUtils.getFileName(pathname);
                 ruta = FileUtils.getFileRuta(pathname);
                 templateLoader = new ClassTemplateLoader(SendMailServiceImpl.class, ruta);
@@ -131,14 +131,14 @@ public class SendMailServiceImpl implements SendMailService {
                 out = new ByteArrayOutputStream();
                 templateSalida = new OutputStreamWriter(out);
 
-                if (ObjectUtils.isEmpty(parameters)) {
+                if (parameters.isEmpty()) {
                     parameters = new HashMap<>();
                 }
 
                 template.process(parameters, templateSalida);
                 templateSalida.flush();
 
-                salida = new String(out.toByteArray(), Constantes.MAIL_ENCODING);
+                salida = new String(out.toByteArray(), StandardCharsets.UTF_8);
 
                 out.close();
                 templateSalida.close();

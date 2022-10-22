@@ -3,6 +3,7 @@ import {DataGrid} from '@mui/x-data-grid';
 import AddUser from "./AddUser";
 import UsuariosService from "./usuarios.service";
 import {Alert, Snackbar} from "@mui/material";
+import ResponsiveAppBar from "../appBar/AppBar";
 
 
 const UsersList = () => {
@@ -38,12 +39,10 @@ const UsersList = () => {
     }, []);
 
     const addUsuario = (usuario) => {
-        console.log("Add usuario", JSON.stringify(usuario))
-
         UsuariosService
             .add(usuario)
             .then(
-                (response) => {
+                () => {
                     setResultado({...resultado, success: true})
                     getUsuarios();
                 },
@@ -56,8 +55,9 @@ const UsersList = () => {
 
     return (
         <>
+            <ResponsiveAppBar/>
             <Snackbar open={resultado.success} autoHideDuration={6000} onClose={() => {setResultado({...resultado, success: false})}}>
-                <Alert severity="success" variant="filled">El usuario se agregó de forma correcta</Alert>
+                <Alert severity="success" variant="filled">El usuario se guardó de forma correcta</Alert>
             </Snackbar>
             <Snackbar open={resultado.error} autoHideDuration={6000}  onClose={() => {setResultado({...resultado, error: false})}}>
                 <Alert severity="error" variant="filled">Hubo un error al agregar al usuario</Alert>

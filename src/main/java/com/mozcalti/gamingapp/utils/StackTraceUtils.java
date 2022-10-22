@@ -1,11 +1,14 @@
 package com.mozcalti.gamingapp.utils;
 
 import com.mozcalti.gamingapp.exceptions.UtilsException;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 
+@NoArgsConstructor(access = AccessLevel.NONE)
 public final class StackTraceUtils {
 
     public static String getCause(Throwable aThrowable) throws UtilsException {

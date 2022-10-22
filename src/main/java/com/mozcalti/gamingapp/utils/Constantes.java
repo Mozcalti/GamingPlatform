@@ -1,16 +1,23 @@
 package com.mozcalti.gamingapp.utils;
 
-public interface Constantes {
+public final class Constantes {
 
-    String FECHA_HORA_PATTERN = "dd/MM/yyyy hh:mm a";
-    String FECHA_PATTERN = "dd/MM/yyyy";
-    String HORA_PATTERN = "hh:mm a";
-    String DIA_PATTERN = "E";
-    String MAIL_MESSAGE_TYPE = "text/html";
-    String MAIL_IMAGE_HEADER = "Content-ID";
-    String MAIL_ENCODING = "UTF-8";
-    String INDIVIDUAL = "INDIVIDUAL";
-    String EQUIPO = "EQUIPO";
-    String OCURRIO_ERROR_INESPERADO = "Ocurrio un error inesperado";
+    private Constantes() {
+        throw new IllegalStateException("Utility Constantes");
+    }
 
+    public static final String FECHA_HORA_PATTERN = "dd/MM/yyyy hh:mm a";
+    public static final String FECHA_PATTERN = "dd/MM/yyyy";
+    public static final String HORA_PATTERN = "hh:mm a";
+    public static final String DIA_PATTERN = "E";
+    public static final String MAIL_MESSAGE_TYPE = "text/html";
+    public static final String MAIL_IMAGE_HEADER = "Content-ID";
+    public static final String MAIL_ENCODING = "UTF-8";
+    public static final String INDIVIDUAL = "INDIVIDUAL";
+    public static final String EQUIPO = "EQUIPO";
+    public static final String OCURRIO_ERROR_INESPERADO = "Ocurrio un error inesperado";
+    public static final String RECORD_INFO_INICIO = "^.+recordInfo.+$";
+    public static final String RECORD_INFO_FIN = "^.+\\/recordInfo.+$";
+
+    public static final String TODOS = "todos";
 }
