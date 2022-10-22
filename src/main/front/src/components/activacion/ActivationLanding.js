@@ -24,6 +24,7 @@ const ActivationLanding = () => {
 
         const queryParams = new URLSearchParams(window.location.search);
         validaToken(queryParams.get("token"))
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (<div>
