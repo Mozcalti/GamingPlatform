@@ -35,6 +35,9 @@ resources:
     instituciones: ${PATH_INSTITUCIONES:path}
     participantes: ${PATH_PARTICIPANTES:path}
 
+path:
+  robocode: ${PATH_ROBOCODE:path}
+
 server:
   error:
     whitelabel:
