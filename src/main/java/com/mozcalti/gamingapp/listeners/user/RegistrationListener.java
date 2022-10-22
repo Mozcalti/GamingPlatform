@@ -4,7 +4,7 @@ import com.mozcalti.gamingapp.events.user.OnUsuarioRegistradoEvent;
 import com.mozcalti.gamingapp.exceptions.SendMailException;
 import com.mozcalti.gamingapp.exceptions.UtilsException;
 import com.mozcalti.gamingapp.model.Usuario;
-import com.mozcalti.gamingapp.service.SendMailService;
+import com.mozcalti.gamingapp.service.correos.SendMailService;
 import com.mozcalti.gamingapp.service.usuarios.VerificationTokenService;
 import com.mozcalti.gamingapp.utils.StackTraceUtils;
 import lombok.RequiredArgsConstructor;
