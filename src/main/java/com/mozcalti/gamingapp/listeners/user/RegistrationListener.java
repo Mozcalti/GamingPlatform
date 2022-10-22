@@ -10,6 +10,7 @@ import com.mozcalti.gamingapp.utils.StackTraceUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -22,8 +23,12 @@ import java.util.UUID;
 @Slf4j
 public class RegistrationListener implements ApplicationListener<OnUsuarioRegistradoEvent> {
 
+    private static final String MAIL_PROPERTIES_KEY = "registro";
+
     private final SendMailService sendMailService;
     private final VerificationTokenService verificationTokenService;
+
+    private final MessageSource mailMessageSource;
 
     @Override
     public void onApplicationEvent(OnUsuarioRegistradoEvent event) {
@@ -33,24 +38,21 @@ public class RegistrationListener implements ApplicationListener<OnUsuarioRegist
     private void confirmRegistration(OnUsuarioRegistradoEvent event) {
         Usuario usuario = event.getUsuario();
         String token = UUID.randomUUID().toString();
-
-        log.debug("token {}", token);
         verificationTokenService.addVerificationToken(usuario, token);
 
         final String baseUrl = getBaseUrl();
 
         log.debug("baseUrl: {}", baseUrl);
 
-
         String mailTo = usuario.getEmail();
-        String subject = "Registro confirmado";
-        String mailTemplate = "/template/mail/Registro.html";
+
+        String subject = mailMessageSource.getMessage("%s.subject".formatted(MAIL_PROPERTIES_KEY), null, "Registro confirmado",null);
+        String mailTemplate = mailMessageSource.getMessage("%s.template".formatted(MAIL_PROPERTIES_KEY), null, "/template/mail/Registro.html",null);
+
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("token", token);
         parameters.put("baseUrl", baseUrl);
-
-        log.debug("token: {}", token);
-        log.debug("baseUrl: {}", baseUrl);
+        parameters.put("nombre", usuario.getNombre());
 
         try {
             String templateMessage = sendMailService.readMailTemplate(mailTemplate, parameters);
@@ -60,7 +62,7 @@ public class RegistrationListener implements ApplicationListener<OnUsuarioRegist
 
             sendMailService.sendMail(mailTo, subject, templateMessage, imagesMessage);
         } catch (SendMailException | UtilsException e) {
-            log.error("Error en el job mailInicioBatallas(): {}", StackTraceUtils.getCustomStackTrace(e));
+            log.error("Error al enviar el correo de activacion de cuenta: {}", StackTraceUtils.getCustomStackTrace(e));
         }
     }
 
