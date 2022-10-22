@@ -3,6 +3,7 @@ package com.mozcalti.gamingapp.jobs;
 import com.mozcalti.gamingapp.exceptions.UtilsException;
 import com.mozcalti.gamingapp.model.correos.DatosCorreoBatallaDTO;
 import com.mozcalti.gamingapp.service.*;
+import com.mozcalti.gamingapp.service.correos.SendMailService;
 import com.mozcalti.gamingapp.utils.StackTraceUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,7 @@ public class SendMailTorneo {
 
     private CalendarizarEtapasTorneoService calendarizarEtapasTorneoService;
 
-    @Scheduled(cron = "${cron.mail.batallas}")
+    @Scheduled(cron = "${cron.mail-batallas}")
     public void mailInicioBatallas() throws UtilsException {
 
         log.info("Se buscan correos para el envio a los participantes");

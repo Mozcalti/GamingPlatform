@@ -22,7 +22,7 @@ spring:
     activate:
       on-profile: prod
   datasource:
-    url: jdbc:postgresql://${POSTGRESQL_HOSTNAME:localhost}:${POSTGRESQL_PORT:5432}/${POSTGRESQL_DB_NAME:gaming_platform}
+    url: jdbc:postgresql://${POSTGRESQL_HOSTNAME:localhost}:${POSTGRESQL_PORT:5432}/${POSTGRESQL_DB_NAME:gaming}
     username: ${POSTGRESQL_DB_USER:user}
     password: ${POSTGRESQL_DB_PASSWORD:pass}
 
@@ -36,8 +36,9 @@ spring:
 
 resources:
   static:
-    instituciones: ${PATH_INSTITUCIONES:path}
-    participantes: ${PATH_PARTICIPANTES:path}
+    instituciones: ${PATH_INSTITUCIONES:C:/tmp/robocode/instituciones}
+    participantes: ${PATH_PARTICIPANTES:C:/tmp/robocode/participantes}
+    resultados-batalla: ${PATH_RESULTADOS_BATALLA:C:/tmp/robocode/resultados}
 
 server:
   error:
@@ -45,8 +46,8 @@ server:
       enabled: false
 
 cron:
-  mail:
-    batallas: ${CRON_MAIL_BATTALLAS:0 */1 * * * *}
+  mail-batallas: ${CRON_MAIL_BATTALLAS:0 */5 * * * *}
+  resultados-batallas: ${CRON_RESULTADOS_BATTALLAS:0 */1 * * * *}
 
 mail:
   host: ${MAIL_HOST:smtp.gmail.com}

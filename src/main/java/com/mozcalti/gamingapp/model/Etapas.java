@@ -29,7 +29,7 @@ public class Etapas {
     @Column(name = "id_torneo")
     private Integer idTorneo;
 
-    @OneToMany(mappedBy = "etapasByIdEtapa", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "etapasByIdEtapa")
     private Collection<EtapaEquipo> etapaEquiposByIdEtapa;
 
     @OneToOne(mappedBy = "etapas")
@@ -42,13 +42,13 @@ public class Etapas {
     @JoinColumn(name = "id_torneo", referencedColumnName = "id_torneo", insertable = false, updatable = false)
     private Torneos torneosByIdTorneo;
 
-    public Etapas(EtapaDTO etapaDTO, Torneos torneos) {
+    public Etapas(EtapaDTO etapaDTO, Integer idTorneo) {
         if(etapaDTO.getIdEtapa() != null) {
             this.idEtapa = etapaDTO.getIdEtapa();
         }
         this.numeroEtapa = etapaDTO.getNumeroEtapa();
         this.fechaInicio = etapaDTO.getFechaInicio();
         this.fechaFin = etapaDTO.getFechaFin();
-        this.idTorneo = torneos.getIdTorneo();
+        this.idTorneo = idTorneo;
     }
 }

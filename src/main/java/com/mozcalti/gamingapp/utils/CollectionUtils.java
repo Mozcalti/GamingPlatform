@@ -1,5 +1,8 @@
 package com.mozcalti.gamingapp.utils;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -7,6 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CollectionUtils {
 
     public static List<Integer> getRandomNumbers(List<Integer> idEquipos) throws NoSuchAlgorithmException {

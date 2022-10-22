@@ -83,9 +83,28 @@ public final class DateUtils {
         }
     }
 
+ public static boolean isHoursRangoValid(String horaIni, String horaFin,
+                                            String horaValidar, String formato) {
+
+        boolean resultado = false;
+        Calendar calendarIni = getDateFormat(horaIni, formato);
+        Calendar calendarFin = getDateFormat(horaFin, formato);
+        Calendar calendarHoraValidar = getDateFormat(horaValidar, formato);
+
+        boolean isEquals = calendarHoraValidar.equals(calendarIni) || calendarHoraValidar.equals(calendarFin);
+        boolean isValid = calendarHoraValidar.after(calendarIni) && calendarHoraValidar.before(calendarFin);
+
+        if(isEquals || isValid) {
+            resultado = true;
+        }
+
+        return resultado;
+
+    }
+
     public static boolean isHoursRangoValid(String horaIni, String horaFin,
-                                            String horaIniValid, String horaFinValid,
-                                            String formato) {
+                                         String horaIniValid, String horaFinValid,
+                                         String formato) {
 
         StringBuilder sHoraIniValid = new StringBuilder();
         StringBuilder sHoraFinValid = new StringBuilder();
@@ -96,9 +115,16 @@ public final class DateUtils {
         Calendar calendarIniValid = getDateFormat(sHoraIniValid.toString(), formato);
         Calendar calendarFinValid = getDateFormat(sHoraFinValid.toString(), formato);
 
-        return !calendarIni.before(calendarIniValid) && !calendarFin.after(calendarFinValid);
+        boolean resultado = true;
+
+        if(calendarIni.before(calendarIniValid) || calendarFin.after(calendarFinValid)) {
+            resultado = false;
+        }
+
+        return resultado;
 
     }
+
 
     public static Date addMinutos(Date date, int minutos) throws ValidacionException {
         if (date != null) {

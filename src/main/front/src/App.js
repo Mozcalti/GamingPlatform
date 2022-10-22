@@ -23,6 +23,7 @@ function App() {
                 <Route path="/usuarios" element={<UsersList />}/>
                 <Route path="/registro" element={<ActivationLanding />}/>
                 <Route path="/activacion" element={<ActivationForm />}/>
+                <Route path="/participantes" element={<ParticipantesList />}/>
             </Routes>
         </BrowserRouter>
     );

@@ -37,11 +37,18 @@ public class Batallas {
     @Column(name = "bnd_envio_correo")
     private Integer bndEnvioCorreo;
 
+    @Basic
+    @Column(name = "bnd_termina")
+    private Integer bndTermina;
+
     @OneToMany(mappedBy = "batallasByIdBatalla", fetch = FetchType.EAGER)
     private Collection<BatallaParticipantes> batallaParticipantesByIdBatalla;
 
     @OneToMany(mappedBy = "batallasByIdBatalla")
     private Collection<EtapaBatalla> etapaBatallasByIdBatalla;
+
+    @OneToMany(mappedBy = "batallasByIdBatalla")
+    private Collection<Resultados> resultadosByIdBatalla;
 
     public Batallas(BatallaDTO batallaDTO) {
         this.fecha = batallaDTO.getFecha();
@@ -49,5 +56,6 @@ public class Batallas {
         this.horaFin = batallaDTO.getHoraFin();
         this.rondas = batallaDTO.getRondas();
         this.bndEnvioCorreo = 0;
+        this.bndTermina = 0;
     }
 }
