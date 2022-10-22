@@ -8,26 +8,22 @@ import {Undo} from "@mui/icons-material";
 
 const ActivationLanding = () => {
     const queryParams = new URLSearchParams(window.location.search)
-    const token = queryParams.get("token")
-
     const navigate = useNavigate();
-
     const [message, setMessage] = useState("");
 
-    const validaToken = token => {
-        RegistroService
-            .verify(token)
-            .then( () => {
-                    navigate(`/activacion?token=${token}`);
-                },
-                error => {
-                    setMessage(error.response.data);
-                })
-    }
-
-
     useEffect(() => {
-        validaToken(token)
+        const validaToken = token => {
+            RegistroService
+                .verify(token)
+                .then( () => {
+                        navigate(`/activacion?token=${token}`);
+                    },
+                    error => {
+                        setMessage(error.response.data);
+                    })
+        };
+
+        validaToken(queryParams.get("token"))
     }, []);
 
     return (<div>
