@@ -154,123 +154,108 @@
         </dependency>
 
         <!-- Robocode -->
+
+        <!-- https://mvnrepository.com/artifact/net.sf.robocode/robocode.api -->
         <dependency>
             <groupId>net.sf.robocode</groupId>
-            <artifactId>robocode-host</artifactId>
+            <artifactId>robocode.api</artifactId>
+            <version>1.9.4.7</version>
+        </dependency>
+
+
+        <!-- https://mvnrepository.com/artifact/net.sf.robocode/robocode.host -->
+        <dependency>
+            <groupId>net.sf.robocode</groupId>
+            <artifactId>robocode.host</artifactId>
             <version>1.9.4.7</version>
             <scope>provided</scope>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/net.sf.robocode/robocode.battle -->
         <dependency>
             <groupId>net.sf.robocode</groupId>
-            <artifactId>robocode-battle</artifactId>
+            <artifactId>robocode.battle</artifactId>
             <version>1.9.4.7</version>
             <scope>provided</scope>
         </dependency>
 
+
+        <!-- https://mvnrepository.com/artifact/net.sf.robocode/robocode.repository -->
         <dependency>
             <groupId>net.sf.robocode</groupId>
-            <artifactId>robocode-repository</artifactId>
+            <artifactId>robocode.repository</artifactId>
             <version>1.9.4.7</version>
-            <scope>provided</scope>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/net.sf.robocode/robocode.core -->
         <dependency>
             <groupId>net.sf.robocode</groupId>
-            <artifactId>robocode-core</artifactId>
+            <artifactId>robocode.core</artifactId>
             <version>1.9.4.7</version>
-            <scope>provided</scope>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/net.sf.robocode/robocode.ui -->
         <dependency>
             <groupId>net.sf.robocode</groupId>
-            <artifactId>robocode-sound</artifactId>
+            <artifactId>robocode.ui</artifactId>
             <version>1.9.4.7</version>
-            <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>net.sf.robocode</groupId>
-            <artifactId>robocode-ui-editor</artifactId>
-            <version>1.9.4.7</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>net.sf.robocode</groupId>
-            <artifactId>robocode-ui</artifactId>
-            <version>1.9.4.7</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>net.sf.robocode</groupId>
-            <artifactId>robocode</artifactId>
-            <version>1.0</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>net.sf.robocode</groupId>
-            <artifactId>roborumble</artifactId>
-            <version>1.0</version>
-            <scope>provided</scope>
-        </dependency>
-
+        <!-- https://mvnrepository.com/artifact/org.apache.bcel/bcel -->
         <dependency>
             <groupId>org.apache.bcel</groupId>
             <artifactId>bcel</artifactId>
             <version>6.2</version>
-            <scope>provided</scope>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.osgi/osgi.annotation -->
         <dependency>
-            <groupId>org.osgi.annotation</groupId>
-            <artifactId>osgi-annotation</artifactId>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi.annotation</artifactId>
             <version>8.0.1</version>
             <scope>provided</scope>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.picocontainer/picocontainer -->
         <dependency>
             <groupId>org.picocontainer</groupId>
             <artifactId>picocontainer</artifactId>
             <version>2.14.2</version>
-            <scope>provided</scope>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.osgi/org.osgi.service.prefs -->
         <dependency>
-            <groupId>org.osgi.service</groupId>
-            <artifactId>org-osgi-service-prefs</artifactId>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.service.prefs</artifactId>
             <version>1.1.2</version>
-            <scope>provided</scope>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-stdlib-common -->
         <dependency>
-            <groupId>kotiln.stdlib</groupId>
+            <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib-common</artifactId>
             <version>1.5.20</version>
-            <scope>provided</scope>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-stdlib -->
         <dependency>
-            <groupId>kotiln.stdlib</groupId>
+            <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
             <version>1.5.20</version>
-            <scope>provided</scope>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/net.sf.robocode/codesize -->
         <dependency>
-            <groupId>codesize</groupId>
+            <groupId>net.sf.robocode</groupId>
             <artifactId>codesize</artifactId>
             <version>1.2</version>
-            <scope>provided</scope>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.jetbrains/annotations -->
         <dependency>
-            <groupId>org.jetbrains.annotations</groupId>
+            <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>13.0</version>
-            <scope>provided</scope>
         </dependency>
 
     </dependencies>

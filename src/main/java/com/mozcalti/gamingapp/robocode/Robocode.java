@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import lombok.Setter;
+
 import net.sf.robocode.battle.events.BattleEventDispatcher;
 import net.sf.robocode.recording.RecordManager;
 import net.sf.robocode.settings.ISettingsManager;
