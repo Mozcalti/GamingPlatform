@@ -409,8 +409,8 @@ function prepareAnimation(xmlDoc, callback) {
     bulletImage.src = "../public/img/bullets/bullet.png";
     let goneImage = new Image();
     goneImage.src = "";
-    let explosionFramesArr = createFramesArr("../public/img/explosion/explosion2-", 68);
-    let hitTargetFramesArr = createFramesArr("../public/img/explosion/explosion1-", 16);
+    let explosionFramesArr = createFramesArr("../public/img/explosion/explosion2_", 68);
+    let hitTargetFramesArr = createFramesArr("../public/img/explosion/explosion1_", 16);
     let attackImagesArray = [];
     attackImagesArray.push(bulletImage);
     attackImagesArray.push(goneImage);

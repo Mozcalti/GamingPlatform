@@ -1,16 +1,15 @@
 package com.mozcalti.gamingapp.repository;
 
 import com.mozcalti.gamingapp.model.Robots;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface RobotsRepository extends PagingAndSortingRepository<Robots, Integer>, JpaSpecificationExecutor<Robots> {
+public interface RobotsRepository extends CrudRepository<Robots, Integer> {
 
     Robots findByNombre(String nombre);
     void deleteByIdRobot(int idRobot);
@@ -24,5 +23,4 @@ public interface RobotsRepository extends PagingAndSortingRepository<Robots, Int
     List<Robots> findAllByIdEquipo(Integer idEquipo);
 
     List<Robots> findAllByNombre(String nombre);
-
 }
