@@ -42,8 +42,8 @@ public class BattleRunner {
         robocode.setRecordManager(new RecordManager(robocode.getProperties(), robocode.getVersionManager()));
         robocode.setBattleEventDispatcher(new BattleEventDispatcher());
         robocode.getRecordManager().attachRecorder(robocode.getBattleEventDispatcher());
-        robocode.getEngine().addBattleListener(robocode.getRecordManager().getRecorder().getBattleObserver());
-        robocode.getRecordManager().getRecorder().setFileId(xmlFileId);
+        //robocode.getEngine().addBattleListener(robocode.getRecordManager().getRecorder().getBattleObserver());
+       //robocode.getRecordManager().getRecorder().setFileId(xmlFileId);
         robocode.setBattleField(new BattlefieldSpecification(battleFieldWidth, battleFieldHeight));
     }
 
