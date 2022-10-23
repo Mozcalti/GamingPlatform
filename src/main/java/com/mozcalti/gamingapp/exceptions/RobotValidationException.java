@@ -1,8 +1,5 @@
 package com.mozcalti.gamingapp.exceptions;
 
-
-import lombok.NoArgsConstructor;
-
 public class RobotValidationException extends RuntimeException{
 
     public RobotValidationException(String message) {

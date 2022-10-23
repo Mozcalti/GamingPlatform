@@ -1,5 +1,6 @@
 package com.mozcalti.gamingapp.controller;
 
+import com.mozcalti.gamingapp.model.Equipos;
 import com.mozcalti.gamingapp.model.Robots;
 import com.mozcalti.gamingapp.model.dto.*;
 import com.mozcalti.gamingapp.service.RobotsService;
@@ -7,7 +8,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import java.util.List;
@@ -26,13 +26,18 @@ public class RobotController {
     }
 
     @PostMapping(value = "/guardarRobot")
-    public void guardarRobot(@RequestBody Robots robot) {
+    public void guardarRobot(@RequestBody RobotsDTO robotDTO) {
+        Robots robot = new Robots();
+        robot.setNombre(robotDTO.getNombre());
+        robot.setActivo(robotDTO.getActivo());
+        robot.setIdEquipo(1);
+        robot.setEquiposByIdEquipo(new Equipos());
         robotsService.guardarRobot(robot);
     }
 
     @PostMapping(value = "/eliminarRobot")
-    public void eliminarRobot(@RequestParam(value="nombreRobot") String nombreRobot, @RequestParam(value="idRobot") int idRobot) throws NoSuchFileException {
-        robotsService.eliminarRobot(nombreRobot, idRobot);
+    public void eliminarRobot(@RequestParam(value="idRobot") int idRobot) throws NoSuchFileException {
+        robotsService.eliminarRobot(idRobot);
     }
 
     @GetMapping(value ="/verRobots")

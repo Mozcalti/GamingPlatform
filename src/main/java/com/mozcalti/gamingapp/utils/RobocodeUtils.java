@@ -15,6 +15,7 @@ public final class RobocodeUtils {
     }
     public static String getRobotClassName(String file, String type) throws FileNotFoundException {
         ArrayList<String> classNames = new ArrayList<>();
+        log.error(file + " TEST");
         try(ZipInputStream zip = new ZipInputStream(new FileInputStream(file)))
         {
             for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {

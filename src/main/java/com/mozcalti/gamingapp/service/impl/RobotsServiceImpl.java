@@ -23,7 +23,9 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -49,6 +51,27 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
     private static final boolean TESTISRECORDED = false;
     private static final int TESTSIZE = 800;
     private static final int TESTROUNDS = 1;
+    private static final Character[] INVALID_WINDOWS_SPECIFIC_CHARS = {'"', '*', '<', '>', '?', '|'};
+    private static final Character[] INVALID_UNIX_SPECIFIC_CHARS = {'\000'};
+
+    public static Character[] getInvalidCharsByOS() {
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.contains("win")) {
+            return INVALID_WINDOWS_SPECIFIC_CHARS;
+        } else if (os.contains("nix") || os.contains("nux") || os.contains("mac")) {
+            return INVALID_UNIX_SPECIFIC_CHARS;
+        } else {
+            return new Character[]{};
+        }
+    }
+
+    public static boolean validateStringFilenameUsingContains(String filename) {
+        if (filename == null || filename.isEmpty() || filename.length() > 255) {
+            return false;
+        }
+        return Arrays.stream(getInvalidCharsByOS())
+                .noneMatch(ch -> filename.contains(ch.toString()));
+    }
 
     @Override
     public RobotsDTO cargarRobot(int idEquipo, String tipo, MultipartFile file) throws IOException {
@@ -57,9 +80,15 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
                 byte[] bytes;
                 bytes = file.getBytes();
                 String fileName = file.getOriginalFilename();
-                File copiedFile = copyFile(file);
-                return validateRobotJar(copiedFile, fileName, tipo, idEquipo, bytes);
-            }
+                try{
+                    if(validateStringFilenameUsingContains(fileName)){
+                        File copiedFile = copyFile(fileName);
+                        return validateRobotJar(copiedFile, fileName, tipo, idEquipo, bytes);
+                    }
+                }catch (RuntimeException e){
+                    throw new RobotValidationException("Error con el nombre del archivo");
+                }
+             }
         } else {
             throw new RobotValidationException("El archivo que intentas cargar esta vacío.");
         }
@@ -72,9 +101,12 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
     }
 
     @Override
-    public void eliminarRobot(String nombreRobot, int idRobot) throws NoSuchFileException {
-        borrarRobot(nombreRobot);
-        robotsRepository.deleteByIdRobot(idRobot);
+    public void eliminarRobot(int idRobot) throws NoSuchFileException {
+        Optional<Robots> robot = robotsRepository.findById(idRobot);
+        if(robot.isPresent()){
+            borrarRobot(robot.get().getNombre());
+            robotsRepository.deleteByIdRobot(idRobot);
+        }
     }
 
     public void borrarRobot(String nombreRobot) throws NoSuchFileException {
@@ -96,9 +128,9 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
         return robotsRepository.findAllByIdEquipo(idEquipo);
     }
 
-    public File copyFile(MultipartFile file){
+    public File copyFile(String fileName){
         File dir = new File(pathRobots);
-        return new File(dir.getAbsolutePath() + File.separator + file.getOriginalFilename());
+        return new File(dir.getAbsolutePath() + File.separator + fileName);
     }
 
     public RobotsDTO validateRobotJar(File serverFile, String fileName, String tipo, int idEquipo, byte[] bytes) throws IOException {
@@ -129,7 +161,7 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
                 //se piensa subir un robot, busca el .team, no lo encuentra, solo hay un .properties, entonces si es un robot
                 if(!RobocodeUtils.isRobotType(serverFile.getPath().replace('\\', '/'), extension)) {
                     extension = ".class";
-                    testRobot = validateName(serverFile, extension, fileName);            //obtenemos el nombre que necesita robocode para buscarlo y cargarlo en la batalla
+                    testRobot = validateName(extension, fileName);            //obtenemos el nombre que necesita robocode para buscarlo y cargarlo en la batalla
                 }else{
                     log.error("Estas intentando subir a un team, no un robot" + pathRobots + "/" + fileName);
                     Files.delete(Paths.get(pathRobots + "/" + fileName));
@@ -138,7 +170,7 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
             }else{
                 //se piensa subir un equipo, busca el .team, lo encuentra, entonces si es un equipo
                 if(RobocodeUtils.isRobotType(serverFile.getPath().replace('\\', '/'), extension)) {
-                    testRobot = validateName(serverFile, extension, fileName);
+                    testRobot = validateName(extension, fileName);
                 }else{
                     Files.delete(Paths.get(pathRobots + "/" + fileName));
                     throw new RobotValidationException("El tipo de robot elegido no coincide con el robot a cargar");
@@ -160,9 +192,9 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
         }
     }
 
-    public String validateName(File serverFile, String extension, String fileName) throws IOException {
+    public String validateName(String extension, String fileName) throws IOException {
         try{
-            return RobocodeUtils.getRobotClassName(serverFile.getPath().replace('\\', '/'), extension);
+            return RobocodeUtils.getRobotClassName(pathRobots+ "/" + fileName, extension);
         }catch (RuntimeException e){
             Files.delete(Paths.get(pathRobots + "/" + fileName));
             throw new IndexOutOfBoundsException("El robot no contiene un className apropiado.");
