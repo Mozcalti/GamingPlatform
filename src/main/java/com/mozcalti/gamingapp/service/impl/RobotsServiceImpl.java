@@ -79,9 +79,9 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
             if(!file.isEmpty()){
                 byte[] bytes;
                 bytes = file.getBytes();
-                String fileName = file.getOriginalFilename();
                 try{
-                    if(validateStringFilenameUsingContains(fileName)){
+                    if(validateStringFilenameUsingContains(file.getOriginalFilename())){
+                        String fileName = file.getOriginalFilename();
                         File copiedFile = copyFile(fileName);
                         return validateRobotJar(copiedFile, fileName, tipo, idEquipo, bytes);
                     }
@@ -150,6 +150,7 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
     }
 
     public RobotsDTO validateRobot(byte[] bytes, File serverFile, String tipo, int idEquipo, String fileName) throws IOException {
+
         try(BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile))) {
             stream.write(bytes);
             //sonarlint sugiere remover esta llamada, pero si no se hace no se puede ejecutar la batalla con ese robot apenas creado
