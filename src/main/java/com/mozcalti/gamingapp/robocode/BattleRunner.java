@@ -1,11 +1,10 @@
 package com.mozcalti.gamingapp.robocode;
 
-
-
 import com.mozcalti.gamingapp.exceptions.RobotValidationException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.robocode.battle.events.BattleEventDispatcher;
 import net.sf.robocode.recording.RecordManager;
 import net.sf.robocode.settings.SettingsManager;
@@ -15,9 +14,14 @@ import robocode.control.BattlefieldSpecification;
 import robocode.control.RobocodeEngine;
 import robocode.control.RobotSpecification;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 @Getter
 @Setter
 @AllArgsConstructor
+@Slf4j
 public class BattleRunner {
 
     private Robocode robocode;
@@ -43,18 +47,28 @@ public class BattleRunner {
         robocode.setBattleField(new BattlefieldSpecification(battleFieldWidth, battleFieldHeight));
     }
 
+    public void runBattle(String pathRobots, String fileName) throws IOException {
+        RobotSpecification[] selectedRobots;
+        BattleSpecification battleSpec;
 
-    public void runBattle() {
         try {
-            RobotSpecification[] selectedRobots = robocode.getEngine().getLocalRepository(robots);
-            BattleSpecification battleSpec = new BattleSpecification(numberOfRounds, robocode.getBattleField(), selectedRobots);
+            selectedRobots = robocode.getEngine().getLocalRepository(robots);
+            battleSpec = new BattleSpecification(numberOfRounds, robocode.getBattleField(), selectedRobots);
             robocode.getEngine().runBattle(battleSpec, true);
             robocode.getEngine().close();
-            //robocode.getEngine().finalize();
-        }catch(Exception e) {
+        }catch(RuntimeException e) {
+            /*
+                Si el robot es invalido, se debe crear una mini batalla que lo libere para poder borrarlo, ya que es imposible
+                borrarlo, cambiar su nombre o moverlo de directorio mientras antes de lanzar la excepcion que arroja Robocode.
+                Después de esa excepción no encontré la manera de borrarlo, ya que inclusive intenté borrarlo manualmente y no me permite
+                "La acción no se puede completar porque Java(TM) Platform SE binary tiene abierto el archivo.
+            */
+            selectedRobots = robocode.getEngine().getLocalRepository("sample.Fire,sample.Fire");
+            battleSpec = new BattleSpecification(numberOfRounds, robocode.getBattleField(), selectedRobots);
+            robocode.getEngine().runBattle(battleSpec, true);
+            robocode.getEngine().close();
+            Files.delete(Paths.get(pathRobots + fileName + ".jar"));
             throw new RobotValidationException("El robot no es válido. Debe de ser implementado de acuerdo al procedimiento sugerido y compilado con Java 18.");
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
         }
     }
 }

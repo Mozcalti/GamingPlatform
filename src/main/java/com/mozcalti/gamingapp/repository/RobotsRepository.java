@@ -13,12 +13,16 @@ import java.util.List;
 public interface RobotsRepository extends PagingAndSortingRepository<Robots, Integer>, JpaSpecificationExecutor<Robots> {
 
     Robots findByNombre(String nombre);
-    void deleteById(int idRobot);
+    void deleteByIdRobot(int idRobot);
 
-    List<Robots> findAllByIdParticipante(int idParticipante);
+    List<Robots> findAllByIdEquipo(int idParticipante);
 
     @Modifying
     @Query("UPDATE Robots robot SET robot.activo = ?1 where robot.idRobot = ?2")
     int updateActivo(Integer activo, int idRobot);
+
+    List<Robots> findAllByIdEquipo(Integer idEquipo);
+
+    List<Robots> findAllByNombre(String nombre);
 
 }

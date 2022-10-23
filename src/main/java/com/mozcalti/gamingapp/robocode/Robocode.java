@@ -2,7 +2,6 @@ package com.mozcalti.gamingapp.robocode;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 import lombok.Setter;
 import net.sf.robocode.battle.events.BattleEventDispatcher;
