@@ -153,6 +153,109 @@
             <version>1.4.19</version>
         </dependency>
 
+        <!-- Robocode -->
+        <dependency>
+            <groupId>net.sf.robocode</groupId>
+            <artifactId>robocode-host</artifactId>
+            <version>1.9.4.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sf.robocode</groupId>
+            <artifactId>robocode-battle</artifactId>
+            <version>1.9.4.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sf.robocode</groupId>
+            <artifactId>robocode-repository</artifactId>
+            <version>1.9.4.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sf.robocode</groupId>
+            <artifactId>robocode-core</artifactId>
+            <version>1.9.4.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sf.robocode</groupId>
+            <artifactId>robocode-sound</artifactId>
+            <version>1.9.4.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sf.robocode</groupId>
+            <artifactId>robocode-ui-editor</artifactId>
+            <version>1.9.4.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sf.robocode</groupId>
+            <artifactId>robocode-ui</artifactId>
+            <version>1.9.4.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sf.robocode</groupId>
+            <artifactId>robocode</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sf.robocode</groupId>
+            <artifactId>roborumble</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.bcel</groupId>
+            <artifactId>bcel</artifactId>
+            <version>6.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.osgi.annotation</groupId>
+            <artifactId>osgi-annotation</artifactId>
+            <version>8.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.picocontainer</groupId>
+            <artifactId>picocontainer</artifactId>
+            <version>2.14.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.osgi.service</groupId>
+            <artifactId>org-osgi-service-prefs</artifactId>
+            <version>1.1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>kotiln.stdlib</groupId>
+            <artifactId>kotlin-stdlib-common</artifactId>
+            <version>1.5.20</version>
+        </dependency>
+
+        <dependency>
+            <groupId>kotiln.stdlib</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+            <version>1.5.20</version>
+        </dependency>
+
+        <dependency>
+            <groupId>codesize</groupId>
+            <artifactId>codesize</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jetbrains.annotations</groupId>
+            <artifactId>annotations</artifactId>
+            <version>13.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>
