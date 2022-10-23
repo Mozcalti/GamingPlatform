@@ -28,7 +28,7 @@ public class JwtUtil {
     public String getToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
-                .setExpiration(DateUtils.toDate(LocalDateTime.now().plusSeconds(expirationTime)))
+                .setExpiration(DateUtils.toDate(DateUtils.now().plusSeconds(expirationTime)))
                 .signWith(key)
                 .compact();
     }

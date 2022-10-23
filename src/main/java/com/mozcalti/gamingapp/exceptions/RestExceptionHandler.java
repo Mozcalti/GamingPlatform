@@ -1,8 +1,6 @@
 package com.mozcalti.gamingapp.exceptions;
 
-
-
-import com.mozcalti.gamingapp.utils.Utils;
+import com.mozcalti.gamingapp.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
@@ -38,6 +36,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     private ResponseEntity<ErrorResponse> buildResponseEntity(HttpStatus httpStatus, Exception exception, String err){
         log.error("Error al procesar la petición", exception);
-        return ResponseEntity.status(httpStatus).body(new ErrorResponse(httpStatus.value(),err,"GPA-" + exception.getLocalizedMessage(), Utils.FORMATTER.format(Utils.LOCAL_DATE_TIME)));
+        return ResponseEntity.status(httpStatus).body(new ErrorResponse(httpStatus.value(),err,"GPA-" + exception.getLocalizedMessage(), DateUtils.formatDate(DateUtils.now())));
     }
 }

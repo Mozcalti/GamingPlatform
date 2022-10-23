@@ -6,10 +6,10 @@ import com.mozcalti.gamingapp.model.dto.*;
 import com.mozcalti.gamingapp.repository.InstitucionRepository;
 import com.mozcalti.gamingapp.repository.ParticipantesRepository;
 import com.mozcalti.gamingapp.service.ParticipantesService;
+import com.mozcalti.gamingapp.utils.DateUtils;
+import com.mozcalti.gamingapp.utils.FileUtils;
 import com.mozcalti.gamingapp.utils.Numeros;
-import com.mozcalti.gamingapp.utils.Utils;
 import com.mozcalti.gamingapp.utils.Validaciones;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -23,12 +23,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.criteria.Predicate;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 
 @Service
-public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, Integer> implements ParticipantesService, Utils {
+public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, Integer> implements ParticipantesService {
 
     @Autowired
     private ParticipantesRepository participantesRepository;
@@ -104,8 +103,8 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
     @Override
     public List<Participantes> guardarParticipantes(List<Participantes> participantes) {
         for (Participantes participante : participantes) {
-            participante.setFechaCreacion(FORMATTER.format(Utils.LOCAL_DATE_TIME));
-            participante.setFoto(encodeImageToString(pathParticipantes));
+            participante.setFechaCreacion(DateUtils.formatDate(DateUtils.now()));
+            participante.setFoto(FileUtils.encodeImageToString(pathParticipantes + "/participanteFotoDefaul.png"));
         }
         return (List<Participantes>) participantesRepository.saveAll(participantes);
     }
@@ -164,8 +163,8 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
         participante.setIes(participanteDTO.getIes());
         participante.setCarrera(participanteDTO.getCarrera());
         participante.setSemestre(participanteDTO.getSemestre());
-        participante.setFoto(encodeImageToString(pathParticipantes));
-        participante.setFechaCreacion(FORMATTER.format(LOCAL_DATE_TIME));
+        participante.setFoto(FileUtils.encodeImageToString(pathParticipantes + "/participanteFotoDefaul.png"));
+        participante.setFechaCreacion(DateUtils.formatDate(DateUtils.now()));
         participante.setIdInstitucion(institucionRepository.findById(participanteDTO.getIdInstitucion()).get().getId());
         return participantesRepository.save(participante);
     }
@@ -176,14 +175,5 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
                 .map(c -> criteriaBuilder.like(root.get(c.getName()), "%" + text + "%"))
                 .toArray(Predicate[]::new)
         ));
-    }
-
-    @Override
-    public String encodeImageToString(String path) {
-        try (FileInputStream file = new FileInputStream(path + "/participanteFotoDefaul.png")) {
-            return Base64.encodeBase64String(file.readAllBytes());
-        } catch (IOException exception) {
-            throw new IllegalArgumentException(String.format("La imagen no es correcta %s", exception));
-        }
     }
 }
