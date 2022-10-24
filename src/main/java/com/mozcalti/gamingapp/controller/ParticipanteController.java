@@ -44,4 +44,10 @@ public class ParticipanteController {
     public void guardarParticipante(@RequestBody ParticipanteDTO participanteDTO) {
         participantesService.guardarParticipante(participanteDTO);
     }
+
+
+    @PostMapping(value = "/actualizarParticipante")
+    public void actualizarParticipante(@RequestBody TablaParticipantesDTO participanteDTO) {
+        participantesService.actualizarParticipante(participanteDTO);
+    }
 }
