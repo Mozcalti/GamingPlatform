@@ -18,7 +18,6 @@ public final class RobocodeUtils {
 
     public static String getRobotClassName(String file, String type) throws IOException {
         ArrayList<String> classNames = new ArrayList<>();
-        log.error(file + " TEST");
         if (validateZip(file)) {
             try (ZipInputStream zip = new ZipInputStream(new FileInputStream(file))) {
                 for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
@@ -36,17 +35,20 @@ public final class RobocodeUtils {
         return null;
     }
 
-    public static boolean isRobotType(String file, String type) throws FileNotFoundException {
-        try (ZipInputStream zip = new ZipInputStream(new FileInputStream(file))) {
-            for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
-                if (!entry.isDirectory() && entry.getName().endsWith(type)) {
-                    return true;
+    public static boolean isRobotType(String file, String type) throws IOException {
+        if (validateZip(file)) {
+            try (ZipInputStream zip = new ZipInputStream(new FileInputStream(file))) {
+                for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
+                    if (!entry.isDirectory() && entry.getName().endsWith(type)) {
+                        return true;
+                    }
                 }
+                return false;
+            } catch (IOException e) {
+                throw new FileNotFoundException("El archivo de tu robot no se puede abrir." + e);
             }
-            return false;
-        } catch (IOException e) {
-            throw new FileNotFoundException("El archivo de tu robot no se puede abrir." + e);
         }
+        return false;
     }
 
     private static boolean validateZip(String file) throws IOException {

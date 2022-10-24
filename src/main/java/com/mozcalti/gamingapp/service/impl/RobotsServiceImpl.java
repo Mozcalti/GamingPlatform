@@ -84,9 +84,11 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
                         String fileName = file.getOriginalFilename();
                         File copiedFile = copyFile(fileName);
                         return validateRobotJar(copiedFile, fileName, tipo, idEquipo, bytes);
+                    }else{
+                        throw new RobotValidationException("El nombre del robot no es valido.");
                     }
                 }catch (RuntimeException e){
-                    throw new RobotValidationException("Error con el nombre del archivo");
+                    throw new RobotValidationException("Error al cargar el archivo del robot");
                 }
              }
         } else {
