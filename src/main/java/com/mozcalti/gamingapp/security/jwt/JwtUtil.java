@@ -9,9 +9,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.security.Keys;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
-import java.time.LocalDateTime;
 
 @Component
 @Slf4j
@@ -23,7 +23,14 @@ public class JwtUtil {
     @Value("${security.jwt.token.prefix}")
     private String prefix;
 
-    static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    @Value("${security.jwt.token.secret}")
+    private byte[] jwtSecretKey;
+    private Key key;
+
+    @PostConstruct
+    void generateKey(){
+        key = Keys.hmacShaKeyFor(jwtSecretKey);
+    }
 
     public String getToken(String username) {
         return Jwts.builder()
@@ -38,7 +45,7 @@ public class JwtUtil {
 
         String user = null;
 
-        if(token != null) {
+        if (token != null) {
             user = Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()

@@ -12,6 +12,7 @@ security:
       token-validity: 3 #3 dias
   jwt:
     token:
+      secret: 4K2qXPg@14lCwV360#XCGt&#B3#?s!p0
       duration: 36000
       prefix: Bearer
   paths:

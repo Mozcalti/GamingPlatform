@@ -6,6 +6,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -24,7 +25,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleServerException(Exception exc){
         HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         return buildResponseEntity(httpStatus,
-                new RuntimeException("Ocurrió un error al procesar su solicitud. El equipo técnico está enterado y está trabajando en solucionarlo",exc),
+                new RuntimeException(StringUtils.hasText(exc.getMessage()) ? exc.getMessage() : "Ocurrió un error al procesar su solicitud. El equipo técnico está enterado y está trabajando en solucionarlo",exc),
                 httpStatus.name());
     }
 

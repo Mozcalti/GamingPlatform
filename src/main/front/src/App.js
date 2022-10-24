@@ -13,6 +13,9 @@ function App() {
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<Login/>}/>
+                <Route path="/registro" element={<ActivationLanding/>}/>
+                <Route path="/activacion" element={<ActivationForm/>}/>
+
                 <Route
                     path="/mi-perfil"
                     element={
@@ -21,10 +24,23 @@ function App() {
                         </Protected>
                     }
                 />
-                <Route path="/usuarios" element={<UsersList />}/>
-                <Route path="/registro" element={<ActivationLanding />}/>
-                <Route path="/activacion" element={<ActivationForm />}/>
-                <Route path="/participantes" element={<ParticipantesList />}/>
+
+                <Route
+                    path="/usuarios"
+                    element={
+                        <Protected>
+                            <UsersList/>
+                        </Protected>
+                    }/>
+
+                <Route
+                    path="/participantes"
+                    element={
+                        <Protected>
+                            <ParticipantesList/>
+                        </Protected>
+                    }
+                />
             </Routes>
         </BrowserRouter>
     );
