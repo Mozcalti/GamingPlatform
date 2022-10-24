@@ -182,12 +182,12 @@ public class DashboardServiceImpl implements DashboardService {
                     StringBuilder participantes = new StringBuilder();
                     Optional<Institucion> institucion = Optional.empty();
                     for(ParticipanteEquipo participanteEquipo : equipos.orElseThrow().getParticipanteEquiposByIdEquipo()) {
-                        Optional<Participantes> participante = participantesRepository.findById(participanteEquipo.getIdParticipante());
+                        Optional<Participante> participante = participantesRepository.findById(participanteEquipo.getIdParticipante());
 
                         participantes.append(participante.orElseThrow().getNombre()).append(" ").append(participante.orElseThrow().getApellidos()).append(",");
 
                         if(!institucion.isPresent()) {
-                            institucion = institucionRepository.findById(participante.orElseThrow().getIdInstitucion());
+                            institucion = Optional.ofNullable(participante.orElseThrow().getInstitucion());
                         }
                     }
 

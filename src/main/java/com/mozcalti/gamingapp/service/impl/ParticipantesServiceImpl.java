@@ -1,7 +1,7 @@
 package com.mozcalti.gamingapp.service.impl;
 
 import com.mozcalti.gamingapp.commons.GenericServiceImpl;
-import com.mozcalti.gamingapp.model.Participantes;
+import com.mozcalti.gamingapp.model.Participante;
 import com.mozcalti.gamingapp.model.dto.*;
 import com.mozcalti.gamingapp.repository.InstitucionRepository;
 import com.mozcalti.gamingapp.repository.ParticipantesRepository;
@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.util.*;
 
 @Service
-public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, Integer> implements ParticipantesService {
+public class ParticipantesServiceImpl extends GenericServiceImpl<Participante, Integer> implements ParticipantesService {
 
     @Autowired
     private ParticipantesRepository participantesRepository;
@@ -36,7 +36,7 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
     private InstitucionRepository institucionRepository;
 
     @Override
-    public CrudRepository<Participantes, Integer> getDao() {
+    public CrudRepository<Participante, Integer> getDao() {
         return participantesRepository;
     }
 
@@ -55,7 +55,7 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
             while (iterator.hasNext()) {
                 Row nextRow = iterator.next();
                 Iterator<Cell> cellIterator = nextRow.cellIterator();
-                Participantes participantes = new Participantes();
+                Participante participantes = new Participante();
 
 
                 while (cellIterator.hasNext()) {
@@ -75,7 +75,7 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
                     if (nextCell.getColumnIndex() == Numeros.SIETE.getNumero())
                         participantes.setSemestre((int) nextCell.getNumericCellValue());
                     if (nextCell.getColumnIndex() == Numeros.OCHO.getNumero())
-                        participantes.setIdInstitucion(institucionRepository.findByNombre(nextCell.getStringCellValue()).getId());
+                        participantes.setInstitucion(institucionRepository.findByNombre(nextCell.getStringCellValue()));
                 }
                 if (participantesRepository.findByCorreo(participantes.getCorreo()) != null)
                     throw new DuplicateKeyException("Ya esta registrado en el sistema un participante con correo " + "'" + participantes.getCorreo() + "'");
@@ -88,7 +88,7 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
                             participantes.getIes(),
                             participantes.getCarrera(),
                             participantes.getSemestre(),
-                            participantes.getIdInstitucion()));
+                            participantes.getInstitucion().getId()));
             }
             workbook.close();
             file.getInputStream().close();
@@ -101,20 +101,20 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
     }
 
     @Override
-    public List<Participantes> guardarParticipantes(List<Participantes> participantes) {
-        for (Participantes participante : participantes) {
+    public List<Participante> guardarParticipantes(List<Participante> participantes) {
+        for (Participante participante : participantes) {
             participante.setFechaCreacion(DateUtils.formatDate(DateUtils.now()));
             participante.setFoto(FileUtils.encodeImageToString(pathParticipantes + "/participanteFotoDefaul.png"));
         }
-        return (List<Participantes>) participantesRepository.saveAll(participantes);
+        return (List<Participante>) participantesRepository.saveAll(participantes);
     }
 
     @Override
     public List<TablaParticipantesDTO> listaParticipantes(String cadena) {
-        Specification<Participantes> query = Specification.where(containsTextInAttributes(cadena, Arrays.asList("nombre", "correo","institucion")));
-        List<Participantes> participantesPages = participantesRepository.findAll(query);
+        Specification<Participante> query = Specification.where(containsTextInAttributes(cadena, Arrays.asList("nombre", "correo", "institucion")));
+        List<Participante> participantesPages = participantesRepository.findAll(query);
 
-        List<TablaParticipantesDTO> tablaParticipantesDTO = participantesPages.stream()
+        return participantesPages.stream()
                 .map(p -> new TablaParticipantesDTO(
                         p.getIdParticipante(),
                         p.getNombre(),
@@ -126,17 +126,16 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
                         p.getSemestre(),
                         p.getFoto(),
                         p.getFechaCreacion(),
-                        institucionRepository.findById(p.getIdInstitucion()).get().getNombre()
+                        p.getInstitucion().getNombre()
                 )).toList();
-        return tablaParticipantesDTO;
     }
 
     @Override
     public TablaParticipantesDTO obtenerParticipante(Integer id) {
-        Optional<Participantes> participantes = participantesRepository.findById(id);
-        if (participantes.isEmpty()){
+        Optional<Participante> participantes = participantesRepository.findById(id);
+        if (participantes.isEmpty()) {
             throw new NoSuchElementException("No se encontro el participante en el sistema");
-        }else
+        } else
             return new TablaParticipantesDTO(
                     participantes.get().getIdParticipante(),
                     participantes.get().getNombre(),
@@ -148,13 +147,13 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
                     participantes.get().getSemestre(),
                     participantes.get().getFoto(),
                     participantes.get().getFechaCreacion(),
-                    institucionRepository.findById(participantes.get().getIdInstitucion()).get().getNombre());
+                    participantes.get().getInstitucion().getNombre());
     }
 
     @Override
-    public Participantes guardarParticipante(ParticipanteDTO participanteDTO) {
-        Participantes participante = new Participantes();
-        if(participantesRepository.findByCorreo(participanteDTO.getCorreo()) != null)
+    public Participante guardarParticipante(ParticipanteDTO participanteDTO) {
+        Participante participante = new Participante();
+        if (participantesRepository.findByCorreo(participanteDTO.getCorreo()) != null)
             throw new DuplicateKeyException(String.format("El participante '%s' ya esta registrado en el sistema", participanteDTO.getCorreo()));
         participante.setNombre(participanteDTO.getNombre());
         participante.setApellidos(participanteDTO.getApellidos());
@@ -165,11 +164,11 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
         participante.setSemestre(participanteDTO.getSemestre());
         participante.setFoto(FileUtils.encodeImageToString(pathParticipantes + "/participanteFotoDefaul.png"));
         participante.setFechaCreacion(DateUtils.formatDate(DateUtils.now()));
-        participante.setIdInstitucion(institucionRepository.findById(participanteDTO.getIdInstitucion()).get().getId());
+        participante.setInstitucion(institucionRepository.findById(participanteDTO.getIdInstitucion()).orElseThrow());
         return participantesRepository.save(participante);
     }
 
-    private Specification<Participantes> containsTextInAttributes(String text, List<String> attributes) {
+    private Specification<Participante> containsTextInAttributes(String text, List<String> attributes) {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.or(root.getModel().getDeclaredAttributes().stream()
                 .filter(a -> attributes.contains(a.getName()))
                 .map(c -> criteriaBuilder.like(root.get(c.getName()), "%" + text + "%"))
