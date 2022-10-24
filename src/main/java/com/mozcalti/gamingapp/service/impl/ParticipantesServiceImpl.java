@@ -171,22 +171,23 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
 
     @Override
     public Participantes actualizarParticipante(DetalleParticipanteDTO participanteDTO) {
-        Participantes participanteDB = participantesRepository.findById(participanteDTO.getIdParticipante()).get();
-        participanteDB.setNombre(participanteDTO.getNombre());
-        participanteDB.setApellidos(participanteDTO.getApellidos());
-        participanteDB.setCorreo(participanteDTO.getCorreo());
-        participanteDB.setAcademia(participanteDTO.getAcademia());
-        participanteDB.setIes(participanteDTO.getIes());
-        participanteDB.setCarrera(participanteDTO.getCarrera());
-        participanteDB.setSemestre(participanteDTO.getSemestre());
-        participanteDB.setFoto(participanteDTO.getFoto());
-        participanteDB.setFechaCreacion(participanteDTO.getFechaCreacion());
-        participanteDB.setIdInstitucion(participanteDTO.getIdInstitucion());
+        Participantes participanteDB = participantesRepository.findById(participanteDTO.getIdParticipante()).orElse(null);
+        if (participanteDB != null) {
+            participanteDB.setNombre(participanteDTO.getNombre());
+            participanteDB.setApellidos(participanteDTO.getApellidos());
+            participanteDB.setCorreo(participanteDTO.getCorreo());
+            participanteDB.setAcademia(participanteDTO.getAcademia());
+            participanteDB.setIes(participanteDTO.getIes());
+            participanteDB.setCarrera(participanteDTO.getCarrera());
+            participanteDB.setSemestre(participanteDTO.getSemestre());
+            participanteDB.setFoto(participanteDTO.getFoto());
+            participanteDB.setFechaCreacion(participanteDTO.getFechaCreacion());
+            participanteDB.setIdInstitucion(participanteDTO.getIdInstitucion());
+            return participantesRepository.save(participanteDB);
+        } else
+            throw new NoSuchElementException(String.format("El participante con el id '%s' no se encuentra en el sistema", participanteDTO.getIdParticipante()));
 
-        if (participanteDB == null)
-            throw new NoSuchElementException("No existe el participante con el en el sistema");
 
-        return participantesRepository.save(participanteDB);
     }
 
     private Specification<Participantes> containsTextInAttributes(String text, List<String> attributes) {
