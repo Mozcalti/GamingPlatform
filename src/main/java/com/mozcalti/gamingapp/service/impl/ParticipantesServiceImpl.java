@@ -127,17 +127,17 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
                         p.getSemestre(),
                         p.getFoto(),
                         p.getFechaCreacion(),
-                        institucionRepository.findById(p.getIdInstitucion()).get().getNombre()
+                        institucionRepository.findById(p.getIdInstitucion()).get().getId()
                 )).toList();
     }
 
     @Override
-    public DetalleParticipanteDTO obtenerParticipante(Integer id) {
+    public TablaParticipantesDTO obtenerParticipante(Integer id) {
         Optional<Participantes> participantes = participantesRepository.findById(id);
         if (participantes.isEmpty()) {
             throw new NoSuchElementException("No se encontro el participante en el sistema");
         } else
-            return new DetalleParticipanteDTO(
+            return new TablaParticipantesDTO(
                     participantes.get().getIdParticipante(),
                     participantes.get().getNombre(),
                     participantes.get().getApellidos(),
@@ -170,7 +170,7 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
     }
 
     @Override
-    public Participantes actualizarParticipante(DetalleParticipanteDTO participanteDTO) {
+    public Participantes actualizarParticipante(TablaParticipantesDTO participanteDTO) {
         Participantes participanteDB = participantesRepository.findById(participanteDTO.getIdParticipante()).orElse(null);
         if (participanteDB != null) {
             participanteDB.setNombre(participanteDTO.getNombre());

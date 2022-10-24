@@ -16,5 +16,5 @@ public class TablaParticipantesDTO {
     private final Integer semestre;
     private final String foto;
     private final String fechaCreacion;
-    private final String institucion;
+    private final Integer idInstitucion;
 }
