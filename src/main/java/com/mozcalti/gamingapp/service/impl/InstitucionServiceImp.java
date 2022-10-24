@@ -54,7 +54,7 @@ public class InstitucionServiceImp implements InstitucionService, Utils {
                     if (nextCell.getColumnIndex() == Numeros.DOS.getNumero())
                         institucion.setCorreo(Validaciones.validaEmailCellValue(nextCell));
                 }
-                if (institucionRepository.findByNombre(institucion.getNombre()) != null)
+                if (institucionRepository.findByNombre(institucion.getNombre()).isPresent())
                     throw new DuplicateKeyException(String.format("La institución '%s' ya esta registrada en el sistema", institucion.getNombre()));
                 else
                     listadoInstituciones.add(new InstitucionDTO(institucion.getNombre(), institucion.getCorreo()));
@@ -113,7 +113,7 @@ public class InstitucionServiceImp implements InstitucionService, Utils {
     @Override
     public Institucion guardarInstitucion(InstitucionDTO institucionDTO) {
         Institucion institucion = new Institucion();
-        if (institucionRepository.findByNombre(institucionDTO.getNombre()) != null)
+        if (institucionRepository.findByNombre(institucionDTO.getNombre()).isPresent())
             throw new DuplicateKeyException(String.format("La institución '%s' ya esta registrada en el sistema", institucionDTO.getNombre()));
 
         institucion.setNombre(Validaciones.validaStringValue(institucionDTO.getNombre()));
