@@ -43,15 +43,17 @@ public class BattleRunner {
         robocode.setBattleEventDispatcher(new BattleEventDispatcher());
         robocode.getRecordManager().attachRecorder(robocode.getBattleEventDispatcher());
         robocode.setBattleField(new BattlefieldSpecification(battleFieldWidth, battleFieldHeight));
-
     }
 
-    public void runBattle(String pathRobots, String fileName) throws IOException {
+    public void runBattle(String src) throws IOException {
         RobotSpecification[] selectedRobots;
         BattleSpecification battleSpec;
-
         try {
             selectedRobots = robocode.getEngine().getLocalRepository(robots);
+            battleSpec = new BattleSpecification(numberOfRounds, robocode.getBattleField(), selectedRobots);
+            robocode.getEngine().runBattle(battleSpec, true);
+            robocode.getEngine().close();
+            selectedRobots = robocode.getEngine().getLocalRepository("sample.Fire,sample.Fire");
             battleSpec = new BattleSpecification(numberOfRounds, robocode.getBattleField(), selectedRobots);
             robocode.getEngine().runBattle(battleSpec, true);
             robocode.getEngine().close();
@@ -66,7 +68,7 @@ public class BattleRunner {
             battleSpec = new BattleSpecification(numberOfRounds, robocode.getBattleField(), selectedRobots);
             robocode.getEngine().runBattle(battleSpec, true);
             robocode.getEngine().close();
-            Files.delete(Paths.get(pathRobots + fileName + ".jar"));
+            Files.delete(Paths.get(src));
             throw new RobotValidationException("El robot no es válido. Debe de ser implementado de acuerdo al procedimiento sugerido y compilado con Java 18.");
         }
     }
