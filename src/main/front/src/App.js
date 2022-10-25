@@ -7,6 +7,7 @@ import UsersList from "./components/users";
 import ActivationLanding from "./components/activacion/ActivationLanding";
 import ActivationForm from "./components/activacion";
 import ParticipantesList from "./components/participantes";
+import InstitucionesList from "./components/instituciones";
 
 function App() {
     return (
@@ -25,6 +26,7 @@ function App() {
                 <Route path="/registro" element={<ActivationLanding />}/>
                 <Route path="/activacion" element={<ActivationForm />}/>
                 <Route path="/participantes" element={<ParticipantesList />}/>
+                <Route path="/instituciones" element={<InstitucionesList />}/>
             </Routes>
         </BrowserRouter>
     );
