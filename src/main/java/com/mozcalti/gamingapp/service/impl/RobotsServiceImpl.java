@@ -161,17 +161,10 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
         }
     }
 
-    public boolean safetyCheckForFileName(MultipartFile file) throws NoSuchFileException {
+    public boolean safetyCheckForFileName(MultipartFile file){
         if(file.getOriginalFilename() != null){
             String fileName = file.getOriginalFilename();
-            if(validateStringFilenameUsingContains(fileName)){
-                if(fileName.matches(".*[/\\n\\r\\t\\f`?*\\\\<>|\":].*")){
-                    borrarRobot(fileName.replace(ROBOTEXTENSION, ""));
-                }
-                return true;
-            }else{
-                return false;
-            }
+            return(validateStringFilenameUsingContains(fileName));
         }
         return false;
     }
