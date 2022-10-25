@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import java.util.List;
 
@@ -21,7 +20,7 @@ public class RobotController {
 
 
     @PostMapping(value = "/cargarRobot", produces = MediaType.APPLICATION_JSON_VALUE)
-    public RobotsDTO cargarArchivo(@RequestParam(value="idEquipo") int idEquipo, @RequestParam(value="tipo") String tipo, @RequestParam(value = "file") MultipartFile file)  throws IOException {
+    public RobotsDTO cargarArchivo(@RequestParam(value="idEquipo") int idEquipo, @RequestParam(value="tipo") String tipo, @RequestParam(value = "file") MultipartFile file) throws Throwable {
         return robotsService.cargarRobot(idEquipo, tipo, file);
     }
 

@@ -14,9 +14,10 @@ import robocode.control.BattlefieldSpecification;
 import robocode.control.RobocodeEngine;
 import robocode.control.RobotSpecification;
 
-import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -45,9 +46,11 @@ public class BattleRunner {
         robocode.setBattleField(new BattlefieldSpecification(battleFieldWidth, battleFieldHeight));
     }
 
-    public void runBattle(String src) throws IOException {
+    public void runBattle(Path targetFile, String pathRobots, String originalFileName, String pathRobocode, String replayType) throws Throwable {
         RobotSpecification[] selectedRobots;
         BattleSpecification battleSpec;
+        Files.move(targetFile, targetFile.resolveSibling(pathRobots + "\\" + originalFileName));
+        prepareRobocode(pathRobocode, replayType);
         try {
             selectedRobots = robocode.getEngine().getLocalRepository(robots);
             battleSpec = new BattleSpecification(numberOfRounds, robocode.getBattleField(), selectedRobots);
@@ -56,10 +59,9 @@ public class BattleRunner {
             selectedRobots = robocode.getEngine().getLocalRepository("sample.Fire,sample.Fire");
             battleSpec = new BattleSpecification(numberOfRounds, robocode.getBattleField(), selectedRobots);
             robocode.getEngine().runBattle(battleSpec, true);
-            robocode.getEngine().close();
         }catch(RuntimeException e) {
-            /*
-                Si el robot es invalido, se debe crear una mini batalla que lo libere para poder borrarlo, ya que es imposible
+        /*
+                Si el robot es inválido, se debe crear una mini batalla que lo libere para poder borrarlo, ya que es imposible
                 borrarlo, cambiar su nombre o moverlo de directorio mientras antes de lanzar la excepcion que arroja Robocode.
                 Después de esa excepción no encontré la manera de borrarlo, ya que inclusive intenté borrarlo manualmente y no me permite
                 "La acción no se puede completar porque Java(TM) Platform SE binary tiene abierto el archivo.
@@ -67,9 +69,14 @@ public class BattleRunner {
             selectedRobots = robocode.getEngine().getLocalRepository("sample.Fire,sample.Fire");
             battleSpec = new BattleSpecification(numberOfRounds, robocode.getBattleField(), selectedRobots);
             robocode.getEngine().runBattle(battleSpec, true);
-            robocode.getEngine().close();
-            Files.delete(Paths.get(src));
+            Path jarFile = Paths.get(pathRobots + "\\" + originalFileName);
+            String finalPath = pathRobots + "\\" + UUID.randomUUID();
+            Files.move(jarFile, jarFile.resolveSibling(finalPath));
+            Files.delete(Paths.get(finalPath));
             throw new RobotValidationException("El robot no es válido. Debe de ser implementado de acuerdo al procedimiento sugerido y compilado con Java 18.");
+        }finally{
+            robocode.getEngine().reloadLocalRepository();
+            robocode.getEngine().close();
         }
     }
 }

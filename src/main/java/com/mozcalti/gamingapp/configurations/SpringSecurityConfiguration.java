@@ -45,11 +45,10 @@ public class SpringSecurityConfiguration {
         http
                 .cors()
                 .and()
-                    .csrf().disable()
-                /*
+                    .csrf()
                     .ignoringAntMatchers("/api/login/**")
                     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .and()*/
+                .and()
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                     .exceptionHandling()
