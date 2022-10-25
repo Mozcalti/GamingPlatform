@@ -26,8 +26,8 @@ public class ParticipanteController {
     }
 
     @PostMapping(value = "/guardar")
-    public void guardar(@RequestBody List<Participantes> participantes) {
-        participantesService.guardarParticipantes(participantes);
+    public void guardar(@RequestBody List<ParticipanteDTO> participantesDTO) {
+        participantesService.guardarParticipantes(participantesDTO);
     }
 
     @GetMapping("/todos")

@@ -40,7 +40,6 @@ function AddParticipante(props) {
     };
 
     const guardarParticipante = data => {
-        console.log(data)
         props.addParticipante(data);
         cerrarModal();
     }

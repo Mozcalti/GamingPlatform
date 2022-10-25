@@ -15,7 +15,7 @@ import AddParticipante from "./AddParticipante";
 import DetalleParticipante from "./DetalleParticipante";
 import InstitucionService from "../../services/institucion.service";
 import * as Yup from "yup";
-
+import CargaMasiva from "./CargaMasiva";
 
 
 const ParticipantesList = () => {
@@ -33,7 +33,6 @@ const ParticipantesList = () => {
         ParticipantesService.lista(texto)
             .then(
                 (response) => {
-                    console.log(response.data)
                     setParticipantes(response.data);
                 },
                 error => {
@@ -52,12 +51,27 @@ const ParticipantesList = () => {
                     getParticipantes('');
                 },
                 error => {
-                    console.error(error.response.data.message);
                     setErrorResponse(error.response.data.message)
                     setResultado({...resultado, error: true})
                 }
             );
     }
+
+    const validaExcel = (participante) => {
+        ParticipantesService
+            .validaExcel(participante)
+            .then(
+                (response) => {
+                    setResultado({...resultado, success: true})
+                    getParticipantes("")
+                },
+                error => {
+                    setErrorResponse(error.response.data.message)
+                    setResultado({...resultado, error: true})
+                }
+            );
+    }
+
 
     const actualizarParticipante = (participante) => {
         ParticipantesService
@@ -122,18 +136,26 @@ const ParticipantesList = () => {
             .required('La institucion es obligatoria')
     });
 
+    const ValidaFormCargaMasiva = Yup.object().shape({
+        file: Yup.mixed()
+            .test("file", "El archivo es obligatorio", (value) => {if (value.length > 0)return true;else return false;})
+            .test("fileType", "El formato del archivo no es valido", (value) =>{
+                return value.length && ["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel"].includes(value[0].type)
+            })
+    });
 
 
     const columns = [
-        {field: 'nombre', headerName: 'Nombre', filterable: false ,width: 300},
-        {field: 'apellidos', headerName: 'Apellidos', filterable: false , width: 300},
-        {field: 'fechaCreacion', headerName: 'Fecha de Creación', filterable: false , width: 300},
+        {field: 'nombre', headerName: 'Nombre', filterable: false, width: 300},
+        {field: 'apellidos', headerName: 'Apellidos', filterable: false, width: 300},
+        {field: 'fechaCreacion', headerName: 'Fecha de Creación', filterable: false, width: 300},
         {
-            field: 'idParticipante', headerName: 'Acciones', filterable: false , width: 225, renderCell: (p) => {
+            field: 'idParticipante', headerName: 'Acciones', filterable: false, width: 225, renderCell: (p) => {
                 return (
                     <Grid container spacing={2}>
                         <Grid item xs={6}>
-                            <DetalleParticipante id={p.value} instituciones={instituciones} ValidaForm={ValidaForm} actualizarParticipante={actualizarParticipante} />
+                            <DetalleParticipante id={p.value} instituciones={instituciones} ValidaForm={ValidaForm}
+                                                 actualizarParticipante={actualizarParticipante}/>
                         </Grid>
                     </Grid>
                 )
@@ -156,13 +178,16 @@ const ParticipantesList = () => {
                                        onChange={(e) => setMessage(e.target.value)}/>
                         </Grid>
                         <Grid item xs={2} md={2}>
-                            <Button onClick={() => getParticipantes(message)} variant="contained" size="large">Buscar</Button>
+                            <Button onClick={() => getParticipantes(message)} variant="contained"
+                                    size="large">Buscar</Button>
                         </Grid>
                         <Grid item xs={2} md={2}>
-                            <AddParticipante addParticipante={agregarParticipante} instituciones={instituciones} ValidaForm={ValidaForm}/>
+                            <AddParticipante addParticipante={agregarParticipante} instituciones={instituciones}
+                                             ValidaForm={ValidaForm}/>
                         </Grid>
                         <Grid item xs={2} md={2}>
-                            <Button variant="contained" size="large">Subir Archivo</Button>
+                            <CargaMasiva validaExcel={validaExcel}
+                                         ValidaFormCargaMasiva={ValidaFormCargaMasiva}></CargaMasiva>
                         </Grid>
 
                     </Grid>
@@ -179,10 +204,14 @@ const ParticipantesList = () => {
                 </div>
             </Container>
 
-            <Snackbar open={resultado.success} autoHideDuration={6000} onClose={() => {setResultado({...resultado, success: false})}}>
+            <Snackbar open={resultado.success} autoHideDuration={6000} onClose={() => {
+                setResultado({...resultado, success: false})
+            }}>
                 <Alert severity="success" variant="filled">Se guardo correctamente el participante</Alert>
             </Snackbar>
-            <Snackbar open={resultado.error} autoHideDuration={6000}  onClose={() => {setResultado({...resultado, error: false})}}>
+            <Snackbar open={resultado.error} autoHideDuration={6000} onClose={() => {
+                setResultado({...resultado, error: false})
+            }}>
                 <Alert severity="error" variant="filled">{errorResponse}</Alert>
             </Snackbar>
         </>
