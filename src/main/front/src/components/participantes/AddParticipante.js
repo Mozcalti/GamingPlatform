@@ -18,8 +18,12 @@ import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup/dist/yup";
 
 
+
+
 function AddParticipante(props) {
     const [open, setOpen] = useState(false);
+
+    
 
     const {
         register,
@@ -51,7 +55,6 @@ function AddParticipante(props) {
                     onClick={() => abrirModal()}>Agregar</Button>
             <Dialog open={open} onClose={cerrarModal} fullWidth={true}>
                 <DialogTitle align="center">Nuevo Participante</DialogTitle>
-                <Divider/>
                 <DialogContent>
                     <form onReset>
                         <Stack spacing={2}>
@@ -160,11 +163,11 @@ function AddParticipante(props) {
                         </Stack>
                     </form>
                 </DialogContent>
-                <Divider/>
                 <DialogActions>
                     <Button variant="contained" color="inherit" onClick={cerrarModal}>Cancelar</Button>
                     <Button variant="contained" onClick={handleSubmit(guardarParticipante)}>Guardar</Button>
-                </DialogActions>
+                </DialogActions>               
+                
             </Dialog>
         </div>
     )

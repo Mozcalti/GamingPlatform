@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import Button from "@mui/material/Button";
 import AddParticipante from "./AddParticipante";
+import AddArchivo from "./AddArchivo";
 import DetalleParticipante from "./DetalleParticipante";
 import InstitucionService from "../../services/institucion.service";
 import * as Yup from "yup";
@@ -20,6 +21,7 @@ import * as Yup from "yup";
 
 const ParticipantesList = () => {
     const [participantes, setParticipantes] = useState([]);
+    const [archivo, setArchivo] = useState([]);
     const [message, setMessage] = useState("");
     const [instituciones, setInstituciones] = useState([]);
     const [resultado, setResultado] = useState({
@@ -59,6 +61,22 @@ const ParticipantesList = () => {
             );
     }
 
+    const agregarArchivo = (archivo) => {
+        ParticipantesService
+            .guardarParticipante(archivo)
+            .then(
+                (response) => {
+                    setResultado({...resultado, success: true})
+                    getParticipantes('');
+                },
+                error => {
+                    console.error(error.response.data.message);
+                    setErrorResponse(error.response.data.message)
+                    setResultado({...resultado, error: true})
+                }
+            );
+    }
+  
     const actualizarParticipante = (participante) => {
         ParticipantesService
             .actualizarParticipante(participante)
@@ -162,7 +180,8 @@ const ParticipantesList = () => {
                             <AddParticipante addParticipante={agregarParticipante} instituciones={instituciones} ValidaForm={ValidaForm}/>
                         </Grid>
                         <Grid item xs={2} md={2}>
-                            <Button variant="contained" size="large">Subir Archivo</Button>
+                            
+                            <AddArchivo addArchivo = {agregarArchivo} instituciones={instituciones} ValidaForm={ValidaForm} />
                         </Grid>
 
                     </Grid>
