@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface RobotsService extends GenericServiceAPI<Robots, Integer> {
 
-    RobotsDTO cargarRobot(int idEquipo ,String tipo, MultipartFile file) throws Throwable;
+    RobotsDTO cargarRobot(int idEquipo ,String tipo, MultipartFile file) throws IOException;
     Robots guardarRobot(Robots robot);
     void eliminarRobot(int idRobot) throws NoSuchFileException;
     @PostMapping(value = "/seleccionarRobot")

@@ -11,7 +11,6 @@ import com.mozcalti.gamingapp.robocode.Robocode;
 import com.mozcalti.gamingapp.service.RobotsService;
 import com.mozcalti.gamingapp.utils.RobocodeUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DuplicateKeyException;
@@ -44,7 +43,6 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
     private String pathRobocode;
     @Value("${robocode.robots}")
     private String pathRobots;
-    private static final String INVALID_CHARS = ".*[/\\n\\r\\t\\f`?*\\\\<>|\":].*";
     private static final String REPLAYTYPE = "xml";
     private static final String ROBOTEXTENSION = ".jar";
     private static final String TESTFILEID = "PRUEBA";
@@ -55,7 +53,7 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
     private static final Character[] INVALID_UNIX_SPECIFIC_CHARS = {'\000'};
 
     @Override
-    public RobotsDTO cargarRobot(int idEquipo, String tipo, MultipartFile file) throws Throwable {
+    public RobotsDTO cargarRobot(int idEquipo, String tipo, MultipartFile file) throws IOException {
         if (file != null) {
             if(!file.isEmpty()){
                 byte[] bytes;
@@ -96,7 +94,7 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
         return robotsRepository.findAllByIdEquipo(idEquipo);
     }
 
-    public RobotsDTO validateRobotJar(String originalFileName, Path serverFile, String tempFileName, String tipo, int idEquipo, byte[] bytes) throws Throwable {
+    public RobotsDTO validateRobotJar(String originalFileName, Path serverFile, String tempFileName, String tipo, int idEquipo, byte[] bytes) throws IOException {
         if(originalFileName != null){
             if(originalFileName.endsWith(ROBOTEXTENSION)) {
                 if (robotsRepository.findByNombre(originalFileName) != null) {
@@ -112,7 +110,7 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
         }
     }
 
-    public RobotsDTO validateRobot(String originalFileName, byte[] bytes, Path serverFile, String tipo, int idEquipo, String tempFileName) throws Throwable {
+    public RobotsDTO validateRobot(String originalFileName, byte[] bytes, Path serverFile, String tipo, int idEquipo, String tempFileName) throws IOException {
 
         String src = serverFile.toAbsolutePath().toString();
         try(BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile.toFile()))) {
@@ -129,16 +127,15 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
             //se piensa subir un robot, busca el archivo team, no lo encuentra, solo hay un .properties, entonces si es un robot
             if(!RobocodeUtils.isRobotType(src, extension)) {
                 extension = ".class";
-                testRobot = validateName(src, extension);            //obtenemos el nombre que necesita robocode para buscarlo y cargarlo en la batalla
+                testRobot = validateName(src, extension, tempFileName);            //obtenemos el nombre que necesita robocode para buscarlo y cargarlo en la batalla
             }else{
-                log.error("Estas intentando subir a un team, no un robot" + src);
                 borrarRobot(tempFileName);
                 throw new RobotValidationException("El tipo de robot elegido no coincide con el robot a cargar");
             }
         }else{
             //se piensa subir un equipo, busca el .team, lo encuentra, entonces si es un equipo
             if(RobocodeUtils.isRobotType(src, extension)) {
-                testRobot = validateName(src, extension);
+                testRobot = validateName(src, extension, tempFileName);
             }else{
                 borrarRobot(tempFileName);
                 throw new RobotValidationException("El tipo de robot elegido no coincide con el robot a cargar");
@@ -155,23 +152,21 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
         return new RobotsDTO(robot.getNombre(), robot.getActivo(), robot.getIdEquipo(), new Equipos());
     }
 
-    public String validateName(String src, String extension) throws IOException {
+    public String validateName(String src, String extension, String tempFileName) throws NoSuchFileException {
         try{
             return RobocodeUtils.getRobotClassName(src, extension);
-        }catch (RuntimeException e){
-            Files.delete(Paths.get(src));
+        }catch (IOException e){
+            borrarRobot(tempFileName);
             throw new IndexOutOfBoundsException("El robot no contiene un className apropiado.");
         }
     }
 
-    public boolean safetyCheckForFileName(MultipartFile file) throws IOException {
+    public boolean safetyCheckForFileName(MultipartFile file) throws NoSuchFileException {
         if(file.getOriginalFilename() != null){
             String fileName = file.getOriginalFilename();
-            File copiedFile = new File(fileName);
             if(validateStringFilenameUsingContains(fileName)){
-                if(fileName.matches(INVALID_CHARS)){
-                    FileUtils.forceDelete(copiedFile);
-                    return false;
+                if(fileName.matches(".*[/\\n\\r\\t\\f`?*\\\\<>|\":].*")){
+                    borrarRobot(fileName.replace(ROBOTEXTENSION, ""));
                 }
                 return true;
             }else{

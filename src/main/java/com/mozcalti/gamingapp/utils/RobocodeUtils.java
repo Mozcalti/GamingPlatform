@@ -12,9 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public final class RobocodeUtils {
 
-    private RobocodeUtils() {throw new IllegalStateException("Robocode Utility class");
-    }
-
+    private RobocodeUtils() {throw new IllegalStateException("Robocode Utility class");}
     public static String getRobotClassName(String src, String type) throws IOException {
         ArrayList<String> classNames = new ArrayList<>();
         try(ZipSecureFile zipSecureFile = new ZipSecureFile(src)){
@@ -23,7 +21,6 @@ public final class RobocodeUtils {
                 ZipEntry ze = entries.nextElement();
                 if (!ze.isDirectory() && ze.getName().endsWith(type)) {
                     String className = ze.getName().replace('/', '.');
-                    log.info(className);
                     classNames.add(className.substring(0, className.length() - type.length()));
                 }
             }
@@ -35,7 +32,6 @@ public final class RobocodeUtils {
     }
 
     public static boolean isRobotType(String src, String type) throws FileNotFoundException {
-        log.error(src);
         try(ZipSecureFile zipSecureFile = new ZipSecureFile(src)) {
             Enumeration<? extends ZipEntry> entries = zipSecureFile.getEntries();
             while (entries.hasMoreElements()) {
