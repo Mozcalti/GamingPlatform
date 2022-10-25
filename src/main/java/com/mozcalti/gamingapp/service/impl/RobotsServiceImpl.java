@@ -202,7 +202,7 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
 
     public void borrarRobot(String nombreRobot) throws NoSuchFileException {
         try {
-            Files.delete(Paths.get(pathRobots + "\\" + nombreRobot + ROBOTEXTENSION));
+            Files.delete(Paths.get(pathRobots + File.separator + nombreRobot + ROBOTEXTENSION));
         } catch (IOException e) {
             throw new NoSuchFileException("El robot a borrar no existe");
         }

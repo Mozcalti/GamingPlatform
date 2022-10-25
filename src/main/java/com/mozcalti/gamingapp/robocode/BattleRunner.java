@@ -14,6 +14,8 @@ import robocode.control.BattlefieldSpecification;
 import robocode.control.RobocodeEngine;
 import robocode.control.RobotSpecification;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -46,7 +48,7 @@ public class BattleRunner {
         robocode.setBattleField(new BattlefieldSpecification(battleFieldWidth, battleFieldHeight));
     }
 
-    public void runBattle(Path targetFile, String pathRobots, String originalFileName, String pathRobocode, String replayType) throws Throwable {
+    public void runBattle(Path targetFile, String pathRobots, String originalFileName, String pathRobocode, String replayType) throws IOException {
         RobotSpecification[] selectedRobots;
         BattleSpecification battleSpec;
         Files.move(targetFile, targetFile.resolveSibling(pathRobots + "\\" + originalFileName));
@@ -70,12 +72,11 @@ public class BattleRunner {
             battleSpec = new BattleSpecification(numberOfRounds, robocode.getBattleField(), selectedRobots);
             robocode.getEngine().runBattle(battleSpec, true);
             Path jarFile = Paths.get(pathRobots + "\\" + originalFileName);
-            String finalPath = pathRobots + "\\" + UUID.randomUUID();
+            String finalPath = pathRobots + File.separator + UUID.randomUUID();
             Files.move(jarFile, jarFile.resolveSibling(finalPath));
             Files.delete(Paths.get(finalPath));
             throw new RobotValidationException("El robot no es válido. Debe de ser implementado de acuerdo al procedimiento sugerido y compilado con Java 18.");
         }finally{
-            robocode.getEngine().reloadLocalRepository();
             robocode.getEngine().close();
         }
     }
