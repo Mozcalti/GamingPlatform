@@ -4,6 +4,8 @@ import {BrowserRouter, Route, Routes} from "react-router-dom";
 import Protected from "./components/protected";
 import MiPerfil from "./components/perfil";
 import UsersList from "./components/users";
+import ActivationLanding from "./components/activacion/ActivationLanding";
+import ActivationForm from "./components/activacion";
 import ParticipantesList from "./components/participantes";
 
 function App() {
@@ -20,6 +22,8 @@ function App() {
                     }
                 />
                 <Route path="/usuarios" element={<UsersList />}/>
+                <Route path="/registro" element={<ActivationLanding />}/>
+                <Route path="/activacion" element={<ActivationForm />}/>
                 <Route path="/participantes" element={<ParticipantesList />}/>
             </Routes>
         </BrowserRouter>

@@ -43,4 +43,10 @@ public class InstitucionController {
     public void guardarInstitucion(@RequestBody InstitucionDTO institucionDTO) {
         institucionService.guardarInstitucion(institucionDTO);
     }
+
+    @GetMapping("/")
+    public Iterable<Institucion> catalogoInstituciones(){
+        return institucionService.instituciones();
+    }
+
 }

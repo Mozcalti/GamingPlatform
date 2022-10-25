@@ -41,9 +41,9 @@ public class Participantes {
     private String foto;
     @Column(name = "fecha_creacion")
     private String fechaCreacion;
-    @Basic
-    @Column(name = "id_institucion")
-    private Integer idInstitucion;
+    @ManyToOne
+    @JoinColumn(name = "id_institucion")
+    private Institucion institucion;
 
     @OneToMany(mappedBy = "participantesByIdParticipante")
     private Collection<ParticipanteEquipo> participanteEquiposByIdParticipante;

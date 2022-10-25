@@ -76,7 +76,7 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
                     if (nextCell.getColumnIndex() == Numeros.SIETE.getNumero())
                         participantes.setSemestre((int) nextCell.getNumericCellValue());
                     if (nextCell.getColumnIndex() == Numeros.OCHO.getNumero())
-                        participantes.setIdInstitucion(institucionRepository.findByNombre(nextCell.getStringCellValue()).getId());
+                        participantes.setInstitucion(institucionRepository.findByNombre(nextCell.getStringCellValue()).orElse(null));
                 }
                 if (participantesRepository.findByCorreo(participantes.getCorreo()) != null)
                     throw new DuplicateKeyException("Ya esta registrado en el sistema un participante con correo " + "'" + participantes.getCorreo() + "'");
@@ -89,7 +89,7 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
                             participantes.getIes(),
                             participantes.getCarrera(),
                             participantes.getSemestre(),
-                            participantes.getIdInstitucion()));
+                            participantes.getInstitucion().getId()));
             }
             workbook.close();
             file.getInputStream().close();
@@ -112,10 +112,10 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
 
     @Override
     public List<TablaParticipantesDTO> listaParticipantes(String cadena) {
-        Specification<Participantes> query = Specification.where(containsTextInAttributes(cadena, Arrays.asList("nombre", "correo","institucion")));
+        Specification<Participantes> query = Specification.where(containsTextInAttributes(cadena, Arrays.asList("nombre", "correo")));
         List<Participantes> participantesPages = participantesRepository.findAll(query);
 
-        List<TablaParticipantesDTO> tablaParticipantesDTO = participantesPages.stream()
+        return participantesPages.stream()
                 .map(p -> new TablaParticipantesDTO(
                         p.getIdParticipante(),
                         p.getNombre(),
@@ -127,17 +127,16 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
                         p.getSemestre(),
                         p.getFoto(),
                         p.getFechaCreacion(),
-                        institucionRepository.findById(p.getIdInstitucion()).get().getNombre()
+                        p.getInstitucion().getId()
                 )).toList();
-        return tablaParticipantesDTO;
     }
 
     @Override
     public TablaParticipantesDTO obtenerParticipante(Integer id) {
         Optional<Participantes> participantes = participantesRepository.findById(id);
-        if (participantes.isEmpty()){
+        if (participantes.isEmpty()) {
             throw new NoSuchElementException("No se encontro el participante en el sistema");
-        }else
+        } else
             return new TablaParticipantesDTO(
                     participantes.get().getIdParticipante(),
                     participantes.get().getNombre(),
@@ -149,13 +148,13 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
                     participantes.get().getSemestre(),
                     participantes.get().getFoto(),
                     participantes.get().getFechaCreacion(),
-                    institucionRepository.findById(participantes.get().getIdInstitucion()).get().getNombre());
+                    participantes.get().getInstitucion().getId());
     }
 
     @Override
     public Participantes guardarParticipante(ParticipanteDTO participanteDTO) {
         Participantes participante = new Participantes();
-        if(participantesRepository.findByCorreo(participanteDTO.getCorreo()) != null)
+        if (participantesRepository.findByCorreo(participanteDTO.getCorreo()) != null)
             throw new DuplicateKeyException(String.format("El participante '%s' ya esta registrado en el sistema", participanteDTO.getCorreo()));
         participante.setNombre(participanteDTO.getNombre());
         participante.setApellidos(participanteDTO.getApellidos());
@@ -166,8 +165,29 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
         participante.setSemestre(participanteDTO.getSemestre());
         participante.setFoto(encodeImageToString(pathParticipantes));
         participante.setFechaCreacion(FORMATTER.format(LOCAL_DATE_TIME));
-        participante.setIdInstitucion(institucionRepository.findById(participanteDTO.getIdInstitucion()).get().getId());
+        participante.setInstitucion(institucionRepository.findById(participanteDTO.getIdInstitucion()).orElse(null));
         return participantesRepository.save(participante);
+    }
+
+    @Override
+    public Participantes actualizarParticipante(TablaParticipantesDTO participanteDTO) {
+        Participantes participanteDB = participantesRepository.findById(participanteDTO.getIdParticipante()).orElse(null);
+        if (participanteDB != null) {
+            participanteDB.setNombre(participanteDTO.getNombre());
+            participanteDB.setApellidos(participanteDTO.getApellidos());
+            participanteDB.setCorreo(participanteDTO.getCorreo());
+            participanteDB.setAcademia(participanteDTO.getAcademia());
+            participanteDB.setIes(participanteDTO.getIes());
+            participanteDB.setCarrera(participanteDTO.getCarrera());
+            participanteDB.setSemestre(participanteDTO.getSemestre());
+            participanteDB.setFoto(participanteDTO.getFoto());
+            participanteDB.setFechaCreacion(participanteDTO.getFechaCreacion());
+            participanteDB.setInstitucion(institucionRepository.findById(participanteDTO.getIdInstitucion()).orElse(null));
+            return participantesRepository.save(participanteDB);
+        } else
+            throw new NoSuchElementException(String.format("El participante con el id '%s' no se encuentra en el sistema", participanteDTO.getIdParticipante()));
+
+
     }
 
     private Specification<Participantes> containsTextInAttributes(String text, List<String> attributes) {
@@ -181,7 +201,7 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
     @Override
     public String encodeImageToString(String path) {
         try (FileInputStream file = new FileInputStream(path + "/participanteFotoDefaul.png")) {
-            return Base64.encodeBase64String(file.readAllBytes());
+            return "data:image/png;base64," + Base64.encodeBase64String(file.readAllBytes());
         } catch (IOException exception) {
             throw new IllegalArgumentException(String.format("La imagen no es correcta %s", exception));
         }

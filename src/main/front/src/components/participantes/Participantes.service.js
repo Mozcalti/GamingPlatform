@@ -27,6 +27,15 @@ class ParticipantesService{
 
     }
 
+    actualizarParticipante(participante){
+        return axios
+            .post("/participante/actualizarParticipante", participante)
+            .then(response => {
+                return response;
+            });
+
+    }
+
 
 }
 
