@@ -187,7 +187,7 @@ public class DashboardServiceImpl implements DashboardService {
                         participantes.append(participante.orElseThrow().getNombre()).append(" ").append(participante.orElseThrow().getApellidos()).append(",");
 
                         if(!institucion.isPresent()) {
-                            institucion = institucionRepository.findById(participante.orElseThrow().getIdInstitucion());
+                            institucion = institucionRepository.findById(participante.orElseThrow().getInstitucion().getId());
                         }
                     }
 
