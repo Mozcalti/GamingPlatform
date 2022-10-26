@@ -1,11 +1,10 @@
 package com.mozcalti.gamingapp.service.impl;
 
 import com.mozcalti.gamingapp.model.Institucion;
-import com.mozcalti.gamingapp.model.dto.InstitucionDTO;
-import com.mozcalti.gamingapp.model.dto.PaginadoDTO;
-import com.mozcalti.gamingapp.model.dto.TablaDTO;
-import com.mozcalti.gamingapp.model.dto.TablaInstitucionDTO;
+import com.mozcalti.gamingapp.model.Participantes;
+import com.mozcalti.gamingapp.model.dto.*;
 import com.mozcalti.gamingapp.repository.InstitucionRepository;
+import com.mozcalti.gamingapp.repository.ParticipantesRepository;
 import com.mozcalti.gamingapp.service.InstitucionService;
 import com.mozcalti.gamingapp.utils.*;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +26,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class InstitucionServiceImp implements InstitucionService {
     private final InstitucionRepository institucionRepository;
+    private final ParticipantesRepository participantesRepository;
 
     @Value("${resources.static.instituciones}")
     private String pathInstituciones;
@@ -100,12 +100,32 @@ public class InstitucionServiceImp implements InstitucionService {
     }
 
     @Override
-    public TablaInstitucionDTO obtenerInstitucion(Integer id) {
+    public DetalleInstitucionDTO obtenerInstitucion(Integer id) {
         Optional<Institucion> institucion = institucionRepository.findById(id);
+
+        List<Participantes> participantes = participantesRepository.findAllByInstitucionIdOrderByNombreAsc(id);
+        List<ParticipanteDTO> participanteDTOList = new ArrayList<>();
+        for (Participantes participante : participantes) {
+            participanteDTOList.add(new ParticipanteDTO(
+                    participante.getNombre(),
+                    participante.getApellidos(),
+                    participante.getCorreo(),
+                    participante.getAcademia(),
+                    participante.getIes(),
+                    participante.getCarrera(),
+                    participante.getSemestre(),
+                    participante.getInstitucion().getId()));
+        }
         if (institucion.isEmpty()) {
             throw new NoSuchElementException("La institución no se encuentra en el sistema");
         } else
-            return new TablaInstitucionDTO(institucion.get().getId(), institucion.get().getNombre(), institucion.get().getCorreo(), institucion.get().getFechaCreacion(), institucion.get().getLogo());
+            return new DetalleInstitucionDTO(
+                    institucion.get().getId(),
+                    institucion.get().getNombre(),
+                    institucion.get().getCorreo(),
+                    institucion.get().getFechaCreacion(),
+                    institucion.get().getLogo(),
+                    participanteDTOList);
 
     }
 
