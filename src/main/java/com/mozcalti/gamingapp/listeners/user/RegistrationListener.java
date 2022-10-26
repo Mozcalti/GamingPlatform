@@ -6,6 +6,7 @@ import com.mozcalti.gamingapp.exceptions.UtilsException;
 import com.mozcalti.gamingapp.model.Usuario;
 import com.mozcalti.gamingapp.service.correos.SendMailService;
 import com.mozcalti.gamingapp.service.usuarios.VerificationTokenService;
+import com.mozcalti.gamingapp.utils.ServerUtils;
 import com.mozcalti.gamingapp.utils.StackTraceUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,12 +25,10 @@ import java.util.UUID;
 @Slf4j
 public class RegistrationListener implements ApplicationListener<OnUsuarioRegistradoEvent> {
 
-    private static final String MAIL_PROPERTIES_KEY = "registro";
+    private static final String MAIL_TEMPLATE_KEY = "registro";
 
     private final SendMailService sendMailService;
     private final VerificationTokenService verificationTokenService;
-
-    private final MessageSource mailMessageSource;
 
     @Override
     public void onApplicationEvent(OnUsuarioRegistradoEvent event) {
@@ -41,14 +40,9 @@ public class RegistrationListener implements ApplicationListener<OnUsuarioRegist
         String token = UUID.randomUUID().toString();
         verificationTokenService.addVerificationToken(usuario, token);
 
-        final String baseUrl = getBaseUrl();
-
-        log.debug("baseUrl: {}", baseUrl);
+        final String baseUrl = ServerUtils.getBaseUrl();
 
         String mailTo = usuario.getEmail();
-
-        String subject = mailMessageSource.getMessage("%s.subject".formatted(MAIL_PROPERTIES_KEY), null, "Registro confirmado", Locale.getDefault());
-        String mailTemplate = mailMessageSource.getMessage("%s.template".formatted(MAIL_PROPERTIES_KEY), null, "/template/mail/Registro.html",Locale.getDefault());
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("token", token);
@@ -56,21 +50,11 @@ public class RegistrationListener implements ApplicationListener<OnUsuarioRegist
         parameters.put("nombre", usuario.getNombre());
 
         try {
-            String templateMessage = sendMailService.readMailTemplate(mailTemplate, parameters);
-
-            Map<String, String> imagesMessage = new HashMap<>();
-            imagesMessage.put("logo_plai", "/img/logo_plai.png");
-
-            sendMailService.sendMail(mailTo, subject, templateMessage, imagesMessage);
+            sendMailService.sendMail(mailTo, MAIL_TEMPLATE_KEY, parameters);
         } catch (SendMailException | UtilsException e) {
             log.error("Error al enviar el correo de activacion de cuenta: {}", StackTraceUtils.getCustomStackTrace(e));
         }
     }
 
-    private String getBaseUrl() {
-        return ServletUriComponentsBuilder.fromCurrentRequest()
-                .replacePath(null)
-                .build()
-                .toUriString();
-    }
+
 }

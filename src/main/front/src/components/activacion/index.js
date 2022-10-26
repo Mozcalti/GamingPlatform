@@ -50,7 +50,6 @@ const ActivationForm = () => {
         RegistroService
             .activate(token, status.pass)
             .then((response) => {
-                    console.info(response.data);
                     setUsuario(response.data);
                     setStatus({...status, dialogOpen: true})
                 },

@@ -10,10 +10,24 @@ import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import {Divider} from "@mui/material";
+import AuthService from "../../services/auth.service";
+import {useLocation, useNavigate} from "react-router-dom";
 
-const pages = ['Usuarios', 'Instituciones', 'Participantes', 'Cerrar Sesión'];
+const pages = [
+    {title: 'Inicio', path: '/'},
+    {title: 'Usuarios', path: '/usuarios'},
+    {title: 'Instituciones', path: '/instituciones'},
+    {title: 'Participantes', path: '/participantes'},
+];
 
 function ResponsiveAppBar() {
+
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const pathname = location.pathname;
+
+
     const [anchorElNav, setAnchorElNav] = React.useState(null);
 
     const handleOpenNavMenu = (event) => {
@@ -24,22 +38,27 @@ function ResponsiveAppBar() {
         setAnchorElNav(null);
     };
 
+    const handleLogout = () => {
+        AuthService.logout();
+        navigate('/');
+    }
+
     return (
-        <AppBar position="static" style={{ background: '#fff'}}>
+        <AppBar position="static" style={{background: '#fff'}}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Typography
                         component="a"
-                        href="/usuarios"
+                        href="https://plai.mx/"
                         sx={{
                             mr: 10,
-                            display: { xs: 'none', md: 'flex' },
+                            display: {xs: 'none', md: 'flex'},
                         }}
                     >
-                        <img src="/img/ui/logo_plai1.png" alt="Logo Plai" width={180} height={80}></img>
+                        <img src="/img/ui/logo_plai1.png" alt="Logo Plai" height={80}></img>
                     </Typography>
 
-                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none', color: '#000' } }}>
+                    <Box sx={{flexGrow: 1, display: {xs: 'flex', md: 'none', color: '#000'}}}>
                         <IconButton
                             size="large"
                             aria-label="account of current user"
@@ -48,7 +67,7 @@ function ResponsiveAppBar() {
                             onClick={handleOpenNavMenu}
                             color="inherit"
                         >
-                            <MenuIcon />
+                            <MenuIcon/>
                         </IconButton>
                         <Menu
                             id="menu-appbar"
@@ -65,44 +84,61 @@ function ResponsiveAppBar() {
                             open={Boolean(anchorElNav)}
                             onClose={handleCloseNavMenu}
                             sx={{
-                                display: { xs: 'block', md: 'none', color: '#000'},
+                                display: {xs: 'block', md: 'none', color: '#000'},
                             }}
                         >
-                            {pages.map((page) => (
-                                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                                    <Button
-                                        key={page}
-                                        onClick={handleCloseNavMenu}
-                                        href={page}
-                                        sx={{ my: 1, color: 'black', display: 'block'}}>
-                                        {page}
-                                    </Button>
-                                </MenuItem>
-                            ))}
+                            {pages.map((page) => {
+                                    const {title, path} = page;
+                                    return (
+                                        <MenuItem key={path} onClick={handleCloseNavMenu}>
+                                            <Button
+                                                key={path}
+                                                onClick={handleCloseNavMenu}
+                                                href={path}
+                                                sx={{my: 1, color: 'black', display: 'block'}}>
+                                                {title}
+                                            </Button>
+                                        </MenuItem>);
+                                }
+                            )}
                         </Menu>
                     </Box>
 
-                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                        {pages.map((page) => (
-                            <Divider>
+                    <Box sx={{flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
+                        {pages.map((page) => {
+                                const {title, path} = page;
+                                return (
+                                    <Divider key={path}>
+                                        <MenuItem key={path} selected={path === pathname}>
+                                            <Button
+                                                key={path}
+                                                onClick={handleCloseNavMenu}
+                                                href={path}
+                                                sx={{my: 1, color: 'black', display: 'block'}}>
+                                                {title}
+                                            </Button>
+                                        </MenuItem>
+                                    </Divider>
+                                )
+                            }
+                        )}
+                        <Divider>
+                            <MenuItem>
                                 <Button
-                                    key={page}
-                                    onClick={handleCloseNavMenu}
-                                    href={page}
-                                    sx={{ my: 1, color: 'black', display: 'block'}}>
-                                    {page}
+                                    onClick={handleLogout}
+                                    sx={{my: 1, color: 'black', display: 'block'}}>
+                                    Cerrar Sesión
                                 </Button>
-                            </Divider>
-
-                        ))}
+                            </MenuItem>
+                        </Divider>
                     </Box>
                     <Typography
                         component="a"
-                        href="/"
+                        href="https://mozcalti.com/"
                         sx={{
-                            display: { xs: 'none', md: 'flex' },
+                            display: {xs: 'none', md: 'flex'},
                         }}>
-                        <img src="/img/ui/rojo_trans.png" alt="Logo MTI" width={180} height={80}></img>
+                        <img src="/img/ui/rojo_trans.png" alt="Logo MTI" height={80}></img>
                     </Typography>
 
                 </Toolbar>
@@ -111,4 +147,5 @@ function ResponsiveAppBar() {
         </AppBar>
     );
 }
+
 export default ResponsiveAppBar;

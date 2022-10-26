@@ -3,9 +3,11 @@ package com.mozcalti.gamingapp.utils;
 import com.mozcalti.gamingapp.exceptions.UtilsException;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.apache.commons.codec.binary.Base64;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
@@ -138,6 +140,14 @@ public final class FileUtils {
         } catch (Exception e) {
             throw new UtilsException("Error generado en el metodo: removeUTF8BOM(String s)"
                     + "\nMensaje de error: " + e.getMessage(), e);
+        }
+    }
+
+    public static String encodeImageToString(String path) {
+        try (FileInputStream file = new FileInputStream(path)) {
+            return "data:image/png;base64," + Base64.encodeBase64String(file.readAllBytes());
+        } catch (IOException exception) {
+            throw new IllegalArgumentException(String.format("La imagen no es correcta %s", exception));
         }
     }
 

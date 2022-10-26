@@ -16,9 +16,11 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-@AllArgsConstructor(onConstructor = @__(@Autowired))
+@AllArgsConstructor
 @Slf4j
 public class SendMailTorneo {
+
+    private static final String MAIL_TEMPLATE_KEY = "torneo";
 
     private SendMailService sendMailService;
 
@@ -36,17 +38,12 @@ public class SendMailTorneo {
             if(!mailsbatallas.isEmpty()) {
                 for(DatosCorreoBatallaDTO datosCorreoBatallaDTO : mailsbatallas) {
                     String mailTo = datosCorreoBatallaDTO.getMailToParticipantes();
-                    String subject = "Inicio de Batalla";
-                    String mailTemplate = "/template/mail/Mensaje.html";
+
                     Map<String, Object> parameters = new HashMap<>();
                     parameters.put("mailBatalla", datosCorreoBatallaDTO);
 
-                    String templateMessage = sendMailService.readMailTemplate(mailTemplate, parameters);
 
-                    Map<String, String> imagesMessage = new HashMap<>();
-                    imagesMessage.put("logo_plai", "/img/logo_plai.png");
-
-                    sendMailService.sendMail(mailTo, subject, templateMessage, imagesMessage);
+                    sendMailService.sendMail(mailTo, MAIL_TEMPLATE_KEY, parameters);
 
                     log.info("Se hace el envio de email a los participantes indicados");
                 }

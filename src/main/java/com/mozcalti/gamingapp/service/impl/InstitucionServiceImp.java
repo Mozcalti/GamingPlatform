@@ -9,7 +9,6 @@ import com.mozcalti.gamingapp.repository.InstitucionRepository;
 import com.mozcalti.gamingapp.service.InstitucionService;
 import com.mozcalti.gamingapp.utils.*;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DuplicateKeyException;
@@ -26,7 +25,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class InstitucionServiceImp implements InstitucionService, Utils {
+public class InstitucionServiceImp implements InstitucionService {
     private final InstitucionRepository institucionRepository;
 
     @Value("${resources.static.instituciones}")
@@ -54,7 +53,7 @@ public class InstitucionServiceImp implements InstitucionService, Utils {
                     if (nextCell.getColumnIndex() == Numeros.DOS.getNumero())
                         institucion.setCorreo(Validaciones.validaEmailCellValue(nextCell));
                 }
-                if (institucionRepository.findByNombre(institucion.getNombre()).isPresent())
+                if (institucionRepository.findByNombre(institucion.getNombre()) != null)
                     throw new DuplicateKeyException(String.format("La institución '%s' ya esta registrada en el sistema", institucion.getNombre()));
                 else
                     listadoInstituciones.add(new InstitucionDTO(institucion.getNombre(), institucion.getCorreo()));
@@ -71,8 +70,8 @@ public class InstitucionServiceImp implements InstitucionService, Utils {
     @Override
     public List<Institucion> guardarInstituciones(List<Institucion> instituciones) {
         for (Institucion institucion : instituciones) {
-            institucion.setFechaCreacion(FORMATTER.format(LOCAL_DATE_TIME));
-            institucion.setLogo(encodeImageToString(pathInstituciones));
+            institucion.setFechaCreacion(DateUtils.formatDate(DateUtils.now()));
+            institucion.setLogo(FileUtils.encodeImageToString(pathInstituciones + "/institucionLogoDefaul.png"));
         }
         return (List<Institucion>) institucionRepository.saveAll(instituciones);
     }
@@ -118,8 +117,8 @@ public class InstitucionServiceImp implements InstitucionService, Utils {
 
         institucion.setNombre(Validaciones.validaStringValue(institucionDTO.getNombre()));
         institucion.setCorreo(Validaciones.validaEmailValue(institucionDTO.getCorreo()));
-        institucion.setFechaCreacion(FORMATTER.format(LOCAL_DATE_TIME));
-        institucion.setLogo(encodeImageToString(pathInstituciones));
+        institucion.setFechaCreacion(DateUtils.formatDate(DateUtils.now()));
+        institucion.setLogo(FileUtils.encodeImageToString(pathInstituciones + "/institucionLogoDefaul.png"));
 
         return institucionRepository.save(institucion);
     }
@@ -136,15 +135,4 @@ public class InstitucionServiceImp implements InstitucionService, Utils {
                 .toArray(Predicate[]::new)
         ));
     }
-
-
-    @Override
-    public String encodeImageToString(String path) {
-        try (FileInputStream file = new FileInputStream(path + "/institucionLogoDefaul.png")) {
-            return "data:image/png;base64," + Base64.encodeBase64String(file.readAllBytes());
-        } catch (IOException exception) {
-            throw new IllegalArgumentException(String.format("La imagen no es correcta %s", exception));
-        }
-    }
-
 }
