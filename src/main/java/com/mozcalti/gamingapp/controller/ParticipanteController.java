@@ -1,7 +1,6 @@
 package com.mozcalti.gamingapp.controller;
 
 
-import com.mozcalti.gamingapp.model.Participante;
 import com.mozcalti.gamingapp.model.dto.ParticipanteDTO;
 import com.mozcalti.gamingapp.model.dto.TablaParticipantesDTO;
 import com.mozcalti.gamingapp.service.ParticipantesService;

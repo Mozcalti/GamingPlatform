@@ -25,7 +25,7 @@ public class ParticipanteEquipo {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_participante", referencedColumnName = "id_participante", nullable = false, insertable = false, updatable = false)
-    private Participante participantesByIdParticipante;
+    private Participantes participantesByIdParticipante;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_equipo", referencedColumnName = "id_equipo", nullable = false, insertable = false, updatable = false)

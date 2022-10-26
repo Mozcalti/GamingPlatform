@@ -116,7 +116,7 @@ public class CalendarizarEtapasTorneoServiceImpl implements CalendarizarEtapasTo
         List<EtapaDTO> etapasDTO = new ArrayList<>();
         EtapaDTO etapaDTO;
         Equipos equipos;
-        Participante participantes;
+        Participantes participantes;
         List<ParticipanteDTO> participantesDTO = new ArrayList<>();
         EquipoDTO equipoDTO;
         List<EquipoDTO> equiposDTO = new ArrayList<>();
@@ -285,7 +285,7 @@ public class CalendarizarEtapasTorneoServiceImpl implements CalendarizarEtapasTo
         BatallaDTO batallaDTO = null;
         BatallaParticipanteDTO batallaParticipanteDTO;
         Equipos equiposRandom;
-        Participante participantesEntity;
+        Participantes participantesEntity;
         int numCompetidores = 0;
         int totalParticipantes = etapas.getReglas().getNumCompetidores();
 

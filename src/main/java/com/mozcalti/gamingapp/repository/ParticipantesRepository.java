@@ -1,12 +1,12 @@
 package com.mozcalti.gamingapp.repository;
 
-import com.mozcalti.gamingapp.model.Participante;
+import com.mozcalti.gamingapp.model.Participantes;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ParticipantesRepository extends PagingAndSortingRepository<Participante, Integer>, JpaSpecificationExecutor<Participante> {
+public interface ParticipantesRepository extends PagingAndSortingRepository<Participantes, Integer>, JpaSpecificationExecutor<Participantes> {
 
-    Participante findByCorreo(String correo);
+    Participantes findByCorreo(String correo);
 }

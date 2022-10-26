@@ -145,7 +145,7 @@ public final class FileUtils {
 
     public static String encodeImageToString(String path) {
         try (FileInputStream file = new FileInputStream(path)) {
-            return Base64.encodeBase64String(file.readAllBytes());
+            return "data:image/png;base64," + Base64.encodeBase64String(file.readAllBytes());
         } catch (IOException exception) {
             throw new IllegalArgumentException(String.format("La imagen no es correcta %s", exception));
         }

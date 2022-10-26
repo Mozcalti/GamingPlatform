@@ -10,7 +10,7 @@ import java.util.Collection;
 @Table(name = "participantes")
 @Data
 @NoArgsConstructor
-public class Participante {
+public class Participantes {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id_participante")
