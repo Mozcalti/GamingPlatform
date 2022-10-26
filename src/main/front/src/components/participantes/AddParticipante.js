@@ -1,130 +1,172 @@
 import DialogTitle from "@mui/material/DialogTitle";
-import {Divider, Stack, TextField} from "@mui/material";
+import {
+    Divider,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
+    Stack,
+    TextField,
+    Typography
+} from "@mui/material";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import React, {useState} from "react";
-import {Participante} from "./Participante.model";
+import {useForm} from "react-hook-form";
+import {yupResolver} from "@hookform/resolvers/yup/dist/yup";
+
 
 function AddParticipante(props) {
-    const [participante, setParticipante] = useState(new Participante('', '', '', '', '', '', '', '', '', '', ''));
     const [open, setOpen] = useState(false);
 
-    const abrirModal = (data) => {
-        setParticipante(data)
+    const {
+        register,
+        reset,
+        handleSubmit,
+        formState: {errors}
+    } = useForm({
+        resolver: yupResolver(props.ValidaForm)
+    });
+
+    const abrirModal = () => {
         setOpen(true);
     };
 
     const cerrarModal = () => {
+        reset();
         setOpen(false);
     };
 
-    const guardarParticipante = () => {
-        props.addParticipante(participante);
+    const guardarParticipante = data => {
+        props.addParticipante(data);
         cerrarModal();
     }
-
 
     return (
         <div>
             <Button variant="contained" size="large"
-                    onClick={() => abrirModal(new Participante('', '', '', '', '', '', '', '', '', '', ''))}>Agregar</Button>
+                    onClick={() => abrirModal()}>Agregar</Button>
             <Dialog open={open} onClose={cerrarModal} fullWidth={true}>
                 <DialogTitle align="center">Nuevo Participante</DialogTitle>
                 <Divider/>
                 <DialogContent>
-                    <Stack spacing={2}>
-                        <TextField
-                            autoFocus
-                            label="Nombre"
-                            variant="outlined"
-                            required
-                            fullWidth
-                            value={participante.nombre}
-                            onChange={(e) => setParticipante({...participante, nombre: e.target.value})}
-                        />
+                    <form onReset>
+                        <Stack spacing={2}>
+                            <TextField
+                                autoFocus
+                                label="Nombre"
+                                variant="outlined"
+                                required
+                                fullWidth
+                                {...register('nombre')}
+                                error={!!errors.nombre}/>
+                            <Typography variant="subtitle1" color="error.main">
+                                {errors.nombre?.message}
+                            </Typography>
 
-                        <TextField
-                            autoFocus
-                            label="Apellidos"
-                            variant="outlined"
-                            required
-                            fullWidth
-                            value={participante.apellidos}
-                            onChange={(e) => setParticipante({...participante, apellidos: e.target.value})}
-                        />
+                            <TextField
+                                autoFocus
+                                label="Apellidos"
+                                variant="outlined"
+                                required
+                                fullWidth
+                                {...register('apellidos')}
+                                error={!!errors.apellidos}/>
+                            <Typography variant="subtitle1" color="error.main">
+                                {errors.apellidos?.message}
+                            </Typography>
 
-                        <TextField
-                            autoFocus
-                            label="Correo"
-                            variant="outlined"
-                            required
-                            fullWidth
-                            value={participante.correo}
-                            onChange={(e) => setParticipante({...participante, correo: e.target.value})}
-                        />
+                            <TextField
+                                autoFocus
+                                label="Correo"
+                                variant="outlined"
+                                required
+                                fullWidth
+                                {...register('correo')}
+                                error={!!errors.correo}/>
+                            <Typography variant="subtitle1" color="error.main">
+                                {errors.correo?.message}
+                            </Typography>
 
-                        <TextField
-                            autoFocus
-                            label="Carrera"
-                            variant="outlined"
-                            required
-                            fullWidth
-                            value={participante.carrera}
-                            onChange={(e) => setParticipante({...participante, carrera: e.target.value})}
-                        />
+                            <TextField
+                                autoFocus
+                                label="Carrera"
+                                variant="outlined"
+                                required
+                                fullWidth
+                                {...register('carrera')}
+                                error={!!errors.carrera}/>
+                            <Typography variant="subtitle1" color="error.main">
+                                {errors.carrera?.message}
+                            </Typography>
 
-                        <TextField
-                            autoFocus
-                            label="Academia"
-                            variant="outlined"
-                            required
-                            fullWidth
-                            value={participante.academia}
-                            onChange={(e) => setParticipante({...participante, academia: e.target.value})}
-                        />
-                        <TextField
-                            autoFocus
-                            label="IES"
-                            variant="outlined"
-                            required
-                            fullWidth
-                            value={participante.ies}
-                            onChange={(e) => setParticipante({...participante, ies: e.target.value})}
-                        />
+                            <TextField
+                                autoFocus
+                                label="Academia"
+                                variant="outlined"
+                                required
+                                fullWidth
+                                {...register('academia')}
+                                error={!!errors.academia}/>
+                            <Typography variant="subtitle1" color="error.main">
+                                {errors.academia?.message}
+                            </Typography>
+                            <TextField
+                                autoFocus
+                                label="IES"
+                                variant="outlined"
+                                required
+                                fullWidth
+                                {...register('ies')}
+                                error={!!errors.ies}/>
+                            <Typography variant="subtitle1" color="error.main">
+                                {errors.ies?.message}
+                            </Typography>
 
-                        <TextField
-                            autoFocus
-                            label="Semestre"
-                            variant="outlined"
-                            required
-                            fullWidth
-                            value={participante.semestre}
-                            onChange={(e) => setParticipante({...participante, semestre: e.target.value})}
-                        />
-                        <TextField
-                            autoFocus
-                            label="Institución"
-                            variant="outlined"
-                            required
-                            fullWidth
-                            value={participante.idInstitucion}
-                            onChange={(e) => setParticipante({...participante, idInstitucion: e.target.value})}
-                        />
-                    </Stack>
+                            <TextField
+                                autoFocus
+                                type='number'
+                                label="Semestre"
+                                variant="outlined"
+                                required
+                                fullWidth
+                                {...register('semestre')}
+                                error={!!errors.semestre}/>
+                            <Typography variant="subtitle1" color="error.main">
+                                {errors.semestre?.message}
+                            </Typography>
 
+
+                            <FormControl>
+                                <InputLabel id="institucion-label">Institución</InputLabel>
+                                <Select
+                                    id="idInstitucion"
+                                    labelId="institucion-label"
+                                    {...register('idInstitucion')}
+                                    error={!!errors.idInstitucion}>
+                                    <MenuItem disabled selected>Selecciona una Institución</MenuItem>
+                                    {props.instituciones.map((institucion) => (
+                                        <MenuItem value={institucion.id}>{institucion.nombre}</MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+
+                            <Typography variant="subtitle1" color="error.main">
+                                {errors.idInstitucion?.message}
+                            </Typography>
+                        </Stack>
+                    </form>
                 </DialogContent>
                 <Divider/>
                 <DialogActions>
-                    <Button variant="contained" color="inherit" onClick={cerrarModal}>Cerrar</Button>
-                    <Button variant="contained" onClick={guardarParticipante}>Guardar</Button>
+                    <Button variant="contained" color="inherit" onClick={cerrarModal}>Cancelar</Button>
+                    <Button variant="contained" onClick={handleSubmit(guardarParticipante)}>Guardar</Button>
                 </DialogActions>
             </Dialog>
         </div>
-
-
-)
+    )
 
 };
 

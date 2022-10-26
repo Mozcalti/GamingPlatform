@@ -7,6 +7,7 @@ import UsersList from "./components/users";
 import ActivationLanding from "./components/activacion/ActivationLanding";
 import ActivationForm from "./components/activacion";
 import ParticipantesList from "./components/participantes";
+import InstitucionesList from "./components/instituciones";
 
 function App() {
     return (
@@ -41,6 +42,13 @@ function App() {
                         </Protected>
                     }
                 />
+                <Route
+                    path="/instituciones"
+                    element={
+                        <Protected>
+                            <InstitucionesList />
+                        </Protected>
+                }/>
             </Routes>
         </BrowserRouter>
     );

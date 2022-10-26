@@ -112,7 +112,7 @@ public class InstitucionServiceImp implements InstitucionService {
     @Override
     public Institucion guardarInstitucion(InstitucionDTO institucionDTO) {
         Institucion institucion = new Institucion();
-        if (institucionRepository.findByNombre(institucionDTO.getNombre()) != null)
+        if (institucionRepository.findByNombre(institucionDTO.getNombre()).isPresent())
             throw new DuplicateKeyException(String.format("La institución '%s' ya esta registrada en el sistema", institucionDTO.getNombre()));
 
         institucion.setNombre(Validaciones.validaStringValue(institucionDTO.getNombre()));
@@ -121,6 +121,11 @@ public class InstitucionServiceImp implements InstitucionService {
         institucion.setLogo(FileUtils.encodeImageToString(pathInstituciones + "/institucionLogoDefaul.png"));
 
         return institucionRepository.save(institucion);
+    }
+
+    @Override
+    public Iterable<Institucion> instituciones() {
+       return institucionRepository.findAll();
     }
 
     private Specification<Institucion> containsTextInAttributes(String text, List<String> attributes) {

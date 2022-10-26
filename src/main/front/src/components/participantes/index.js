@@ -3,38 +3,31 @@ import React, {useEffect, useState} from "react";
 import ParticipantesService from "./Participantes.service"
 import {DataGrid} from "@mui/x-data-grid";
 import {
+    Alert,
     Container,
     Divider,
-    Grid,
-    Stack,
+    Grid, Snackbar,
     TextField,
     Typography
 } from "@mui/material";
 import Button from "@mui/material/Button";
-import * as PropTypes from "prop-types";
-import {Participante} from "./Participante.model";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
-import DialogActions from "@mui/material/DialogActions";
 import AddParticipante from "./AddParticipante";
+import DetalleParticipante from "./DetalleParticipante";
+import InstitucionService from "../../services/institucion.service";
+import * as Yup from "yup";
+import CargaMasiva from "./CargaMasiva";
 
 
-function Item(props) {
-    return null;
-}
-
-Item.propTypes = {children: PropTypes.node};
 const ParticipantesList = () => {
     const [participantes, setParticipantes] = useState([]);
-    const [participante, setParticipante] = useState(new Participante('','','','','','','','','','',''));
     const [message, setMessage] = useState("");
+    const [instituciones, setInstituciones] = useState([]);
     const [resultado, setResultado] = useState({
             success: false,
             error: false
         }
     );
-    const [open, setOpen] = useState(false);
+    const [errorResponse, setErrorResponse] = useState("");
 
     const getParticipantes = (texto) => {
         ParticipantesService.lista(texto)
@@ -48,18 +41,6 @@ const ParticipantesList = () => {
             );
     }
 
-    const getParticipante = (id) => {
-        ParticipantesService.getParticipante(id)
-            .then(
-                (response) => {
-                    setParticipante(response.data);
-                    abrirModal(response.data)
-                },
-                error => {
-                    console.log(error)
-                }
-            );
-    }
 
     const agregarParticipante = (participante) => {
         ParticipantesService
@@ -70,37 +51,111 @@ const ParticipantesList = () => {
                     getParticipantes('');
                 },
                 error => {
-                    console.error(error);
+                    setErrorResponse(error.response.data.message)
                     setResultado({...resultado, error: true})
                 }
             );
     }
 
+    const validaExcel = (participante) => {
+        ParticipantesService
+            .validaExcel(participante)
+            .then(
+                (response) => {
+                    setResultado({...resultado, success: true})
+                    getParticipantes("")
+                },
+                error => {
+                    setErrorResponse(error.response.data.message)
+                    setResultado({...resultado, error: true})
+                }
+            );
+    }
+
+
+    const actualizarParticipante = (participante) => {
+        ParticipantesService
+            .actualizarParticipante(participante)
+            .then(
+                (response) => {
+                    setResultado({...resultado, success: true})
+                    getParticipantes('');
+                },
+                error => {
+                    console.error(error.response.data.message);
+                    setErrorResponse(error.response.data.message)
+                    setResultado({...resultado, error: true})
+                }
+            );
+    }
+
+    const getInstituciones = () => {
+        InstitucionService.getInstituciones()
+            .then(
+                (response) => {
+                    setInstituciones(response.data);
+                },
+                error => {
+                    console.log(error)
+                }
+            );
+    }
     useEffect(() => {
         getParticipantes("")
+        getInstituciones()
+
     }, []);
 
+    const ValidaForm = Yup.object().shape({
+        nombre: Yup.string()
+            .required('El nombre es obligatorio')
+            .max(255, 'El nombre no debe exceder los 255 caracteres')
+            .min(3, 'El nombre debe tener como minimo 3 caracteres'),
+        apellidos: Yup.string()
+            .required('El apellido es obligatorio')
+            .max(255, 'El apellido no debe exceder los 255 caracteres')
+            .min(3, 'El apellido debe tener como minimo 3 caracteres'),
+        correo: Yup.string()
+            .required('El correo es obligatorio')
+            .email('El formato del correo no es correcto'),
+        carrera: Yup.string()
+            .required('La carrera es obligatoria')
+            .max(255, 'La carrera no debe exceder los 255 caracteres')
+            .min(3, 'La carrera debe tener como minimo 3 caracteres'),
+        academia: Yup.string()
+            .required('La academia es obligatoria')
+            .max(255, 'La academia no debe exceder los 255 caracteres')
+            .min(3, 'La academia debe tener como minimo 3 caracteres'),
+        ies: Yup.string()
+            .required('La IES es obligatoria')
+            .max(255, 'La IES no debe exceder los 255 caracteres')
+            .min(3, 'La IES debe tener como minimo 3 caracteres'),
+        semestre: Yup.number()
+            .required('El semestre es obligatorio'),
+        idInstitucion: Yup.string()
+            .required('La institucion es obligatoria')
+    });
 
-    const abrirModal = (data) => {
-        setParticipante(data)
-        setOpen(true);
-    };
-
-    const cerrarModal = () => {
-        setOpen(false);
-    };
+    const ValidaFormCargaMasiva = Yup.object().shape({
+        file: Yup.mixed()
+            .test("file", "El archivo es obligatorio", (value) => {if (value.length > 0)return true;else return false;})
+            .test("fileType", "El formato del archivo no es valido", (value) =>{
+                return value.length && ["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel"].includes(value[0].type)
+            })
+    });
 
 
     const columns = [
-        {field: 'nombre', headerName: 'Nombre', width: 300},
-        {field: 'apellidos', headerName: 'Apellidos', width: 300},
-        {field: 'fechaCreacion', headerName: 'Fecha de Creación', width: 300},
+        {field: 'nombre', headerName: 'Nombre', filterable: false, width: 300},
+        {field: 'apellidos', headerName: 'Apellidos', filterable: false, width: 300},
+        {field: 'fechaCreacion', headerName: 'Fecha de Creación', filterable: false, width: 300},
         {
-            field: 'idParticipante', headerName: 'Acciones', width: 225, renderCell: (p) => {
+            field: 'idParticipante', headerName: 'Acciones', filterable: false, width: 225, renderCell: (p) => {
                 return (
                     <Grid container spacing={2}>
                         <Grid item xs={6}>
-                            <Button variant="contained" onClick={() => getParticipante(p.value)}>Ver</Button>
+                            <DetalleParticipante id={p.value} instituciones={instituciones} ValidaForm={ValidaForm}
+                                                 actualizarParticipante={actualizarParticipante}/>
                         </Grid>
                     </Grid>
                 )
@@ -116,20 +171,23 @@ const ParticipantesList = () => {
                 <Typography variant="h4">Participantes</Typography>
                 <Divider/>
                 <br/>
-                <div style={{height: 430}}>
+                <div style={{height: 400}}>
                     <Grid container spacing={2}>
                         <Grid item xs={6} md={6}>
                             <TextField label="Busqueda" variant="outlined" fullWidth
                                        onChange={(e) => setMessage(e.target.value)}/>
                         </Grid>
                         <Grid item xs={2} md={2}>
-                            <Button onClick={() => getParticipantes(message)} variant="contained" size="large">Buscar</Button>
+                            <Button onClick={() => getParticipantes(message)} variant="contained"
+                                    size="large">Buscar</Button>
                         </Grid>
                         <Grid item xs={2} md={2}>
-                            <AddParticipante addParticipante={agregarParticipante}/>
+                            <AddParticipante addParticipante={agregarParticipante} instituciones={instituciones}
+                                             ValidaForm={ValidaForm}/>
                         </Grid>
                         <Grid item xs={2} md={2}>
-                            <Button variant="contained" size="large">Subir Archivo</Button>
+                            <CargaMasiva validaExcel={validaExcel}
+                                         ValidaFormCargaMasiva={ValidaFormCargaMasiva}></CargaMasiva>
                         </Grid>
 
                     </Grid>
@@ -146,96 +204,16 @@ const ParticipantesList = () => {
                 </div>
             </Container>
 
-            <Dialog open={open} onClose={cerrarModal} fullWidth={true}>
-                <DialogTitle align="center">Detalle del Participante</DialogTitle>
-                <Divider/>
-                <DialogContent>
-                    <Stack spacing={2}>
-                        <TextField
-                            autoFocus
-                            label="Nombre"
-                            variant="outlined"
-                            required
-                            fullWidth
-                            value={participante.nombre}
-                            onChange={(e) => setParticipante({...participante, nombre: e.target.value})}
-                        />
-
-                        <TextField
-                            autoFocus
-                            label="Apellidos"
-                            variant="outlined"
-                            required
-                            fullWidth
-                            value={participante.apellidos}
-                            onChange={(e) => setParticipante({...participante, apellidos: e.target.value})}
-                        />
-
-                        <TextField
-                            autoFocus
-                            label="Correo"
-                            variant="outlined"
-                            required
-                            fullWidth
-                            value={participante.correo}
-                            onChange={(e) => setParticipante({...participante, correo: e.target.value})}
-                        />
-
-                        <TextField
-                            autoFocus
-                            label="Carrera"
-                            variant="outlined"
-                            required
-                            fullWidth
-                            value={participante.carrera}
-                            onChange={(e) => setParticipante({...participante, carrera: e.target.value})}
-                        />
-
-                        <TextField
-                            autoFocus
-                            label="Academia"
-                            variant="outlined"
-                            required
-                            fullWidth
-                            value={participante.academia}
-                            onChange={(e) => setParticipante({...participante, academia: e.target.value})}
-                        />
-                        <TextField
-                            autoFocus
-                            label="IES"
-                            variant="outlined"
-                            required
-                            fullWidth
-                            value={participante.ies}
-                            onChange={(e) => setParticipante({...participante, ies: e.target.value})}
-                        />
-
-                        <TextField
-                            autoFocus
-                            label="Semestre"
-                            variant="outlined"
-                            required
-                            fullWidth
-                            value={participante.semestre}
-                            onChange={(e) => setParticipante({...participante, semestre: e.target.value})}
-                        />
-                        <TextField
-                            autoFocus
-                            label="Institución"
-                            variant="outlined"
-                            required
-                            fullWidth
-                            value={participante.institucion}
-                            onChange={(e) => setParticipante({...participante, institucion: e.target.value})}
-                        />
-                    </Stack>
-
-                </DialogContent>
-                <Divider/>
-                <DialogActions>
-                    <Button variant="contained" color="inherit" onClick={cerrarModal}>Cerrar</Button>
-                </DialogActions>
-            </Dialog>
+            <Snackbar open={resultado.success} autoHideDuration={6000} onClose={() => {
+                setResultado({...resultado, success: false})
+            }}>
+                <Alert severity="success" variant="filled">Se guardo correctamente el participante</Alert>
+            </Snackbar>
+            <Snackbar open={resultado.error} autoHideDuration={6000} onClose={() => {
+                setResultado({...resultado, error: false})
+            }}>
+                <Alert severity="error" variant="filled">{errorResponse}</Alert>
+            </Snackbar>
         </>
     )
 };
