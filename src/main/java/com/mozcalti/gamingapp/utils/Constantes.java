@@ -18,7 +18,7 @@ public final class Constantes {
     public static final String RECORD_INFO_INICIO = "^.+recordInfo.+$";
     public static final String RECORD_INFO_FIN = "^.+\\/recordInfo.+$";
 
-    public static final String IMAGES_PlAI_LOGO = "/img/logo_plai.png";
+    public static final String IMAGES_PLAI_LOGO = "/img/logo_plai.png";
 
     public static final String TODOS = "todos";
 }

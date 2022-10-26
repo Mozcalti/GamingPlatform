@@ -31,9 +31,6 @@ public class SameSiteCookieCsrfTokenRepository implements CsrfTokenRepository {
     private Boolean secure;
     private int cookieMaxAge = -1;
 
-    public SameSiteCookieCsrfTokenRepository() {
-    }
-
     public CsrfToken generateToken(HttpServletRequest request) {
         return new DefaultCsrfToken(this.headerName, this.parameterName, this.createNewToken());
     }
