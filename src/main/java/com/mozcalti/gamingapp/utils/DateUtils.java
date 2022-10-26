@@ -54,6 +54,20 @@ public final class DateUtils {
 
     }
 
+    public static boolean isDatesRangoValid(String fechaIni, String fechaFin, String pattern) {
+
+        boolean resultado = false;
+        Calendar calendarIni = getDateFormat(fechaIni, pattern);
+        Calendar calendarFin = getDateFormat(fechaFin, pattern);
+
+        if (calendarFin.after(calendarIni) || calendarIni.equals(calendarFin)) {
+            resultado = true;
+        }
+
+        return resultado;
+
+    }
+
     public static Calendar getDateFormat(String fecha, String pattern) throws ValidacionException {
 
         DateTimeFormatter fmt;
@@ -141,6 +155,15 @@ public final class DateUtils {
         if (fecha != null) {
             DateTimeFormatter fmt = DateTimeFormat.forPattern(pattern).withLocale(Locale.ENGLISH);
             return getDateFormat(fmt.parseDateTime(fecha).plusMinutes(minutos).toDate(), pattern);
+        } else {
+            throw new ValidacionException("El parametro date no puede ser null");
+        }
+    }
+
+    public static String addDias(String fecha, String pattern, int dias) throws ValidacionException {
+        if (fecha != null) {
+            DateTimeFormatter fmt = DateTimeFormat.forPattern(pattern).withLocale(Locale.ENGLISH);
+            return getDateFormat(fmt.parseDateTime(fecha).plusDays(dias).toDate(), pattern);
         } else {
             throw new ValidacionException("El parametro date no puede ser null");
         }

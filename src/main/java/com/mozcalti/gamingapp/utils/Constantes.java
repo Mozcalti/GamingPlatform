@@ -9,6 +9,10 @@ public final class Constantes {
     public static final String FECHA_HORA_PATTERN = "dd/MM/yyyy hh:mm a";
     public static final String FECHA_PATTERN = "dd/MM/yyyy";
     public static final String HORA_PATTERN = "hh:mm a";
+
+    public static final String SABADO = "Sat";
+
+    public static final String DOMINGO = "Sun";
     public static final String DIA_PATTERN = "E";
     public static final String MAIL_MESSAGE_TYPE = "text/html";
     public static final String MAIL_IMAGE_HEADER = "Content-ID";

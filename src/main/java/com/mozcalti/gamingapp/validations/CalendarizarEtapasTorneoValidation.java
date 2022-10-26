@@ -42,11 +42,11 @@ public final class CalendarizarEtapasTorneoValidation {
                 DateUtils.getDateFormat(torneoDTO.getFechaFin(), Constantes.FECHA_PATTERN).getTime(),
                 Constantes.DIA_PATTERN);
 
-        if(diaSemanaFIT.contains("SÁB") || diaSemanaFIT.contains("DOM")) {
+        if(diaSemanaFIT.contains(Constantes.SABADO) || diaSemanaFIT.contains(Constantes.DOMINGO)) {
             throw new ValidacionException("Fecha de inicio del torneo no puede ser un día inhábil");
         }
 
-        if(diaSemanaFFT.contains("SÁB") || diaSemanaFFT.contains("DOM")) {
+        if(diaSemanaFFT.contains(Constantes.SABADO) || diaSemanaFFT.contains(Constantes.DOMINGO)) {
             throw new ValidacionException("Fecha de fin del torneo no puede ser un día inhábil");
         }
 

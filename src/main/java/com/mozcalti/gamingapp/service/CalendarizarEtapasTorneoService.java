@@ -1,6 +1,8 @@
 package com.mozcalti.gamingapp.service;
 
 import com.mozcalti.gamingapp.exceptions.ValidacionException;
+import com.mozcalti.gamingapp.model.Etapas;
+import com.mozcalti.gamingapp.model.Torneos;
 import com.mozcalti.gamingapp.model.correos.DatosCorreoBatallaDTO;
 import com.mozcalti.gamingapp.model.torneos.TorneoDTO;
 import com.mozcalti.gamingapp.model.batallas.BatallasDTO;
