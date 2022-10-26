@@ -102,12 +102,23 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
     }
 
     @Override
-    public List<Participantes> guardarParticipantes(List<Participantes> participantes) {
-        for (Participantes participante : participantes) {
-            participante.setFechaCreacion(FORMATTER.format(Utils.LOCAL_DATE_TIME));
+    public List<Participantes> guardarParticipantes(List<ParticipanteDTO> participanteDTO) {
+        List<Participantes> listadoParticipantes = new ArrayList<>();
+        for (ParticipanteDTO dto : participanteDTO) {
+            Participantes participante = new Participantes();
+            participante.setNombre(dto.getNombre());
+            participante.setApellidos(dto.getApellidos());
+            participante.setCorreo(dto.getCorreo());
+            participante.setAcademia(dto.getAcademia());
+            participante.setIes(dto.getIes());
+            participante.setCarrera(dto.getCarrera());
+            participante.setSemestre(dto.getSemestre());
             participante.setFoto(encodeImageToString(pathParticipantes));
+            participante.setFechaCreacion(FORMATTER.format(LOCAL_DATE_TIME));
+            participante.setInstitucion(institucionRepository.findById(dto.getIdInstitucion()).orElse(null));
+            listadoParticipantes.add(participante);
         }
-        return (List<Participantes>) participantesRepository.saveAll(participantes);
+        return (List<Participantes>) participantesRepository.saveAll(listadoParticipantes);
     }
 
     @Override
