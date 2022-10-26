@@ -4,6 +4,7 @@ import com.mozcalti.gamingapp.model.Institucion;
 import com.mozcalti.gamingapp.model.Participantes;
 import com.mozcalti.gamingapp.model.dto.*;
 import com.mozcalti.gamingapp.repository.InstitucionRepository;
+import com.mozcalti.gamingapp.repository.ParticipantesRepository;
 import com.mozcalti.gamingapp.service.InstitucionService;
 import com.mozcalti.gamingapp.utils.*;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class InstitucionServiceImp implements InstitucionService, Utils {
     private final InstitucionRepository institucionRepository;
+    private final ParticipantesRepository participantesRepository;
 
     @Value("${resources.static.instituciones}")
     private String pathInstituciones;
@@ -101,7 +103,8 @@ public class InstitucionServiceImp implements InstitucionService, Utils {
     @Override
     public DetalleInstitucionDTO obtenerInstitucion(Integer id) {
         Optional<Institucion> institucion = institucionRepository.findById(id);
-        List<Participantes> participantes = institucionRepository.participantesEnInstitucion(id);
+
+        List<Participantes> participantes = participantesRepository.findAllByInstitucionIdOrderByNombreAsc(id);
         List<ParticipanteDTO> participanteDTOList = new ArrayList<>();
         for (Participantes participante : participantes) {
             participanteDTOList.add(new ParticipanteDTO(
