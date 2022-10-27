@@ -7,10 +7,6 @@ import java.util.Map;
 
 public interface SendMailService {
 
-    void sendMail(String toAddress, String subject, String templateMessage, Map<String, String> imagesMessage)
+    void sendMail(String toAddress, String templateKey, Map<String, Object> templateParameters)
             throws SendMailException, UtilsException;
-
-    public String readMailTemplate(String pathname, Map<String, Object> parameters)
-            throws SendMailException, UtilsException;
-
 }

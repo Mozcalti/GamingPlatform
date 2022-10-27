@@ -41,7 +41,8 @@ public class Participantes {
     private String foto;
     @Column(name = "fecha_creacion")
     private String fechaCreacion;
-    @ManyToOne
+
+    @ManyToOne(optional = false)
     @JoinColumn(name = "id_institucion")
     private Institucion institucion;
 

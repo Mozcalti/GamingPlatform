@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface ParticipantesService extends GenericServiceAPI<Participantes, Integer> {
     List<ParticipanteDTO> cargarArchivo(MultipartFile file) ;
-    List<Participantes> guardarParticipantes(List<Participantes> participantes);
+    List<Participantes> guardarParticipantes(List<ParticipanteDTO> participantesDTO);
     List<TablaParticipantesDTO> listaParticipantes(String cadena);
     TablaParticipantesDTO obtenerParticipante(Integer id);
     Participantes guardarParticipante(ParticipanteDTO participanteDTO);

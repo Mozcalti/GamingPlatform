@@ -1,5 +1,6 @@
 package com.mozcalti.gamingapp.configurations;
 
+import com.mozcalti.gamingapp.security.SameSiteCookieCsrfTokenRepository;
 import com.mozcalti.gamingapp.security.jwt.AuthEntryPointJwt;
 import com.mozcalti.gamingapp.security.jwt.AuthTokenFilter;
 import com.mozcalti.gamingapp.security.jwt.JwtUtil;
@@ -20,7 +21,6 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -45,10 +45,10 @@ public class SpringSecurityConfiguration {
         http
                 .cors()
                 .and()
-                    .csrf().disable()
-                    /*.ignoringAntMatchers("/api/login/**")
-                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .and()*/
+                    .csrf()
+                    .ignoringAntMatchers("/api/login/**")
+                    .csrfTokenRepository(SameSiteCookieCsrfTokenRepository.withHttpOnlyFalse())
+                .and()
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                     .exceptionHandling()
@@ -95,7 +95,7 @@ public class SpringSecurityConfiguration {
     CorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:8080"));
         configuration.setAllowedHeaders(List.of(HttpHeaders.AUTHORIZATION, HttpHeaders.CACHE_CONTROL, HttpHeaders.CONTENT_TYPE, HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "x-xsrf-token"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PUT","OPTIONS","PATCH", "DELETE"));
         configuration.setAllowCredentials(true);
@@ -104,5 +104,4 @@ public class SpringSecurityConfiguration {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
 }
