@@ -2,6 +2,7 @@ package com.mozcalti.gamingapp.service.impl;
 
 import com.mozcalti.gamingapp.commons.GenericServiceImpl;
 import com.mozcalti.gamingapp.exceptions.ValidacionException;
+import com.mozcalti.gamingapp.model.batallas.BatallaDTO;
 import com.mozcalti.gamingapp.model.batallas.BatallaFechaHoraInicioDTO;
 import com.mozcalti.gamingapp.service.TorneosService;
 import com.mozcalti.gamingapp.model.*;
@@ -9,6 +10,7 @@ import com.mozcalti.gamingapp.repository.*;
 import com.mozcalti.gamingapp.utils.Constantes;
 import com.mozcalti.gamingapp.utils.DateUtils;
 import com.mozcalti.gamingapp.utils.TorneoUtils;
+import com.mozcalti.gamingapp.validations.CalendarizarEtapasTorneoValidation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +27,12 @@ import java.util.*;
 public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> implements TorneosService {
 
     private TorneosRepository torneosRepository;
-
     private EtapasRepository etapasRepository;
     private BatallasRepository batallasRepository;
+    private InstitucionRepository institucionRepository;
+
+    private EquiposRepository equiposRepository;
+    private ParticipantesRepository participantesRepository;
 
     @Override
     public CrudRepository<Torneos, Integer> getDao() {
@@ -101,6 +106,51 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
 
         return batallaFechaHoraInicioDTOS;
 
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public List<BatallaDTO> obtieneParticipantes(Integer idEtapa) throws ValidacionException {
+
+        //Map<String, Integer> instituciones = new HashMap<>();
+
+        List<Institucion> instituciones = new ArrayList<>();
+        institucionRepository.findAll().forEach(instituciones::add);
+
+        List<Integer> participantes = new ArrayList<>();
+        for(Institucion institucion : instituciones) {
+            participantesRepository.findAllByInstitucion(institucion).forEach(
+                    p -> participantes.add(p.getParticipanteEquiposByIdParticipante()
+                            .stream().findFirst().orElseThrow().getIdParticipanteEquipo())
+            );
+        }
+
+        participantes.stream().forEach(
+                p -> log.info(p.toString())
+        );
+
+        /*Optional<Etapas> etapas = etapasRepository.findById(idEtapa);
+
+        // Armamos equipos
+        List<Integer> randomNumbers = CalendarizarEtapasTorneoValidation.armaEquipos(etapas.orElseThrow());
+
+        int totalParticipantes = etapas.orElseThrow().getReglas().getNumCompetidores();
+
+        for(Integer randomNumber : randomNumbers) {
+            Optional<Equipos> equiposRandom = equiposRepository.findById(randomNumber);
+
+            if(etapas.orElseThrow().getReglas().getTrabajo().equals(Constantes.INDIVIDUAL)) {
+                for(ParticipanteEquipo participanteEquipo : equiposRandom.orElseThrow().getParticipanteEquiposByIdEquipo()) {
+
+                }
+            }
+
+
+        }*/
+
+
+
+        return null;
     }
 
 }

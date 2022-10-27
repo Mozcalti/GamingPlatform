@@ -274,11 +274,11 @@ public class CalendarizarEtapasTorneoServiceImpl implements CalendarizarEtapasTo
 
         Etapas etapas = etapasService.get(idEtapa);
         BatallasDTO batallasDTO = new BatallasDTO();
-        Torneos torneos;
+        //Torneos torneos;
 
         CalendarizarEtapasTorneoValidation.validaGeneraBatallas(etapas, idEtapa);
 
-        torneos = torneosService.get(etapas.getIdTorneo());
+        //torneos = torneosService.get(etapas.getIdTorneo());
 
         // Armamos equipos
         List<Integer> randomNumbers = CalendarizarEtapasTorneoValidation.armaEquipos(etapas);
@@ -345,9 +345,9 @@ public class CalendarizarEtapasTorneoServiceImpl implements CalendarizarEtapasTo
 
                 }
 
-            } /*else if(etapas.getReglas().getTrabajo().equals(Constantes.EQUIPO)) {
+            } else if(etapas.getReglas().getTrabajo().equals(Constantes.EQUIPO)) {
 
-                if(numCompetidores == 0) {
+                /*if(numCompetidores == 0) {
                     batallaDTO = new BatallaDTO();
                     participantes = new ArrayList<>();
 
@@ -366,7 +366,7 @@ public class CalendarizarEtapasTorneoServiceImpl implements CalendarizarEtapasTo
                     batallaDTO.setRondas(etapas.getReglas().getNumRondas());
 
                     batallasDTO.getBatallas().add(batallaDTO);
-                }
+                }*/
 
                 if(numCompetidores < totalParticipantes) {
                     batallaParticipanteDTO = new BatallaParticipanteDTO();
@@ -382,7 +382,7 @@ public class CalendarizarEtapasTorneoServiceImpl implements CalendarizarEtapasTo
                     numCompetidores = 0;
                 }
 
-            }*/
+            }
 
         }
 

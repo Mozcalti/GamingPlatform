@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-@Slf4j
 public final class TorneoUtils {
 
     public static Map<Integer, List<BatallaFechaHoraInicioDTO>> obtieneMapHorarios(Torneos torneos, String fechaInicioParam) throws UtilsException {
@@ -67,9 +66,6 @@ public final class TorneoUtils {
 
         for(Map.Entry<Integer, List<BatallaFechaHoraInicioDTO>> entry : mapHorarios.entrySet()) {
             for(BatallaFechaHoraInicioDTO batallaFechaHoraInicioDTO : entry.getValue()) {
-                String fechaHoraValdia = batallaFechaHoraInicioDTO.getId() + "--> " + batallaFechaHoraInicioDTO.getFecha() + " " + batallaFechaHoraInicioDTO.getHoraInicio() + " " + batallaFechaHoraInicioDTO.getHoraFin();
-                log.info(fechaHoraValdia);
-
                 String horaInicio = batallaFechaHoraInicioDTO.getFecha() + " " + batallaFechaHoraInicioDTO.getHoraInicio();
                 String horaFin = batallaFechaHoraInicioDTO.getFecha() + " " + batallaFechaHoraInicioDTO.getHoraFin();
                 String horaValida = fecha + " " + horaValid;

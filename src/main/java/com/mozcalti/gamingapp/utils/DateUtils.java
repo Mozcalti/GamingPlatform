@@ -17,6 +17,8 @@ import java.util.Locale;
 @NoArgsConstructor(access = AccessLevel.NONE)
 public final class DateUtils {
 
+    private static final String PARAMETRO_NOTNULL = "El parametro date no puede ser null";
+
     public static Date toDate(LocalDateTime dateToConvert) {
         return Date
                 .from(dateToConvert.atZone(ZoneId.systemDefault())
@@ -147,7 +149,7 @@ public final class DateUtils {
             calendar.add(Calendar.MINUTE, minutos);
             return calendar.getTime();
         } else {
-            throw new ValidacionException("El parametro date no puede ser null");
+            throw new ValidacionException(PARAMETRO_NOTNULL);
         }
     }
 
@@ -156,7 +158,7 @@ public final class DateUtils {
             DateTimeFormatter fmt = DateTimeFormat.forPattern(pattern).withLocale(Locale.ENGLISH);
             return getDateFormat(fmt.parseDateTime(fecha).plusMinutes(minutos).toDate(), pattern);
         } else {
-            throw new ValidacionException("El parametro date no puede ser null");
+            throw new ValidacionException(PARAMETRO_NOTNULL);
         }
     }
 
@@ -165,7 +167,7 @@ public final class DateUtils {
             DateTimeFormatter fmt = DateTimeFormat.forPattern(pattern).withLocale(Locale.ENGLISH);
             return getDateFormat(fmt.parseDateTime(fecha).plusDays(dias).toDate(), pattern);
         } else {
-            throw new ValidacionException("El parametro date no puede ser null");
+            throw new ValidacionException(PARAMETRO_NOTNULL);
         }
     }
 
