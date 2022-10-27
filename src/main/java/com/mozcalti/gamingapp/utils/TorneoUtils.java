@@ -4,6 +4,7 @@ import com.mozcalti.gamingapp.exceptions.UtilsException;
 import com.mozcalti.gamingapp.model.TorneoHorasHabiles;
 import com.mozcalti.gamingapp.model.Torneos;
 import com.mozcalti.gamingapp.model.batallas.BatallaFechaHoraInicioDTO;
+import com.mozcalti.gamingapp.model.participantes.InstitucionEquiposDTO;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -79,5 +80,27 @@ public final class TorneoUtils {
         return resultado;
 
     }
+
+    /*public static Integer calculaTotalBatallas(List<InstitucionEquiposDTO> equiposByInstitucion, Integer numCompetidores) {
+
+        int res = 0;
+        for(InstitucionEquiposDTO institucionEquiposDTO : equiposByInstitucion) {
+            res+=TorneoUtils.calculaTotalBatallas(institucionEquiposDTO.getIdEquipos().size(),numCompetidores);
+        }
+        return res;
+
+    }*/
+    public static Integer calculaTotalBatallas(Integer dividendo, Integer divisor) {
+
+        float div = (float) dividendo/divisor;
+        int resDiv = Math.round(div);
+
+        if(resDiv == 0) {
+            resDiv+=1;
+        }
+
+        return resDiv;
+    }
+
 
 }

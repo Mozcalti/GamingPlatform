@@ -21,6 +21,10 @@ public class Equipos {
     @Column(name = "nombre")
     private String nombre;
 
+    @Basic
+    @Column(name = "activo")
+    private boolean activo;
+
     @OneToMany(mappedBy = "equiposByIdEquipo")
     private Collection<EtapaEquipo> etapaEquiposByIdEquipo;
 

@@ -2,15 +2,16 @@ package com.mozcalti.gamingapp.service.impl;
 
 import com.mozcalti.gamingapp.commons.GenericServiceImpl;
 import com.mozcalti.gamingapp.exceptions.ValidacionException;
-import com.mozcalti.gamingapp.model.batallas.BatallaDTO;
 import com.mozcalti.gamingapp.model.batallas.BatallaFechaHoraInicioDTO;
+import com.mozcalti.gamingapp.model.batallas.BatallaParticipanteDTO;
+import com.mozcalti.gamingapp.model.participantes.EquiposDTO;
+import com.mozcalti.gamingapp.model.participantes.InstitucionEquiposDTO;
 import com.mozcalti.gamingapp.service.TorneosService;
 import com.mozcalti.gamingapp.model.*;
 import com.mozcalti.gamingapp.repository.*;
 import com.mozcalti.gamingapp.utils.Constantes;
 import com.mozcalti.gamingapp.utils.DateUtils;
 import com.mozcalti.gamingapp.utils.TorneoUtils;
-import com.mozcalti.gamingapp.validations.CalendarizarEtapasTorneoValidation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,47 +111,108 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public List<BatallaDTO> obtieneParticipantes(Integer idEtapa) throws ValidacionException {
+    public EquiposDTO obtieneInstitucionEquipos() throws ValidacionException {
 
-        //Map<String, Integer> instituciones = new HashMap<>();
+        EquiposDTO equiposDTOS = new EquiposDTO();
+        List<InstitucionEquiposDTO> institucionEquiposDTOS = new ArrayList<>();
 
         List<Institucion> instituciones = new ArrayList<>();
         institucionRepository.findAll().forEach(instituciones::add);
-
-        List<Integer> participantes = new ArrayList<>();
         for(Institucion institucion : instituciones) {
-            participantesRepository.findAllByInstitucion(institucion).forEach(
-                    p -> participantes.add(p.getParticipanteEquiposByIdParticipante()
-                            .stream().findFirst().orElseThrow().getIdParticipanteEquipo())
-            );
-        }
 
-        participantes.stream().forEach(
-                p -> log.info(p.toString())
-        );
+            List<Integer> idEquiposActivos = new ArrayList<>();
+            boolean bndInsVacio = true;
+            for(Participantes participantes : participantesRepository.findAllByInstitucionId(institucion.getId())
+                    .stream().filter(p -> !p.getParticipanteEquiposByIdParticipante().isEmpty()).toList()) {
+                bndInsVacio = false;
+                for(ParticipanteEquipo participanteEquipo : participantes.getParticipanteEquiposByIdParticipante()) {
+                    Optional<Equipos> equipos = equiposRepository.findById(participanteEquipo.getIdEquipo())
+                            .filter(Equipos::isActivo);
 
-        /*Optional<Etapas> etapas = etapasRepository.findById(idEtapa);
-
-        // Armamos equipos
-        List<Integer> randomNumbers = CalendarizarEtapasTorneoValidation.armaEquipos(etapas.orElseThrow());
-
-        int totalParticipantes = etapas.orElseThrow().getReglas().getNumCompetidores();
-
-        for(Integer randomNumber : randomNumbers) {
-            Optional<Equipos> equiposRandom = equiposRepository.findById(randomNumber);
-
-            if(etapas.orElseThrow().getReglas().getTrabajo().equals(Constantes.INDIVIDUAL)) {
-                for(ParticipanteEquipo participanteEquipo : equiposRandom.orElseThrow().getParticipanteEquiposByIdEquipo()) {
+                    if(equipos.isPresent()) {
+                        idEquiposActivos.add(equipos.orElseThrow().getIdEquipo());
+                        equiposDTOS.getIdEquipos().add(equipos.orElseThrow().getIdEquipo());
+                    }
 
                 }
             }
 
+            if(!bndInsVacio) {
+                institucionEquiposDTOS.add(new InstitucionEquiposDTO(institucion.getId(),
+                        idEquiposActivos));
+            }
 
-        }*/
+        }
 
+        equiposDTOS.setEquiposByInstitucion(institucionEquiposDTOS);
 
+        return equiposDTOS;
 
-        return null;
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public List<List<BatallaParticipanteDTO>> obtieneParticipantes(List<Integer> idEquipos,
+                                                                   Integer totalParticipantes) throws ValidacionException {
+
+        List<List<BatallaParticipanteDTO>> listaBatallas = new ArrayList<>();
+        List<BatallaParticipanteDTO> batallaParticipanteDTOS = new ArrayList<>();
+        int countCompetidores = 0;
+
+        for(Integer idEquipo : idEquipos) {
+
+            if(countCompetidores == 0) {
+                batallaParticipanteDTOS = new ArrayList<>();
+            }
+
+            if(countCompetidores < totalParticipantes) {
+                Optional<Equipos> equipos = equiposRepository.findById(idEquipo);
+                StringBuilder nombreParticipantes = new StringBuilder();
+
+                if(equipos.isPresent()) {
+                    for(ParticipanteEquipo participanteEquipo : equipos.orElseThrow().getParticipanteEquiposByIdEquipo()) {
+                        Optional<Participantes> participantes = participantesRepository.findById(participanteEquipo.getIdParticipante());
+                        nombreParticipantes.append(participantes.orElseThrow().getNombre()).append(",");
+                    }
+                }
+
+                batallaParticipanteDTOS.add(new BatallaParticipanteDTO(
+                        idEquipo,
+                        nombreParticipantes.substring(0, nombreParticipantes.length()-1)));
+
+                countCompetidores+=1;
+            }
+
+            if(countCompetidores == totalParticipantes) {
+                listaBatallas.add(batallaParticipanteDTOS);
+                countCompetidores = 0;
+            }
+
+        }
+
+        listaBatallas.add(batallaParticipanteDTOS);
+
+        return listaBatallas;
+
+    }
+
+    @Override
+    public BatallaParticipanteDTO obtieneParticipantes(Integer idEquipo) throws ValidacionException {
+
+            Optional<Equipos> equipos = equiposRepository.findById(idEquipo);
+            StringBuilder nombreParticipantes = new StringBuilder();
+
+            if(equipos.isPresent()) {
+                for(ParticipanteEquipo participanteEquipo : equipos.orElseThrow().getParticipanteEquiposByIdEquipo()) {
+                    Optional<Participantes> participantes = participantesRepository.findById(participanteEquipo.getIdParticipante());
+                    nombreParticipantes.append(participantes.orElseThrow().getNombre()).append(",");
+                }
+            }
+
+        return new BatallaParticipanteDTO(
+                idEquipo,
+                nombreParticipantes.substring(0, nombreParticipantes.length()-1));
+
     }
 
 }

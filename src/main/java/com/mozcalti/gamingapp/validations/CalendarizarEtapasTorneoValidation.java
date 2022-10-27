@@ -129,6 +129,20 @@ public final class CalendarizarEtapasTorneoValidation {
 
     }
 
+    public static List<Integer> armaEquipos(List<Integer> idEquipos) throws ValidacionException {
+
+        List<Integer> randomNumbers;
+
+        try {
+            randomNumbers = CollectionUtils.getRandomNumbers(idEquipos);
+        } catch (NoSuchAlgorithmException e) {
+            throw new ValidacionException(e);
+        }
+
+        return randomNumbers;
+
+    }
+
     public static void validaGeneraBatallas(Etapas etapas, Integer idEtapa) throws ValidacionException {
         if(etapas == null) {
             throw new ValidacionException("No existe la etapa con el id indicado: " + idEtapa);

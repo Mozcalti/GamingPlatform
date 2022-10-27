@@ -3,6 +3,7 @@ package com.mozcalti.gamingapp.controller;
 import com.mozcalti.gamingapp.exceptions.ValidacionException;
 import com.mozcalti.gamingapp.model.batallas.BatallaDTO;
 import com.mozcalti.gamingapp.model.batallas.BatallaFechaHoraInicioDTO;
+import com.mozcalti.gamingapp.model.batallas.BatallaParticipanteDTO;
 import com.mozcalti.gamingapp.model.torneos.TorneoDTO;
 import com.mozcalti.gamingapp.model.batallas.BatallasDTO;
 import com.mozcalti.gamingapp.service.CalendarizarEtapasTorneoService;
@@ -156,7 +157,7 @@ public class TorneoControlller {
     }
 
     @GetMapping("/obtieneParticipantes/{idEtapa}")
-    public List<BatallaDTO> obtieneParticipantes(@PathVariable Integer idEtapa) {
+    public BatallaParticipanteDTO obtieneParticipantes(@PathVariable Integer idEtapa) {
         return torneosService.obtieneParticipantes(idEtapa);
     }
 

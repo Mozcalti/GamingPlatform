@@ -13,6 +13,7 @@ import java.util.List;
 public class BatallaDTO {
 
     private Integer idEtapa;
+    private Integer idInstitucion;
     private Integer idBatalla;
     private String fecha;
     private String horaInicio;

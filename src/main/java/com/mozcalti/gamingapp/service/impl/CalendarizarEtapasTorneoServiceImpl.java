@@ -6,12 +6,15 @@ import com.mozcalti.gamingapp.model.*;
 import com.mozcalti.gamingapp.model.batallas.BatallaFechaHoraInicioDTO;
 import com.mozcalti.gamingapp.model.batallas.BatallaParticipanteDTO;
 import com.mozcalti.gamingapp.model.correos.DatosCorreoBatallaDTO;
+import com.mozcalti.gamingapp.model.participantes.EquiposDTO;
+import com.mozcalti.gamingapp.model.participantes.InstitucionEquiposDTO;
 import com.mozcalti.gamingapp.model.torneos.*;
 import com.mozcalti.gamingapp.model.batallas.BatallaDTO;
 import com.mozcalti.gamingapp.model.batallas.BatallasDTO;
 import com.mozcalti.gamingapp.service.*;
 import com.mozcalti.gamingapp.utils.Constantes;
 import com.mozcalti.gamingapp.utils.DateUtils;
+import com.mozcalti.gamingapp.utils.TorneoUtils;
 import com.mozcalti.gamingapp.validations.CalendarizarEtapasTorneoValidation;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Service
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -274,121 +274,66 @@ public class CalendarizarEtapasTorneoServiceImpl implements CalendarizarEtapasTo
 
         Etapas etapas = etapasService.get(idEtapa);
         BatallasDTO batallasDTO = new BatallasDTO();
-        //Torneos torneos;
 
         CalendarizarEtapasTorneoValidation.validaGeneraBatallas(etapas, idEtapa);
 
-        //torneos = torneosService.get(etapas.getIdTorneo());
+        Integer numCompetidores = etapas.getReglas().getNumCompetidores();
+        Integer numRondas = etapas.getReglas().getNumRondas();
 
-        // Armamos equipos
-        List<Integer> randomNumbers = CalendarizarEtapasTorneoValidation.armaEquipos(etapas);
+        EquiposDTO equiposDTO = torneosService.obtieneInstitucionEquipos();
 
-        BatallaDTO batallaDTO = null;
-        BatallaParticipanteDTO batallaParticipanteDTO;
-        Equipos equiposRandom;
-        Participantes participantesEntity;
-        int numCompetidores = 0;
-        int totalParticipantes = etapas.getReglas().getNumCompetidores();
-
-        //String horaIni = torneos.getTorneoHorasHabilesByIdTorneo().stream().toList().get(0).getHoraIniHabil();
         List<BatallaFechaHoraInicioDTO> batallaFechaHoraInicioDTOS =
-                torneosService.obtieneFechasBatalla(idEtapa, Math.round(randomNumbers.size()/totalParticipantes));
+                torneosService.obtieneFechasBatalla(idEtapa, TorneoUtils
+                        .calculaTotalBatallas(equiposDTO.getIdEquipos().size(), numCompetidores));
 
-        //String horaFin;
-        List<BatallaParticipanteDTO> participantes = null;
-        int consecutivoHorarioBatalla = 0;
-        for(Integer randomNumber : randomNumbers) {
-            equiposRandom = equiposService.get(randomNumber);
+        if(etapas.getReglas().getTrabajo().equals(Constantes.INDIVIDUAL)) {
+            for(InstitucionEquiposDTO institucionEquiposDTO : equiposDTO.getEquiposByInstitucion()) {
 
-            if(etapas.getReglas().getTrabajo().equals(Constantes.INDIVIDUAL)) {
+                List<Integer> randomNumbers = CalendarizarEtapasTorneoValidation
+                        .armaEquipos(institucionEquiposDTO.getIdEquipos());
+                List<List<BatallaParticipanteDTO>> lists = torneosService.obtieneParticipantes(
+                        randomNumbers, numCompetidores);
 
-                for(ParticipanteEquipo participanteEquipo : equiposRandom.getParticipanteEquiposByIdEquipo()) {
-
-                    /*if(numCompetidores == 0) {
-                        batallaDTO = new BatallaDTO();
-                        participantes = new ArrayList<>();
-
-                        batallaDTO.setIdEtapa(idEtapa);
-                        batallaDTO.setHoraInicio(horaIni);
-                        horaFin = DateUtils.addMinutos(horaIni,
-                                Constantes.HORA_PATTERN,
-                                etapas.getReglas().getTiempoBatallaAprox());
-                        horaIni = DateUtils.addMinutos(horaFin,
-                                Constantes.HORA_PATTERN,
-                                etapas.getReglas().getTiempoEspera());
-                        batallaDTO.setFecha(etapas.getFechaInicio());
-
-                        batallaDTO.setHoraFin(horaFin);
-                        batallaDTO.setRondas(etapas.getReglas().getNumRondas());
-
-                        batallasDTO.getBatallas().add(batallaDTO);
-                    }*/
-
-                    batallaFechaHoraInicioDTOS.get(consecutivoHorarioBatalla++);
-
-                    if(numCompetidores < totalParticipantes) {
-                        participantesEntity = participantesService.get(participanteEquipo.getIdParticipante());
-
-                        batallaParticipanteDTO = new BatallaParticipanteDTO();
-                        batallaParticipanteDTO.setIdParticipante(participanteEquipo.getIdEquipo());
-                        batallaParticipanteDTO.setNombre(participantesEntity.getNombre() + " " +
-                                participantesEntity.getApellidos());
-                        participantes.add(batallaParticipanteDTO);
-
-                        numCompetidores+=1;
-                    }
-
-                    if(numCompetidores == totalParticipantes) {
-                        batallaDTO.setBatallaParticipantes(participantes);
-                        numCompetidores = 0;
-                    }
-
-                }
-
-            } else if(etapas.getReglas().getTrabajo().equals(Constantes.EQUIPO)) {
-
-                /*if(numCompetidores == 0) {
-                    batallaDTO = new BatallaDTO();
-                    participantes = new ArrayList<>();
+                for(int x=0; x<lists.size(); x++) {
+                    BatallaDTO batallaDTO = new BatallaDTO();
 
                     batallaDTO.setIdEtapa(idEtapa);
-                    batallaDTO.setHoraInicio(horaIni);
-                    horaFin = DateUtils.addMinutos(horaIni,
-                            Constantes.HORA_PATTERN,
-                            etapas.getReglas().getTiempoBatallaAprox());
-                    horaIni = DateUtils.addMinutos(horaFin,
-                            Constantes.HORA_PATTERN,
-                            etapas.getReglas().getTiempoEspera());
 
-                    batallaDTO.setFecha(etapas.getFechaInicio());
+                    batallaDTO.setIdInstitucion(institucionEquiposDTO.getIdInstitucion());
 
-                    batallaDTO.setHoraFin(horaFin);
-                    batallaDTO.setRondas(etapas.getReglas().getNumRondas());
+                    BatallaFechaHoraInicioDTO batallaFechaHoraInicioDTO = batallaFechaHoraInicioDTOS.get(x);
+                    batallaDTO.setFecha(batallaFechaHoraInicioDTO.getFecha());
+                    batallaDTO.setHoraInicio(batallaFechaHoraInicioDTO.getHoraInicio());
+                    batallaDTO.setHoraFin(batallaFechaHoraInicioDTO.getHoraFin());
+                    batallaDTO.setBatallaParticipantes(lists.get(x));
+                    batallaDTO.setRondas(numRondas);
 
                     batallasDTO.getBatallas().add(batallaDTO);
-                }*/
-
-                if(numCompetidores < totalParticipantes) {
-                    batallaParticipanteDTO = new BatallaParticipanteDTO();
-                    batallaParticipanteDTO.setIdParticipante(equiposRandom.getIdEquipo());
-                    batallaParticipanteDTO.setNombre(equiposRandom.getNombre());
-                    participantes.add(batallaParticipanteDTO);
-
-                    numCompetidores+=1;
-                }
-
-                if(numCompetidores == totalParticipantes) {
-                    batallaDTO.setBatallaParticipantes(participantes);
-                    numCompetidores = 0;
                 }
 
             }
+        } else if(etapas.getReglas().getTrabajo().equals(Constantes.EQUIPO)) {
+            List<Integer> randomNumbers = CalendarizarEtapasTorneoValidation
+                    .armaEquipos(equiposDTO.getIdEquipos());
+            List<List<BatallaParticipanteDTO>> lists = torneosService.obtieneParticipantes(
+                    randomNumbers, numCompetidores);
 
+            for(int x=0; x<lists.size(); x++) {
+                BatallaDTO batallaDTO = new BatallaDTO();
+
+                batallaDTO.setIdEtapa(idEtapa);
+
+                BatallaFechaHoraInicioDTO batallaFechaHoraInicioDTO = batallaFechaHoraInicioDTOS.get(x);
+                batallaDTO.setFecha(batallaFechaHoraInicioDTO.getFecha());
+                batallaDTO.setHoraInicio(batallaFechaHoraInicioDTO.getHoraInicio());
+                batallaDTO.setHoraFin(batallaFechaHoraInicioDTO.getHoraFin());
+                batallaDTO.setBatallaParticipantes(lists.get(x));
+                batallaDTO.setRondas(numRondas);
+
+                batallasDTO.getBatallas().add(batallaDTO);
+            }
         }
 
-        if(batallaDTO != null) {
-            batallaDTO.setBatallaParticipantes(participantes);
-        }
 
         return batallasDTO;
     }
