@@ -122,7 +122,8 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
 
     @Override
     public List<TablaParticipantesDTO> listaParticipantes(String cadena) {
-        Specification<Participantes> query = Specification.where(containsTextInAttributes(cadena, Arrays.asList("nombre", "correo","fechaCreacion")));
+        Specification<Participantes> query = Specification.where(containsTextInAttributes(cadena, Arrays.asList("nombre", "correo","fechaCreacion")))
+                .or(containsTextInInstitucion(cadena));
         List<Participantes> participantesPages = participantesRepository.findAll(query);
 
         return participantesPages.stream()
@@ -206,6 +207,9 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
                 .map(c -> criteriaBuilder.like(root.get(c.getName()), "%" + text + "%"))
                 .toArray(Predicate[]::new)
         ));
+    }
+    private Specification<Participantes> containsTextInInstitucion(String nombreInstitucion) {
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.join("institucion").get("nombre"), nombreInstitucion));
     }
 
 }
