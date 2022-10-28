@@ -5,6 +5,8 @@ import javax.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
@@ -16,7 +18,7 @@ public class Institucion {
     private int id;
     @Column(name = "nombre") private String nombre;
     @Column(name = "correo") private String correo;
-    @Column(name = "fecha_creacion") private String fechaCreacion;
+    @Column(name = "fecha_creacion") private LocalDateTime fechaCreacion;
     @Column(name = "logo") private String logo;
 
 }

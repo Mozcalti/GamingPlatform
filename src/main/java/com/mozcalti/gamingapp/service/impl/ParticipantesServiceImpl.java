@@ -6,10 +6,7 @@ import com.mozcalti.gamingapp.model.dto.*;
 import com.mozcalti.gamingapp.repository.InstitucionRepository;
 import com.mozcalti.gamingapp.repository.ParticipantesRepository;
 import com.mozcalti.gamingapp.service.ParticipantesService;
-import com.mozcalti.gamingapp.utils.DateUtils;
-import com.mozcalti.gamingapp.utils.FileUtils;
-import com.mozcalti.gamingapp.utils.Numeros;
-import com.mozcalti.gamingapp.utils.Validaciones;
+import com.mozcalti.gamingapp.utils.*;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -24,6 +21,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.criteria.Predicate;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 @Service
@@ -113,7 +114,7 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
             participante.setCarrera(dto.getCarrera());
             participante.setSemestre(dto.getSemestre());
             participante.setFoto(FileUtils.encodeImageToString(pathParticipantes + "/participanteFotoDefaul.png"));
-            participante.setFechaCreacion(DateUtils.formatDate(DateUtils.now()));
+            participante.setFechaCreacion(DateUtils.now());
             participante.setInstitucion(institucionRepository.findById(dto.getIdInstitucion()).orElse(null));
             listadoParticipantes.add(participante);
         }
@@ -121,8 +122,9 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
     }
 
     @Override
-    public List<TablaParticipantesDTO> listaParticipantes(String cadena) {
-        Specification<Participantes> query = Specification.where(containsTextInAttributes(cadena, Arrays.asList("nombre", "correo")));
+    public List<TablaParticipantesDTO> listaParticipantes(String cadena, String fechaCreacion) {
+        Specification<Participantes> query = Specification.where(containsTextInAttributes(cadena, fechaCreacion ,Arrays.asList("nombre", "correo")))
+                .or(containsTextInInstitucion(cadena));
         List<Participantes> participantesPages = participantesRepository.findAll(query);
 
         return participantesPages.stream()
@@ -174,7 +176,7 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
         participante.setCarrera(participanteDTO.getCarrera());
         participante.setSemestre(participanteDTO.getSemestre());
         participante.setFoto(FileUtils.encodeImageToString(pathParticipantes + "/participanteFotoDefaul.png"));
-        participante.setFechaCreacion(DateUtils.formatDate(DateUtils.now()));
+        participante.setFechaCreacion(DateUtils.now());
         participante.setInstitucion(institucionRepository.findById(participanteDTO.getIdInstitucion()).orElse(null));
         return participantesRepository.save(participante);
     }
@@ -200,12 +202,28 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
 
     }
 
-    private Specification<Participantes> containsTextInAttributes(String text, List<String> attributes) {
-        return ((root, query, criteriaBuilder) -> criteriaBuilder.or(root.getModel().getDeclaredAttributes().stream()
-                .filter(a -> attributes.contains(a.getName()))
-                .map(c -> criteriaBuilder.like(root.get(c.getName()), "%" + text + "%"))
-                .toArray(Predicate[]::new)
-        ));
+    private Specification<Participantes> containsTextInAttributes(String text, String fechaCreacion,List<String> attributes) {
+
+        try{
+            if (fechaCreacion.isEmpty())
+                return ((root, query, criteriaBuilder) -> criteriaBuilder.or(root.getModel().getDeclaredAttributes().stream()
+                        .filter(a -> attributes.contains(a.getName()))
+                        .map(c -> criteriaBuilder.like(root.get(c.getName()), "%" + text + "%"))
+                        .toArray(Predicate[]::new)
+                ));
+            else {
+                LocalDateTime localDateTime = LocalDateTime.from(DateTimeFormatter.ofPattern(Constantes.TIMESTAMP_PATTERN).parse(fechaCreacion));
+                return ((root, query, criteriaBuilder) -> criteriaBuilder.between(root.get("fechaCreacion"), localDateTime.toLocalDate().atTime(LocalTime.MIN), localDateTime.toLocalDate().atTime(LocalTime.MAX)) );
+            }
+
+        }catch (DateTimeParseException e) {
+            throw new IllegalArgumentException(String.format("El formato de la fecha '%s' es incorrecto, el formato debe ser '%s'", fechaCreacion, Constantes.TIMESTAMP_PATTERN), e);
+        }
+
+
+    }
+    private Specification<Participantes> containsTextInInstitucion(String nombreInstitucion) {
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.join("institucion").get("nombre"), nombreInstitucion));
     }
 
 }

@@ -3,6 +3,8 @@ package com.mozcalti.gamingapp.model.dto;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @RequiredArgsConstructor
 @Getter
 public class TablaParticipantesDTO {
@@ -15,6 +17,6 @@ public class TablaParticipantesDTO {
     private final String carrera;
     private final Integer semestre;
     private final String foto;
-    private final String fechaCreacion;
+    private final LocalDateTime fechaCreacion;
     private final Integer idInstitucion;
 }
