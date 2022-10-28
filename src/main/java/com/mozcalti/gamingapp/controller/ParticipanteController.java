@@ -30,8 +30,8 @@ public class ParticipanteController {
     }
 
     @GetMapping("/todos")
-    public List<TablaParticipantesDTO> todosParticipantes(@RequestParam String texto){
-        return participantesService.listaParticipantes(texto);
+    public List<TablaParticipantesDTO> todosParticipantes(@RequestParam String texto,@RequestParam String fecha){
+        return participantesService.listaParticipantes(texto,fecha);
     }
 
     @GetMapping("/{id}")

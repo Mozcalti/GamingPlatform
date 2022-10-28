@@ -31,8 +31,8 @@ public class InstitucionController {
     }
 
     @GetMapping("/todas")
-    public TablaDTO<TablaInstitucionDTO> todasInstituciones(@RequestParam String texto, @RequestParam Integer indice){
-        return institucionService.listaInstituciones(texto,indice);
+    public TablaDTO<TablaInstitucionDTO> todasInstituciones(@RequestParam String texto, @RequestParam String fecha, @RequestParam Integer indice){
+        return institucionService.listaInstituciones(texto,fecha,indice);
     }
 
     @GetMapping("/{id}")

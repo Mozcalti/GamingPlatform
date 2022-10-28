@@ -8,6 +8,7 @@ import com.mozcalti.gamingapp.repository.ParticipantesRepository;
 import com.mozcalti.gamingapp.service.InstitucionService;
 import com.mozcalti.gamingapp.utils.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DuplicateKeyException;
@@ -20,10 +21,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.criteria.Predicate;
 import java.io.*;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class InstitucionServiceImp implements InstitucionService {
     private final InstitucionRepository institucionRepository;
     private final ParticipantesRepository participantesRepository;
@@ -53,10 +59,12 @@ public class InstitucionServiceImp implements InstitucionService {
                     if (nextCell.getColumnIndex() == Numeros.DOS.getNumero())
                         institucion.setCorreo(Validaciones.validaEmailCellValue(nextCell));
                 }
-                if (institucionRepository.findByNombre(institucion.getNombre()) != null)
+                if (institucionRepository.findByNombre(institucion.getNombre()).isPresent())
                     throw new DuplicateKeyException(String.format("La institución '%s' ya esta registrada en el sistema", institucion.getNombre()));
                 else
                     listadoInstituciones.add(new InstitucionDTO(institucion.getNombre(), institucion.getCorreo()));
+
+
             }
             workbook.close();
             file.getInputStream().close();
@@ -70,15 +78,15 @@ public class InstitucionServiceImp implements InstitucionService {
     @Override
     public List<Institucion> guardarInstituciones(List<Institucion> instituciones) {
         for (Institucion institucion : instituciones) {
-            institucion.setFechaCreacion(DateUtils.formatDate(DateUtils.now()));
+            institucion.setFechaCreacion(DateUtils.now());
             institucion.setLogo(FileUtils.encodeImageToString(pathInstituciones + "/institucionLogoDefaul.png"));
         }
         return (List<Institucion>) institucionRepository.saveAll(instituciones);
     }
 
     @Override
-    public TablaDTO<TablaInstitucionDTO> listaInstituciones(String cadena, Integer indice) {
-        Specification<Institucion> query = Specification.where(containsTextInAttributes(cadena, Arrays.asList("nombre", "fechaCreacion")));
+    public TablaDTO<TablaInstitucionDTO> listaInstituciones(String cadena, String fecha, Integer indice) {
+        Specification<Institucion> query = Specification.where(containsTextInAttributes(cadena, fecha, "nombre"));
         Page<Institucion> institucionPages = institucionRepository.findAll(query, PageRequest.of(indice, 50));
         PaginadoDTO paginadoDTO = new PaginadoDTO(institucionPages.getTotalPages(), institucionPages.getNumber());
         List<Institucion> institucionParte = institucionPages.toList();
@@ -137,7 +145,7 @@ public class InstitucionServiceImp implements InstitucionService {
 
         institucion.setNombre(Validaciones.validaStringValue(institucionDTO.getNombre()));
         institucion.setCorreo(Validaciones.validaEmailValue(institucionDTO.getCorreo()));
-        institucion.setFechaCreacion(DateUtils.formatDate(DateUtils.now()));
+        institucion.setFechaCreacion(DateUtils.now());
         institucion.setLogo(FileUtils.encodeImageToString(pathInstituciones + "/institucionLogoDefaul.png"));
 
         return institucionRepository.save(institucion);
@@ -145,14 +153,24 @@ public class InstitucionServiceImp implements InstitucionService {
 
     @Override
     public Iterable<Institucion> instituciones() {
-       return institucionRepository.findAll();
+        return institucionRepository.findAll();
     }
 
-    private Specification<Institucion> containsTextInAttributes(String text, List<String> attributes) {
-        return ((root, query, criteriaBuilder) -> criteriaBuilder.or(root.getModel().getDeclaredAttributes().stream()
-                .filter(a -> attributes.contains(a.getName()))
-                .map(c -> criteriaBuilder.like(root.get(c.getName()), "%" + text + "%"))
-                .toArray(Predicate[]::new)
-        ));
+    private Specification<Institucion> containsTextInAttributes(String text, String fechaCreacion, String attributes) {
+        try {
+            if (fechaCreacion.isEmpty())
+                return ((root, query, criteriaBuilder) -> criteriaBuilder.or(root.getModel().getDeclaredAttributes().stream()
+                        .filter(a -> attributes.contains(a.getName()))
+                        .map(c -> criteriaBuilder.like(root.get(c.getName()), "%" + text + "%"))
+                        .toArray(Predicate[]::new)
+                ));
+            else {
+                LocalDateTime localDateTime = LocalDateTime.from(DateTimeFormatter.ofPattern(Constantes.TIMESTAMP_PATTERN).parse(fechaCreacion));
+                return ((root, query, criteriaBuilder) -> criteriaBuilder.between(root.get("fechaCreacion"), localDateTime.toLocalDate().atTime(LocalTime.MIN), localDateTime.toLocalDate().atTime(LocalTime.MAX)) );
+
+            }
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException(String.format("El formato de la fecha '%s' es incorrecto, el formato debe ser '%s'", fechaCreacion, Constantes.TIMESTAMP_PATTERN), e);
+        }
     }
 }

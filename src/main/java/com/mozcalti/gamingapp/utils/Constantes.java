@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.NONE)
 public final class Constantes {
     public static final String FECHA_HORA_PATTERN = "dd/MM/yyyy hh:mm a";
+
+    public static final String TIMESTAMP_PATTERN = "yyyy-MM-dd HH:mm:ss.SSSSSS";
+
     public static final String FECHA_PATTERN = "dd/MM/yyyy";
     public static final String HORA_PATTERN = "hh:mm a";
     public static final String DIA_PATTERN = "E";

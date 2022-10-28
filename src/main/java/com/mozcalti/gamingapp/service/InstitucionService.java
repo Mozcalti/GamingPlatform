@@ -15,7 +15,7 @@ public interface InstitucionService {
 
     List<InstitucionDTO> cargarArchivo(MultipartFile file) ;
     List<Institucion> guardarInstituciones(List<Institucion> instituciones);
-    TablaDTO<TablaInstitucionDTO> listaInstituciones(String cadena, Integer indice);
+    TablaDTO<TablaInstitucionDTO> listaInstituciones(String cadena, String fecha,Integer indice);
     DetalleInstitucionDTO obtenerInstitucion(Integer id);
 
     Institucion guardarInstitucion(InstitucionDTO institucionDTO);
