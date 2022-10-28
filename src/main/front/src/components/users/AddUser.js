@@ -4,7 +4,9 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import {
-    Button,
+    Alert,
+    Backdrop,
+    Button, CircularProgress,
     FormControl, Grid,
     InputLabel,
     MenuItem,
@@ -14,10 +16,14 @@ import {
 import * as Yup from "yup";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
+import UsuariosService from "./usuarios.service";
+import {AlertTitle} from "@mui/lab";
 
 function AddUser(props) {
 
     const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     const formValidationSchema = Yup.object().shape({
         nombre: Yup.string()
@@ -45,19 +51,49 @@ function AddUser(props) {
     };
 
     const handleClose = () => {
-        reset();
+        reset({
+            nombre: '',
+            apellidos: '',
+            email: '',
+            rol: 'STAFF',
+        });
+        setLoading(false);
+        setErrorMessage("");
         setOpen(false);
     };
 
-    const onSave = data => {
-        props.addUsuario(data);
-        handleClose();
+    const onSave = usuario => {
+        setLoading(true);
+        UsuariosService
+            .add(usuario)
+            .then(
+                () => {
+                    handleClose();
+                    setLoading(false);
+                    props.addUsuario(usuario);
+                },
+                error => {
+                    setLoading(false);
+                    setErrorMessage(error.response.data.message);
+                    props.addUsuario();
+                }
+            );
     }
 
     return (
         <div>
             <Button variant="contained" color="primary" onClick={handleClickOpen}>Agregar Usuario</Button>
             <Dialog open={open} onClose={handleClose} fullWidth={true}>
+                {errorMessage && <Alert severity="error">
+                    <AlertTitle>Error</AlertTitle>
+                    <strong>{errorMessage}</strong>
+                </Alert>}
+                <Backdrop
+                    sx={{zIndex: (theme) => theme.zIndex.drawer + 1}}
+                    open={loading}
+                >
+                    <CircularProgress color="inherit"/>
+                </Backdrop>
                 <DialogTitle>Nuevo Usuario</DialogTitle>
                 <DialogContent>
                     <Grid container direction="column" spacing={3}>
@@ -109,7 +145,7 @@ function AddUser(props) {
                                 <Select
                                     labelId="rol-label"
                                     id="rol"
-                                    value='STAFF'
+                                    defaultValue='STAFF'
                                     {...register('rol')}
                                     label="Rol"
                                 >

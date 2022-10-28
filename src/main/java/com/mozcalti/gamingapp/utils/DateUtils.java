@@ -17,6 +17,13 @@ import java.util.Locale;
 @NoArgsConstructor(access = AccessLevel.NONE)
 public final class DateUtils {
 
+    public static final java.time.format.DateTimeFormatter FORMATTER = java.time.format.DateTimeFormatter.ofPattern(Constantes.FECHA_HORA_PATTERN);
+
+
+    public static String formatDate(LocalDateTime time){
+        return FORMATTER.format(time);
+    }
+
     public static Date toDate(LocalDateTime dateToConvert) {
         return Date
                 .from(dateToConvert.atZone(ZoneId.systemDefault())
@@ -83,7 +90,7 @@ public final class DateUtils {
         }
     }
 
- public static boolean isHoursRangoValid(String horaIni, String horaFin,
+    public static boolean isHoursRangoValid(String horaIni, String horaFin,
                                             String horaValidar, String formato) {
 
         boolean resultado = false;
@@ -94,7 +101,7 @@ public final class DateUtils {
         boolean isEquals = calendarHoraValidar.equals(calendarIni) || calendarHoraValidar.equals(calendarFin);
         boolean isValid = calendarHoraValidar.after(calendarIni) && calendarHoraValidar.before(calendarFin);
 
-        if(isEquals || isValid) {
+        if (isEquals || isValid) {
             resultado = true;
         }
 
@@ -103,8 +110,8 @@ public final class DateUtils {
     }
 
     public static boolean isHoursRangoValid(String horaIni, String horaFin,
-                                         String horaIniValid, String horaFinValid,
-                                         String formato) {
+                                            String horaIniValid, String horaFinValid,
+                                            String formato) {
 
         StringBuilder sHoraIniValid = new StringBuilder();
         StringBuilder sHoraFinValid = new StringBuilder();
@@ -117,7 +124,7 @@ public final class DateUtils {
 
         boolean resultado = true;
 
-        if(calendarIni.before(calendarIniValid) || calendarFin.after(calendarFinValid)) {
+        if (calendarIni.before(calendarIniValid) || calendarFin.after(calendarFinValid)) {
             resultado = false;
         }
 
@@ -145,5 +152,4 @@ public final class DateUtils {
             throw new ValidacionException("El parametro date no puede ser null");
         }
     }
-
 }

@@ -2,6 +2,7 @@ package com.mozcalti.gamingapp.controller;
 
 
 import com.mozcalti.gamingapp.model.Institucion;
+import com.mozcalti.gamingapp.model.dto.DetalleInstitucionDTO;
 import com.mozcalti.gamingapp.model.dto.InstitucionDTO;
 import com.mozcalti.gamingapp.model.dto.TablaDTO;
 import com.mozcalti.gamingapp.model.dto.TablaInstitucionDTO;
@@ -35,7 +36,7 @@ public class InstitucionController {
     }
 
     @GetMapping("/{id}")
-    public TablaInstitucionDTO obtenerInstitucion(@PathVariable Integer id){
+    public DetalleInstitucionDTO obtenerInstitucion(@PathVariable Integer id){
         return institucionService.obtenerInstitucion(id);
     }
 

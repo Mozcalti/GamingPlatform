@@ -1,15 +1,13 @@
 package com.mozcalti.gamingapp.service.impl;
 
 import com.mozcalti.gamingapp.model.Institucion;
-import com.mozcalti.gamingapp.model.dto.InstitucionDTO;
-import com.mozcalti.gamingapp.model.dto.PaginadoDTO;
-import com.mozcalti.gamingapp.model.dto.TablaDTO;
-import com.mozcalti.gamingapp.model.dto.TablaInstitucionDTO;
+import com.mozcalti.gamingapp.model.Participantes;
+import com.mozcalti.gamingapp.model.dto.*;
 import com.mozcalti.gamingapp.repository.InstitucionRepository;
+import com.mozcalti.gamingapp.repository.ParticipantesRepository;
 import com.mozcalti.gamingapp.service.InstitucionService;
 import com.mozcalti.gamingapp.utils.*;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DuplicateKeyException;
@@ -26,8 +24,9 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class InstitucionServiceImp implements InstitucionService, Utils {
+public class InstitucionServiceImp implements InstitucionService {
     private final InstitucionRepository institucionRepository;
+    private final ParticipantesRepository participantesRepository;
 
     @Value("${resources.static.instituciones}")
     private String pathInstituciones;
@@ -54,7 +53,7 @@ public class InstitucionServiceImp implements InstitucionService, Utils {
                     if (nextCell.getColumnIndex() == Numeros.DOS.getNumero())
                         institucion.setCorreo(Validaciones.validaEmailCellValue(nextCell));
                 }
-                if (institucionRepository.findByNombre(institucion.getNombre()).isPresent())
+                if (institucionRepository.findByNombre(institucion.getNombre()) != null)
                     throw new DuplicateKeyException(String.format("La institución '%s' ya esta registrada en el sistema", institucion.getNombre()));
                 else
                     listadoInstituciones.add(new InstitucionDTO(institucion.getNombre(), institucion.getCorreo()));
@@ -71,8 +70,8 @@ public class InstitucionServiceImp implements InstitucionService, Utils {
     @Override
     public List<Institucion> guardarInstituciones(List<Institucion> instituciones) {
         for (Institucion institucion : instituciones) {
-            institucion.setFechaCreacion(FORMATTER.format(LOCAL_DATE_TIME));
-            institucion.setLogo(encodeImageToString(pathInstituciones));
+            institucion.setFechaCreacion(DateUtils.formatDate(DateUtils.now()));
+            institucion.setLogo(FileUtils.encodeImageToString(pathInstituciones + "/institucionLogoDefaul.png"));
         }
         return (List<Institucion>) institucionRepository.saveAll(instituciones);
     }
@@ -101,12 +100,32 @@ public class InstitucionServiceImp implements InstitucionService, Utils {
     }
 
     @Override
-    public TablaInstitucionDTO obtenerInstitucion(Integer id) {
+    public DetalleInstitucionDTO obtenerInstitucion(Integer id) {
         Optional<Institucion> institucion = institucionRepository.findById(id);
+
+        List<Participantes> participantes = participantesRepository.findAllByInstitucionIdOrderByNombreAsc(id);
+        List<ParticipanteDTO> participanteDTOList = new ArrayList<>();
+        for (Participantes participante : participantes) {
+            participanteDTOList.add(new ParticipanteDTO(
+                    participante.getNombre(),
+                    participante.getApellidos(),
+                    participante.getCorreo(),
+                    participante.getAcademia(),
+                    participante.getIes(),
+                    participante.getCarrera(),
+                    participante.getSemestre(),
+                    participante.getInstitucion().getId()));
+        }
         if (institucion.isEmpty()) {
             throw new NoSuchElementException("La institución no se encuentra en el sistema");
         } else
-            return new TablaInstitucionDTO(institucion.get().getId(), institucion.get().getNombre(), institucion.get().getCorreo(), institucion.get().getFechaCreacion(), institucion.get().getLogo());
+            return new DetalleInstitucionDTO(
+                    institucion.get().getId(),
+                    institucion.get().getNombre(),
+                    institucion.get().getCorreo(),
+                    institucion.get().getFechaCreacion(),
+                    institucion.get().getLogo(),
+                    participanteDTOList);
 
     }
 
@@ -118,8 +137,8 @@ public class InstitucionServiceImp implements InstitucionService, Utils {
 
         institucion.setNombre(Validaciones.validaStringValue(institucionDTO.getNombre()));
         institucion.setCorreo(Validaciones.validaEmailValue(institucionDTO.getCorreo()));
-        institucion.setFechaCreacion(FORMATTER.format(LOCAL_DATE_TIME));
-        institucion.setLogo(encodeImageToString(pathInstituciones));
+        institucion.setFechaCreacion(DateUtils.formatDate(DateUtils.now()));
+        institucion.setLogo(FileUtils.encodeImageToString(pathInstituciones + "/institucionLogoDefaul.png"));
 
         return institucionRepository.save(institucion);
     }
@@ -136,15 +155,4 @@ public class InstitucionServiceImp implements InstitucionService, Utils {
                 .toArray(Predicate[]::new)
         ));
     }
-
-
-    @Override
-    public String encodeImageToString(String path) {
-        try (FileInputStream file = new FileInputStream(path + "/institucionLogoDefaul.png")) {
-            return Base64.encodeBase64String(file.readAllBytes());
-        } catch (IOException exception) {
-            throw new IllegalArgumentException(String.format("La imagen no es correcta %s", exception));
-        }
-    }
-
 }
