@@ -2,9 +2,9 @@ import axios from "axios";
 
 
 class ParticipantesService {
-    lista(texto) {
+    lista(texto, fecha) {
         return axios
-            .get("/participante/todos", {params: {"texto": texto}})
+            .get("/participante/todos", {params: {"texto": texto, "fecha":fecha}})
             .then(respuesta => {
                 return respuesta
             });

@@ -2,9 +2,9 @@ import axios from "axios";
 
 class InstitucionesService {
 
-    lista(texto, indice){
+    lista(texto, fecha,indice){
         return axios
-            .get("/institucion/todas", {params: {"texto": texto, "indice": indice}})
+            .get("/institucion/todas", {params: {"texto": texto, "fecha": fecha,"indice": indice}})
             .then(respuesta =>{
                 return respuesta
             });
