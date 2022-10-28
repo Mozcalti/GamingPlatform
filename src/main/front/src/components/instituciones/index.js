@@ -19,7 +19,7 @@ const InstitucionesList = () => {
 
 
     const getInstituciones = (texto, fechaCreacion, indice) => {
-        if (fechaCreacion == '' || fechaCreacion == null)
+        if (fechaCreacion === '' || fechaCreacion === null)
             fechaCreacion = '';
         else
             fechaCreacion = moment(fechaCreacion).format("yyyy-MM-DD HH:mm:ss.SSSSSS")
