@@ -1,15 +1,20 @@
 package com.mozcalti.gamingapp.model;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "robots")
 @Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class Robots {
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id_robot")
@@ -26,5 +31,4 @@ public class Robots {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_equipo", referencedColumnName = "id_equipo", insertable = false, updatable = false)
     private Equipos equiposByIdEquipo;
-
 }

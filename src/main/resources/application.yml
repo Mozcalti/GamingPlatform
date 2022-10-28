@@ -37,9 +37,14 @@ spring:
 
 resources:
   static:
-    instituciones: ${PATH_INSTITUCIONES:C:/tmp/robocode/instituciones}
-    participantes: ${PATH_PARTICIPANTES:C:/tmp/robocode/participantes}
-    resultados-batalla: ${PATH_RESULTADOS_BATALLA:C:/tmp/robocode/resultados}
+    instituciones: ${PATH_INSTITUCIONES:path}
+    participantes: ${PATH_PARTICIPANTES:path}
+    resultados-batalla: ${PATH_RESULTADOS_BATALLA:path}
+
+robocode:
+  executable: ${PATH_ROBOCODE:path}
+  robots: ${PATH_ROBOTS:path}
+  battles: ${PATH_BATTLES:path}
 
 server:
   error:
