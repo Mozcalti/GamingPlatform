@@ -6,6 +6,7 @@ import com.mozcalti.gamingapp.model.batallas.BatallaFechaHoraInicioDTO;
 import com.mozcalti.gamingapp.model.batallas.BatallaParticipanteDTO;
 import com.mozcalti.gamingapp.model.participantes.EquiposDTO;
 import com.mozcalti.gamingapp.model.participantes.InstitucionEquiposDTO;
+import com.mozcalti.gamingapp.model.torneos.TorneoDTO;
 import com.mozcalti.gamingapp.service.TorneosService;
 import com.mozcalti.gamingapp.model.*;
 import com.mozcalti.gamingapp.repository.*;
@@ -13,6 +14,7 @@ import com.mozcalti.gamingapp.utils.Constantes;
 import com.mozcalti.gamingapp.utils.DateUtils;
 import com.mozcalti.gamingapp.utils.Numeros;
 import com.mozcalti.gamingapp.utils.TorneoUtils;
+import com.mozcalti.gamingapp.validations.TorneoValidation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -213,6 +215,13 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
                 idEquipo,
                 nombreParticipantes.substring(Numeros.CERO.getNumero(), nombreParticipantes.length()-Numeros.DOS.getNumero()));
 
+    }
+
+    @Override
+    @Transactional(rollbackFor = {Exception.class, RuntimeException.class})
+    public void guardaTorneo(TorneoDTO torneoDTO) throws ValidacionException {
+        TorneoValidation.validaSaveTorneo(torneoDTO);
+        torneosRepository.save(new Torneos(torneoDTO));
     }
 
 }

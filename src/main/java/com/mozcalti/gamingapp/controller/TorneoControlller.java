@@ -1,9 +1,6 @@
 package com.mozcalti.gamingapp.controller;
 
 import com.mozcalti.gamingapp.exceptions.ValidacionException;
-import com.mozcalti.gamingapp.model.batallas.BatallaDTO;
-import com.mozcalti.gamingapp.model.batallas.BatallaFechaHoraInicioDTO;
-import com.mozcalti.gamingapp.model.batallas.BatallaParticipanteDTO;
 import com.mozcalti.gamingapp.model.torneos.TorneoDTO;
 import com.mozcalti.gamingapp.model.batallas.BatallasDTO;
 import com.mozcalti.gamingapp.service.CalendarizarEtapasTorneoService;
@@ -15,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/torneo")
@@ -151,14 +146,21 @@ public class TorneoControlller {
 
     }
 
-    @GetMapping("/getFechaFin/{idEtapa}/{numeroFechas}")
-    public List<BatallaFechaHoraInicioDTO> obtieneFechaFin(@PathVariable Integer idEtapa, @PathVariable Integer numeroFechas) {
-        return torneosService.obtieneFechasBatalla(idEtapa, numeroFechas);
-    }
+    @PostMapping("/guardar")
+    public ResponseEntity<String> guardaTorneo(@RequestBody TorneoDTO torneoDTO) {
+        try {
+            torneosService.guardaTorneo(torneoDTO);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body("Torneo Guardado Correctamente");
+        } catch (ValidacionException e) {
+            return ResponseEntity.badRequest()
+                    .body(e.getMessage());
+        } catch (Exception e) {
+            log.error(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
+            return ResponseEntity.badRequest()
+                    .body(Constantes.OCURRIO_ERROR_INESPERADO);
+        }
 
-    @GetMapping("/obtieneParticipantes/{idEtapa}")
-    public BatallaParticipanteDTO obtieneParticipantes(@PathVariable Integer idEtapa) {
-        return torneosService.obtieneParticipantes(idEtapa);
     }
 
 }
