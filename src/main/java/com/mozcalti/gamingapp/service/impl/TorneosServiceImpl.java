@@ -37,7 +37,6 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
     private InstitucionRepository institucionRepository;
     private EquiposRepository equiposRepository;
     private ParticipantesRepository participantesRepository;
-
     private TorneoHorasHabilesRepository torneoHorasHabilesRepository;
 
     @Override
@@ -230,6 +229,23 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
         for(HoraHabilDTO horaHabilDTO : torneoDTO.getHorasHabiles()) {
             torneoHorasHabilesRepository.save(new TorneoHorasHabiles(horaHabilDTO, torneos.getIdTorneo()));
         }
+
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public List<TorneoDTO> obtieneTorneos() {
+
+        List<Torneos> torneos = new ArrayList<>();
+        torneosRepository.findAll().forEach(torneos::add);
+
+        return torneos.stream().map(
+                o -> new TorneoDTO(
+                        o.getIdTorneo(),
+                        o.getFechaInicio(),
+                        o.getFechaFin(),
+                        o.getNumEtapas(),
+                        o.getTorneoHorasHabilesByIdTorneo())).toList();
 
     }
 

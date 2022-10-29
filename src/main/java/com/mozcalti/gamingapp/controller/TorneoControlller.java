@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "/torneo")
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -161,6 +163,11 @@ public class TorneoControlller {
                     .body(Constantes.OCURRIO_ERROR_INESPERADO);
         }
 
+    }
+
+    @GetMapping("/consultar/todos")
+    public List<TorneoDTO> obtieneTorneos() {
+        return torneosService.obtieneTorneos();
     }
 
 }
