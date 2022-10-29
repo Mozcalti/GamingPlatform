@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TorneoValidation {
 
-    public static void validaSaveTorneo(TorneoDTO torneoDTO) throws ValidacionException {
-        // Datos torneo
+    public static void validaGuardarTorneo(TorneoDTO torneoDTO) throws ValidacionException {
+
         DateUtils.isValidDate(torneoDTO.getFechaInicio(),
                 Constantes.FECHA_PATTERN,
                 "Fecha de inicio del torneo no válido");
@@ -39,6 +39,17 @@ public class TorneoValidation {
 
         if(diaSemanaFFT.contains(Constantes.SABADO) || diaSemanaFFT.contains(Constantes.DOMINGO)) {
             throw new ValidacionException("Fecha de fin del torneo no puede ser un día inhábil");
+        }
+
+        if(torneoDTO.getHorasHabiles() == null) {
+            throw new ValidacionException("Debe seleccionar por lo menos un horario para el torneo");
+        }
+
+        for(HoraHabilDTO horaHabilDTO : torneoDTO.getHorasHabiles()) {
+            DateUtils.isDatesRangoValid(horaHabilDTO.getHoraIniHabil(),
+                    horaHabilDTO.getHoraFinHabil(),
+                    Constantes.HORA_PATTERN,
+                    "Horario del torneo no válido");
         }
 
     }

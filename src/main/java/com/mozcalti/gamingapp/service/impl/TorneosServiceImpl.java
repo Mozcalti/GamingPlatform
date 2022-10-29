@@ -6,6 +6,7 @@ import com.mozcalti.gamingapp.model.batallas.BatallaFechaHoraInicioDTO;
 import com.mozcalti.gamingapp.model.batallas.BatallaParticipanteDTO;
 import com.mozcalti.gamingapp.model.participantes.EquiposDTO;
 import com.mozcalti.gamingapp.model.participantes.InstitucionEquiposDTO;
+import com.mozcalti.gamingapp.model.torneos.HoraHabilDTO;
 import com.mozcalti.gamingapp.model.torneos.TorneoDTO;
 import com.mozcalti.gamingapp.service.TorneosService;
 import com.mozcalti.gamingapp.model.*;
@@ -34,9 +35,10 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
     private EtapasRepository etapasRepository;
     private BatallasRepository batallasRepository;
     private InstitucionRepository institucionRepository;
-
     private EquiposRepository equiposRepository;
     private ParticipantesRepository participantesRepository;
+
+    private TorneoHorasHabilesRepository torneoHorasHabilesRepository;
 
     @Override
     public CrudRepository<Torneos, Integer> getDao() {
@@ -218,10 +220,17 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
     }
 
     @Override
-    @Transactional(rollbackFor = {Exception.class, RuntimeException.class})
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class, RuntimeException.class})
     public void guardaTorneo(TorneoDTO torneoDTO) throws ValidacionException {
-        TorneoValidation.validaSaveTorneo(torneoDTO);
-        torneosRepository.save(new Torneos(torneoDTO));
+
+        TorneoValidation.validaGuardarTorneo(torneoDTO);
+
+        Torneos torneos = torneosRepository.save(new Torneos(torneoDTO));
+
+        for(HoraHabilDTO horaHabilDTO : torneoDTO.getHorasHabiles()) {
+            torneoHorasHabilesRepository.save(new TorneoHorasHabiles(horaHabilDTO, torneos.getIdTorneo()));
+        }
+
     }
 
 }
