@@ -13,6 +13,7 @@ import java.util.List;
 public class BatallaDTO {
 
     private Integer idEtapa;
+    private Integer idInstitucion;
     private Integer idBatalla;
     private String fecha;
     private String horaInicio;
@@ -22,5 +23,10 @@ public class BatallaDTO {
 
     public BatallaDTO() {
         this.batallaParticipantes = new ArrayList<>();
+    }
+    public BatallaDTO(BatallaFechaHoraInicioDTO batallaFechaHoraInicioDTO) {
+        this.fecha = batallaFechaHoraInicioDTO.getFecha();
+        this.horaInicio = batallaFechaHoraInicioDTO.getHoraInicio();
+        this.horaFin = batallaFechaHoraInicioDTO.getHoraFin();
     }
 }

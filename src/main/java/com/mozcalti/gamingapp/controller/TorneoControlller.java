@@ -1,9 +1,13 @@
 package com.mozcalti.gamingapp.controller;
 
 import com.mozcalti.gamingapp.exceptions.ValidacionException;
+import com.mozcalti.gamingapp.model.batallas.BatallaDTO;
+import com.mozcalti.gamingapp.model.batallas.BatallaFechaHoraInicioDTO;
+import com.mozcalti.gamingapp.model.batallas.BatallaParticipanteDTO;
 import com.mozcalti.gamingapp.model.torneos.TorneoDTO;
 import com.mozcalti.gamingapp.model.batallas.BatallasDTO;
 import com.mozcalti.gamingapp.service.CalendarizarEtapasTorneoService;
+import com.mozcalti.gamingapp.service.TorneosService;
 import com.mozcalti.gamingapp.utils.Constantes;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "/torneo")
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -19,6 +25,8 @@ import org.springframework.web.bind.annotation.*;
 public class TorneoControlller {
 
     private CalendarizarEtapasTorneoService calendarizarEtapasTorneoService;
+
+    private TorneosService torneosService;
 
     @PostMapping(value = "/save")
     public ResponseEntity<String> saveTorneo(@RequestBody TorneoDTO torneoDTO) {
@@ -141,6 +149,16 @@ public class TorneoControlller {
                     .body(Constantes.OCURRIO_ERROR_INESPERADO);
         }
 
+    }
+
+    @GetMapping("/getFechaFin/{idEtapa}/{numeroFechas}")
+    public List<BatallaFechaHoraInicioDTO> obtieneFechaFin(@PathVariable Integer idEtapa, @PathVariable Integer numeroFechas) {
+        return torneosService.obtieneFechasBatalla(idEtapa, numeroFechas);
+    }
+
+    @GetMapping("/obtieneParticipantes/{idEtapa}")
+    public BatallaParticipanteDTO obtieneParticipantes(@PathVariable Integer idEtapa) {
+        return torneosService.obtieneParticipantes(idEtapa);
     }
 
 }

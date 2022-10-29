@@ -1,6 +1,7 @@
 package com.mozcalti.gamingapp.model;
 
 import com.mozcalti.gamingapp.model.batallas.BatallaDTO;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import java.util.Collection;
 @Table(name = "batallas")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Batallas {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -58,4 +60,5 @@ public class Batallas {
         this.bndEnvioCorreo = 0;
         this.bndTermina = 0;
     }
+
 }
