@@ -24,4 +24,9 @@ public class BatallaDTO {
     public BatallaDTO() {
         this.batallaParticipantes = new ArrayList<>();
     }
+    public BatallaDTO(BatallaFechaHoraInicioDTO batallaFechaHoraInicioDTO) {
+        this.fecha = batallaFechaHoraInicioDTO.getFecha();
+        this.horaInicio = batallaFechaHoraInicioDTO.getHoraInicio();
+        this.horaFin = batallaFechaHoraInicioDTO.getHoraFin();
+    }
 }

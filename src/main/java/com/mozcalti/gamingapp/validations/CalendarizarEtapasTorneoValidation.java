@@ -1,21 +1,15 @@
 package com.mozcalti.gamingapp.validations;
 
 import com.mozcalti.gamingapp.exceptions.ValidacionException;
-import com.mozcalti.gamingapp.model.EtapaEquipo;
 import com.mozcalti.gamingapp.model.Etapas;
 import com.mozcalti.gamingapp.model.Torneos;
 import com.mozcalti.gamingapp.model.torneos.EtapaDTO;
 import com.mozcalti.gamingapp.model.torneos.HoraHabilDTO;
 import com.mozcalti.gamingapp.model.torneos.TorneoDTO;
-import com.mozcalti.gamingapp.utils.CollectionUtils;
 import com.mozcalti.gamingapp.utils.Constantes;
 import com.mozcalti.gamingapp.utils.DateUtils;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CalendarizarEtapasTorneoValidation {
@@ -38,6 +32,7 @@ public final class CalendarizarEtapasTorneoValidation {
         String diaSemanaFIT = DateUtils.getDateFormat(
                 DateUtils.getDateFormat(torneoDTO.getFechaInicio(), Constantes.FECHA_PATTERN).getTime(),
                 Constantes.DIA_PATTERN);
+
         String diaSemanaFFT = DateUtils.getDateFormat(
                 DateUtils.getDateFormat(torneoDTO.getFechaFin(), Constantes.FECHA_PATTERN).getTime(),
                 Constantes.DIA_PATTERN);
@@ -107,39 +102,6 @@ public final class CalendarizarEtapasTorneoValidation {
         if(torneos == null) {
             throw new ValidacionException("No existe en torneo con el id indicado: " + idTorneo);
         }
-
-    }
-
-    public static List<Integer> armaEquipos(Etapas etapas) throws ValidacionException {
-
-        List<Integer> idEquipos = new ArrayList<>();
-        List<Integer> randomNumbers;
-
-        try {
-            for(EtapaEquipo etapaEquipo : etapas.getEtapaEquiposByIdEtapa()) {
-                idEquipos.add(etapaEquipo.getIdEquipo());
-            }
-
-            randomNumbers = CollectionUtils.getRandomNumbers(idEquipos);
-        } catch (NoSuchAlgorithmException e) {
-            throw new ValidacionException(e);
-        }
-
-        return randomNumbers;
-
-    }
-
-    public static List<Integer> armaEquipos(List<Integer> idEquipos) throws ValidacionException {
-
-        List<Integer> randomNumbers;
-
-        try {
-            randomNumbers = CollectionUtils.getRandomNumbers(idEquipos);
-        } catch (NoSuchAlgorithmException e) {
-            throw new ValidacionException(e);
-        }
-
-        return randomNumbers;
 
     }
 

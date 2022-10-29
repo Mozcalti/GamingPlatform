@@ -4,8 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -13,9 +14,9 @@ import java.util.List;
 public class EquiposDTO {
 
     List<InstitucionEquiposDTO> equiposByInstitucion;
-    private List<Integer> idEquipos;
+    private Set<Integer> idEquipos;
 
     public EquiposDTO() {
-        this.idEquipos = new ArrayList<>();
+        this.idEquipos = new HashSet<>();
     }
 }

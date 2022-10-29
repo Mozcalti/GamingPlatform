@@ -1,18 +1,16 @@
 package com.mozcalti.gamingapp.utils;
 
 import com.mozcalti.gamingapp.exceptions.UtilsException;
+import com.mozcalti.gamingapp.exceptions.ValidacionException;
 import com.mozcalti.gamingapp.model.TorneoHorasHabiles;
 import com.mozcalti.gamingapp.model.Torneos;
 import com.mozcalti.gamingapp.model.batallas.BatallaFechaHoraInicioDTO;
-import com.mozcalti.gamingapp.model.participantes.InstitucionEquiposDTO;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -81,15 +79,6 @@ public final class TorneoUtils {
 
     }
 
-    /*public static Integer calculaTotalBatallas(List<InstitucionEquiposDTO> equiposByInstitucion, Integer numCompetidores) {
-
-        int res = 0;
-        for(InstitucionEquiposDTO institucionEquiposDTO : equiposByInstitucion) {
-            res+=TorneoUtils.calculaTotalBatallas(institucionEquiposDTO.getIdEquipos().size(),numCompetidores);
-        }
-        return res;
-
-    }*/
     public static Integer calculaTotalBatallas(Integer dividendo, Integer divisor) {
 
         float div = (float) dividendo/divisor;
@@ -100,6 +89,20 @@ public final class TorneoUtils {
         }
 
         return resDiv;
+    }
+
+    public static List<Integer> armaEquipos(Set<Integer> idEquipos) throws ValidacionException {
+
+        List<Integer> randomNumbers;
+
+        try {
+            randomNumbers = CollectionUtils.getRandomNumbers(idEquipos);
+        } catch (NoSuchAlgorithmException e) {
+            throw new ValidacionException(e);
+        }
+
+        return randomNumbers;
+
     }
 
 

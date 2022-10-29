@@ -11,6 +11,7 @@ import com.mozcalti.gamingapp.model.*;
 import com.mozcalti.gamingapp.repository.*;
 import com.mozcalti.gamingapp.utils.Constantes;
 import com.mozcalti.gamingapp.utils.DateUtils;
+import com.mozcalti.gamingapp.utils.Numeros;
 import com.mozcalti.gamingapp.utils.TorneoUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +43,8 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public List<BatallaFechaHoraInicioDTO> obtieneFechasBatalla(Integer idEtapa, Integer numeroFechas) throws ValidacionException {
+    public List<BatallaFechaHoraInicioDTO> obtieneFechasBatalla(Integer idEtapa, Integer numeroFechas)
+            throws ValidacionException {
 
         Etapas etapas = etapasRepository.findById(idEtapa).orElseThrow();
 
@@ -82,8 +84,8 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
                 .sorted(Comparator.comparing(TorneoHorasHabiles::getIdHoraHabil).reversed()).findFirst();
 
         Map<Integer, List<BatallaFechaHoraInicioDTO>> mapHorarios = TorneoUtils.obtieneMapHorarios(torneos, fecha);
-        batallaFechaHoraInicioDTOS.add(new BatallaFechaHoraInicioDTO(0, fecha, horaInicioBatalla, horaFinBatalla));
-        int contadorFechas = 1;
+        batallaFechaHoraInicioDTOS.add(new BatallaFechaHoraInicioDTO(Numeros.CERO.getNumero(), fecha, horaInicioBatalla, horaFinBatalla));
+        int contadorFechas = Numeros.UNO.getNumero();
         for(Map.Entry<Integer, List<BatallaFechaHoraInicioDTO>> entry : mapHorarios.entrySet()) {
             for(BatallaFechaHoraInicioDTO batallaFechaHoraInicioDTO1 : entry.getValue()) {
                 if(contadorFechas < numeroFechas) {
@@ -94,12 +96,12 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
                         batallaFechaHoraInicioDTOS.add(
                                 new BatallaFechaHoraInicioDTO(batallaFechaHoraInicioDTO1.getId(),
                                         fecha, horaInicioBatalla, horaFinBatalla));
-                        contadorFechas+=1;
+                        contadorFechas+=Numeros.UNO.getNumero();
                     } else if(!DateUtils.isDatesRangoValid(horaInicioBatalla,
                             torneoHoraFinTope.orElseThrow().getHoraFinHabil(), Constantes.HORA_PATTERN)) {
-                        fecha = DateUtils.addDias(fecha, Constantes.FECHA_PATTERN, 1);
+                        fecha = DateUtils.addDias(fecha, Constantes.FECHA_PATTERN, Numeros.UNO.getNumero());
                         horaFinBatalla = DateUtils.addMinutos(
-                                torneoHoraInicioTope.orElseThrow().getHoraIniHabil(), Constantes.HORA_PATTERN, -2);
+                                torneoHoraInicioTope.orElseThrow().getHoraIniHabil(), Constantes.HORA_PATTERN, Numeros.DOS_NEGATIVO.getNumero());
                     }
                 }
             }
@@ -119,8 +121,7 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
         List<Institucion> instituciones = new ArrayList<>();
         institucionRepository.findAll().forEach(instituciones::add);
         for(Institucion institucion : instituciones) {
-
-            List<Integer> idEquiposActivos = new ArrayList<>();
+            Set<Integer> idEquiposActivos = new HashSet<>();
             boolean bndInsVacio = true;
             for(Participantes participantes : participantesRepository.findAllByInstitucionId(institucion.getId())
                     .stream().filter(p -> !p.getParticipanteEquiposByIdParticipante().isEmpty()).toList()) {
@@ -133,7 +134,6 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
                         idEquiposActivos.add(equipos.orElseThrow().getIdEquipo());
                         equiposDTOS.getIdEquipos().add(equipos.orElseThrow().getIdEquipo());
                     }
-
                 }
             }
 
@@ -152,16 +152,16 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public List<List<BatallaParticipanteDTO>> obtieneParticipantes(List<Integer> idEquipos,
-                                                                   Integer totalParticipantes) throws ValidacionException {
+    public List<List<BatallaParticipanteDTO>> obtieneParticipantes(List<Integer> idEquipos, Integer totalParticipantes)
+            throws ValidacionException {
 
         List<List<BatallaParticipanteDTO>> listaBatallas = new ArrayList<>();
         List<BatallaParticipanteDTO> batallaParticipanteDTOS = new ArrayList<>();
-        int countCompetidores = 0;
+        int countCompetidores = Numeros.CERO.getNumero();
 
         for(Integer idEquipo : idEquipos) {
 
-            if(countCompetidores == 0) {
+            if(countCompetidores == Numeros.CERO.getNumero()) {
                 batallaParticipanteDTOS = new ArrayList<>();
             }
 
@@ -172,20 +172,20 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
                 if(equipos.isPresent()) {
                     for(ParticipanteEquipo participanteEquipo : equipos.orElseThrow().getParticipanteEquiposByIdEquipo()) {
                         Optional<Participantes> participantes = participantesRepository.findById(participanteEquipo.getIdParticipante());
-                        nombreParticipantes.append(participantes.orElseThrow().getNombre()).append(",");
+                        nombreParticipantes.append(participantes.orElseThrow().getNombre()).append(Constantes.SEPARA_NOM_PARTICIPANTES);
                     }
                 }
 
                 batallaParticipanteDTOS.add(new BatallaParticipanteDTO(
                         idEquipo,
-                        nombreParticipantes.substring(0, nombreParticipantes.length()-1)));
+                        nombreParticipantes.substring(Numeros.CERO.getNumero(), nombreParticipantes.length()-Numeros.DOS.getNumero())));
 
-                countCompetidores+=1;
+                countCompetidores+=Numeros.UNO.getNumero();
             }
 
             if(countCompetidores == totalParticipantes) {
                 listaBatallas.add(batallaParticipanteDTOS);
-                countCompetidores = 0;
+                countCompetidores = Numeros.CERO.getNumero();
             }
 
         }
@@ -205,13 +205,13 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
             if(equipos.isPresent()) {
                 for(ParticipanteEquipo participanteEquipo : equipos.orElseThrow().getParticipanteEquiposByIdEquipo()) {
                     Optional<Participantes> participantes = participantesRepository.findById(participanteEquipo.getIdParticipante());
-                    nombreParticipantes.append(participantes.orElseThrow().getNombre()).append(",");
+                    nombreParticipantes.append(participantes.orElseThrow().getNombre()).append(Constantes.SEPARA_NOM_PARTICIPANTES);
                 }
             }
 
         return new BatallaParticipanteDTO(
                 idEquipo,
-                nombreParticipantes.substring(0, nombreParticipantes.length()-1));
+                nombreParticipantes.substring(Numeros.CERO.getNumero(), nombreParticipantes.length()-Numeros.DOS.getNumero()));
 
     }
 
