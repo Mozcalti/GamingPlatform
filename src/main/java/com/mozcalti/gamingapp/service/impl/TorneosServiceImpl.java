@@ -222,7 +222,10 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class, RuntimeException.class})
     public void guardaTorneo(TorneoDTO torneoDTO) throws ValidacionException {
 
-        TorneoValidation.validaGuardarTorneo(torneoDTO);
+        List<Torneos> lstTorneos = new ArrayList<>();
+        torneosRepository.findAll().forEach(lstTorneos::add);
+
+        TorneoValidation.validaGuardarTorneo(lstTorneos, torneoDTO, true);
 
         Torneos torneos = torneosRepository.save(new Torneos(torneoDTO));
 
@@ -234,7 +237,7 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public List<TorneoDTO> obtieneTorneos() {
+    public TorneoDTO obtieneTorneos() {
 
         List<Torneos> torneos = new ArrayList<>();
         torneosRepository.findAll().forEach(torneos::add);
@@ -245,7 +248,24 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
                         o.getFechaInicio(),
                         o.getFechaFin(),
                         o.getNumEtapas(),
-                        o.getTorneoHorasHabilesByIdTorneo())).toList();
+                        o.getTorneoHorasHabilesByIdTorneo())).toList()
+                .stream().findFirst().orElseThrow();
+
+    }
+
+    @Override
+    public void modificaTorneo(TorneoDTO torneoDTO) throws ValidacionException {
+
+        List<Torneos> lstTorneos = new ArrayList<>();
+        torneosRepository.findAll().forEach(lstTorneos::add);
+
+        TorneoValidation.validaGuardarTorneo(lstTorneos, torneoDTO, false);
+
+        Torneos torneos = torneosRepository.save(new Torneos(torneoDTO));
+
+        for(HoraHabilDTO horaHabilDTO : torneoDTO.getHorasHabiles()) {
+            torneoHorasHabilesRepository.save(new TorneoHorasHabiles(horaHabilDTO, torneos.getIdTorneo()));
+        }
 
     }
 

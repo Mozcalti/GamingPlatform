@@ -165,9 +165,26 @@ public class TorneoControlller {
 
     }
 
-    @GetMapping("/consultar/todos")
-    public List<TorneoDTO> obtieneTorneos() {
+    @GetMapping("/consultar")
+    public TorneoDTO obtieneTorneos() {
         return torneosService.obtieneTorneos();
+    }
+
+    @PutMapping("/cambiar")
+    public ResponseEntity<String> modificaTorneo(@RequestBody TorneoDTO torneoDTO) {
+        try {
+            torneosService.modificaTorneo(torneoDTO);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body("Torneo Modificado Correctamente");
+        } catch (ValidacionException e) {
+            return ResponseEntity.badRequest()
+                    .body(e.getMessage());
+        } catch (Exception e) {
+            log.error(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
+            return ResponseEntity.badRequest()
+                    .body(Constantes.OCURRIO_ERROR_INESPERADO);
+        }
+
     }
 
 }

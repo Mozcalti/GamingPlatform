@@ -1,17 +1,26 @@
 package com.mozcalti.gamingapp.validations;
 
 import com.mozcalti.gamingapp.exceptions.ValidacionException;
+import com.mozcalti.gamingapp.model.Torneos;
 import com.mozcalti.gamingapp.model.torneos.HoraHabilDTO;
 import com.mozcalti.gamingapp.model.torneos.TorneoDTO;
 import com.mozcalti.gamingapp.utils.Constantes;
 import com.mozcalti.gamingapp.utils.DateUtils;
+import com.mozcalti.gamingapp.utils.Numeros;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TorneoValidation {
 
-    public static void validaGuardarTorneo(TorneoDTO torneoDTO) throws ValidacionException {
+    public static void validaGuardarTorneo(List<Torneos> lstTorneos, TorneoDTO torneoDTO, boolean esAlta)
+            throws ValidacionException {
+
+        if(!lstTorneos.isEmpty() && esAlta) {
+            throw new ValidacionException("Por el momento no es posible agregar más de 1 torneo");
+        }
 
         DateUtils.isValidDate(torneoDTO.getFechaInicio(),
                 Constantes.FECHA_PATTERN,
@@ -50,6 +59,10 @@ public class TorneoValidation {
                     horaHabilDTO.getHoraFinHabil(),
                     Constantes.HORA_PATTERN,
                     "Horario del torneo no válido");
+        }
+
+        if(torneoDTO.getNumEtapas() > Numeros.DOS.getNumero()) {
+            throw new ValidacionException("Por el momento sólo se pueden dar 2 etapas en el torneo");
         }
 
     }

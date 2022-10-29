@@ -22,6 +22,8 @@ public interface TorneosService extends GenericServiceAPI<Torneos, Integer> {
 
     void guardaTorneo(TorneoDTO torneoDTO) throws ValidacionException;
 
-    List<TorneoDTO> obtieneTorneos();
+    TorneoDTO obtieneTorneos();
+
+    void modificaTorneo(TorneoDTO torneoDTO) throws ValidacionException;
 
 }
