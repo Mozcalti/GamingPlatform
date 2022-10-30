@@ -1,5 +1,6 @@
 package com.mozcalti.gamingapp.model.torneos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mozcalti.gamingapp.model.Etapas;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,8 +21,10 @@ public class EtapaDTO {
     private String fechaFin;
     private ReglasDTO reglas;
 
+    @JsonIgnore
     private List<ParticipanteDTO> participantes;
 
+    @JsonIgnore
     private List<EquipoDTO> equipos;
 
     public EtapaDTO(Etapas etapas) {

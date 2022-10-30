@@ -20,7 +20,6 @@ public class TorneoDTO {
     private Integer idTorneo;
     private String fechaInicio;
     private String fechaFin;
-
     private List<HoraHabilDTO> horasHabiles;
     private Integer numEtapas;
 
@@ -40,11 +39,10 @@ public class TorneoDTO {
         this.fechaFin = fechaFin;
         this.numEtapas = numEtapas;
 
-        List<HoraHabilDTO> horasHabiles = new ArrayList<>();
+        this.horasHabiles = new ArrayList<>();
         for(TorneoHorasHabiles torneoHoraHabil : torneoHorasHabiles) {
             horasHabiles.add(new HoraHabilDTO(torneoHoraHabil));
         }
-        this.horasHabiles = horasHabiles;
     }
 
 }

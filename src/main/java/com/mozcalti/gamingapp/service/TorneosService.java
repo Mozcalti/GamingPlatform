@@ -6,6 +6,7 @@ import com.mozcalti.gamingapp.model.Torneos;
 import com.mozcalti.gamingapp.model.batallas.BatallaFechaHoraInicioDTO;
 import com.mozcalti.gamingapp.model.batallas.BatallaParticipanteDTO;
 import com.mozcalti.gamingapp.model.participantes.EquiposDTO;
+import com.mozcalti.gamingapp.model.torneos.EtapaDTO;
 import com.mozcalti.gamingapp.model.torneos.TorneoDTO;
 
 import java.util.List;
@@ -20,6 +21,8 @@ public interface TorneosService extends GenericServiceAPI<Torneos, Integer> {
 
     BatallaParticipanteDTO obtieneParticipantes(Integer idEquipo) throws ValidacionException;
 
+    List<Torneos> getTorneos() throws ValidacionException;
+
     void guardaTorneo(TorneoDTO torneoDTO) throws ValidacionException;
 
     TorneoDTO obtieneTorneos();
@@ -27,5 +30,7 @@ public interface TorneosService extends GenericServiceAPI<Torneos, Integer> {
     void modificaTorneo(TorneoDTO torneoDTO) throws ValidacionException;
 
     void eliminaTorneo();
+
+    void guardaEtapas(List<EtapaDTO> etapasDTOS) throws ValidacionException;
 
 }

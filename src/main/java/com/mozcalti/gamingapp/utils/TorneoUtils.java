@@ -7,7 +7,6 @@ import com.mozcalti.gamingapp.model.Torneos;
 import com.mozcalti.gamingapp.model.batallas.BatallaFechaHoraInicioDTO;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.*;

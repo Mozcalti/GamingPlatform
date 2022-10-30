@@ -1,6 +1,7 @@
 package com.mozcalti.gamingapp.controller;
 
 import com.mozcalti.gamingapp.exceptions.ValidacionException;
+import com.mozcalti.gamingapp.model.torneos.EtapaDTO;
 import com.mozcalti.gamingapp.model.torneos.TorneoDTO;
 import com.mozcalti.gamingapp.model.batallas.BatallasDTO;
 import com.mozcalti.gamingapp.service.CalendarizarEtapasTorneoService;
@@ -166,6 +167,11 @@ public class TorneoControlller {
     @DeleteMapping("/eliminar")
     public void eliminaTorneo() {
         torneosService.eliminaTorneo();
+    }
+
+    @PostMapping("/etapas/guardar")
+    public void guardaEtapas(@RequestBody List<EtapaDTO> etapasDTOS) {
+        torneosService.guardaEtapas(etapasDTOS);
     }
 
 }

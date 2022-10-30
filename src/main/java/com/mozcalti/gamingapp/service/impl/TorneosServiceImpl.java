@@ -6,7 +6,9 @@ import com.mozcalti.gamingapp.model.batallas.BatallaFechaHoraInicioDTO;
 import com.mozcalti.gamingapp.model.batallas.BatallaParticipanteDTO;
 import com.mozcalti.gamingapp.model.participantes.EquiposDTO;
 import com.mozcalti.gamingapp.model.participantes.InstitucionEquiposDTO;
+import com.mozcalti.gamingapp.model.torneos.EtapaDTO;
 import com.mozcalti.gamingapp.model.torneos.HoraHabilDTO;
+import com.mozcalti.gamingapp.model.torneos.ParticipanteDTO;
 import com.mozcalti.gamingapp.model.torneos.TorneoDTO;
 import com.mozcalti.gamingapp.service.TorneosService;
 import com.mozcalti.gamingapp.model.*;
@@ -38,6 +40,10 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
     private EquiposRepository equiposRepository;
     private ParticipantesRepository participantesRepository;
     private TorneoHorasHabilesRepository torneoHorasHabilesRepository;
+    private EtapaEquipoRepository etapaEquipoRepository;
+    private ReglasRepository reglasRepository;
+
+    private ParticipanteEquipoRepository participanteEquipoRepository;
 
     @Override
     public CrudRepository<Torneos, Integer> getDao() {
@@ -219,13 +225,17 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
     }
 
     @Override
+    public List<Torneos> getTorneos() throws ValidacionException {
+        List<Torneos> lstTorneos = new ArrayList<>();
+        torneosRepository.findAll().forEach(lstTorneos::add);
+        return lstTorneos;
+    }
+
+    @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class, RuntimeException.class})
     public void guardaTorneo(TorneoDTO torneoDTO) throws ValidacionException {
 
-        List<Torneos> lstTorneos = new ArrayList<>();
-        torneosRepository.findAll().forEach(lstTorneos::add);
-
-        TorneoValidation.validaGuardarTorneo(lstTorneos, torneoDTO, true);
+        TorneoValidation.validaGuardarTorneo(getTorneos(), torneoDTO, true);
 
         Torneos torneos = torneosRepository.save(new Torneos(torneoDTO));
 
@@ -258,10 +268,7 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
     @Override
     public void modificaTorneo(TorneoDTO torneoDTO) throws ValidacionException {
 
-        List<Torneos> lstTorneos = new ArrayList<>();
-        torneosRepository.findAll().forEach(lstTorneos::add);
-
-        TorneoValidation.validaGuardarTorneo(lstTorneos, torneoDTO, false);
+        TorneoValidation.validaGuardarTorneo(getTorneos(), torneoDTO, false);
 
         Torneos torneos = torneosRepository.save(new Torneos(torneoDTO));
 
@@ -287,6 +294,44 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
         }
 
         torneosRepository.delete(torneos.orElseThrow());
+
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class, RuntimeException.class})
+    public void guardaEtapas(List<EtapaDTO> etapasDTOS) throws ValidacionException {
+
+        List<Torneos> lstTorneos = getTorneos();
+
+        List<Etapas> lstEtapas = new ArrayList<>();
+        etapasRepository.findAll().forEach(lstEtapas::add);
+
+        TorneoValidation.validaGuardarEtapas(lstTorneos, etapasDTOS, lstEtapas);
+
+        Torneos torneos = lstTorneos.stream().findFirst().orElseThrow();
+
+        for(EtapaDTO etapaDTO : etapasDTOS) {
+            // Etapa
+            Etapas etapas = new Etapas(etapaDTO, torneos.getIdTorneo());
+            etapas = etapasRepository.save(etapas);
+
+            // Reglas
+            reglasRepository.save(new Reglas(etapaDTO.getReglas(), etapas.getIdEtapa()));
+
+            // Participantes
+            if(etapaDTO.getReglas().getTrabajo().equals(Constantes.INDIVIDUAL)) {
+                List<Participantes> lstParticipantes = new ArrayList<>();
+                participantesRepository.findAll().forEach(lstParticipantes::add);
+
+                for(Participantes participantes : lstParticipantes) {
+                    Equipos equipos = equiposRepository.save(new Equipos(true));
+
+                    etapaEquipoRepository.save(new EtapaEquipo(etapas.getIdEtapa(), equipos.getIdEquipo()));
+
+                    participanteEquipoRepository.save(new ParticipanteEquipo(participantes.getIdParticipante(), equipos.getIdEquipo()));
+                }
+            }
+        }
 
     }
 
