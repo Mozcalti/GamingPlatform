@@ -179,20 +179,20 @@ public class DashboardServiceImpl implements DashboardService {
                 if(robot.isPresent()) {
                     Optional<Equipos> equipos = equiposRepository.findById(robot.orElseThrow().getIdEquipo());
 
-                    StringBuilder participanteSB = new StringBuilder();
+                    StringBuilder participantes = new StringBuilder();
                     Optional<Institucion> institucion = Optional.empty();
                     for(ParticipanteEquipo participanteEquipo : equipos.orElseThrow().getParticipanteEquiposByIdEquipo()) {
-                        Optional<Participantes> maybeParticipante = participantesRepository.findById(participanteEquipo.getIdParticipante());
-                        Participantes participante = maybeParticipante.orElseThrow();
-                        participanteSB.append(participante.getNombre()).append(" ").append(participante.getApellidos()).append(",");
+                        Optional<Participantes> participante = participantesRepository.findById(participanteEquipo.getIdParticipante());
+
+                        participantes.append(participante.orElseThrow().getNombre()).append(" ").append(participante.orElseThrow().getApellidos()).append(",");
 
                         if(!institucion.isPresent()) {
-                            institucion = Optional.of(participante.getInstitucion());
+                            institucion = institucionRepository.findById(participante.orElseThrow().getInstitucion().getId());
                         }
                     }
 
                     resultadosParticipantesDTOS.add(new ResultadosParticipantesDTO(
-                            participanteSB.substring(0 , participanteSB.length()-1),
+                            participantes.substring(0 , participantes.length()-1),
                             institucion.orElseThrow().getNombre(),
                             robot.orElseThrow().getNombre(),
                             resultados.getScore()

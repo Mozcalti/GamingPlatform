@@ -5,6 +5,7 @@ import com.mozcalti.gamingapp.exceptions.RobotValidationException;
 import com.mozcalti.gamingapp.model.Equipos;
 import com.mozcalti.gamingapp.model.Robots;
 import com.mozcalti.gamingapp.model.dto.*;
+import com.mozcalti.gamingapp.repository.EquiposRepository;
 import com.mozcalti.gamingapp.repository.RobotsRepository;
 import com.mozcalti.gamingapp.robocode.BattleRunner;
 import com.mozcalti.gamingapp.robocode.Robocode;
@@ -24,9 +25,8 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
 @Service
 @Slf4j
 public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> implements RobotsService {
@@ -34,6 +34,8 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
     @Autowired
     private RobotsRepository robotsRepository;
 
+    @Autowired
+    private EquiposRepository equiposRepository;
     @Override
     public CrudRepository<Robots, Integer> getDao() {
         return null;
@@ -51,17 +53,16 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
     private static final int TESTROUNDS = 1;
     private static final Character[] INVALID_WINDOWS_SPECIFIC_CHARS = {'"', '*', '<', '>', '?', '|'};
     private static final Character[] INVALID_UNIX_SPECIFIC_CHARS = {'\000'};
+    private static final int NO_ACTIVO = 0;
+    private static final int ACTIVO = 1;
 
     @Override
     public RobotsDTO cargarRobot(int idEquipo, String tipo, MultipartFile file) throws IOException {
         if (file != null) {
             if(!file.isEmpty()){
-                byte[] bytes;
-                bytes = file.getBytes();
                 if(safetyCheckForFileName(file)){
-                    Path path = Paths.get(pathRobots);
-                    Path tempFile = Files.createTempFile(path, "robot", ".jar");
-                    return validateRobotJar(file.getOriginalFilename(), tempFile, tempFile.toFile().getName().replace(ROBOTEXTENSION, ""), tipo, idEquipo, bytes);
+                    byte[] bytes = file.getBytes();
+                    return validateRobotJar(file.getOriginalFilename(), tipo, idEquipo, bytes);
                 }
             } else {
                 throw new RobotValidationException("El archivo que intentas cargar esta vacío.");
@@ -72,35 +73,52 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
 
     @Override
     public Robots guardarRobot(Robots robot) {
+        Optional<Equipos> equipo = equiposRepository.findById(4);
+        if(equipo.isPresent()){
+            robot.setEquiposByIdEquipo(equipo.get());
+        }
         return robotsRepository.save(robot);
     }
 
     @Override
-    public void eliminarRobot(int idRobot) throws NoSuchFileException {
+    public void eliminarRobot(int idRobot) throws IOException {
         Optional<Robots> robot = robotsRepository.findById(idRobot);
         if(robot.isPresent()){
-            borrarRobot(robot.get().getNombre());
-            robotsRepository.deleteByIdRobot(idRobot);
+            Path jarFile = Paths.get(pathRobots + File.separator + robot.get().getNombre());
+            String finalPath = pathRobots + File.separator + UUID.randomUUID();
+            Files.move(jarFile, jarFile.resolveSibling(finalPath));
+            borrarRobot(String.valueOf(Paths.get(finalPath).getFileName()));
+            robotsRepository.deleteById(idRobot);
         }
     }
 
     @Override
     @Transactional
-    public int seleccionarRobot(String nombreRobot, int idRobot){
-        return robotsRepository.updateActivo(1, idRobot);
+    public int seleccionarRobot(String nombre, int idEquipo){
+        robotsRepository.resetRobotsActivo(NO_ACTIVO, idEquipo);
+        return robotsRepository.updateActivo(ACTIVO, nombre);
     }
 
-    public List<Robots> obtenerRobots(int idEquipo){
-        return robotsRepository.findAllByIdEquipo(idEquipo);
+    @Override
+    public List<RobotsDTO> obtenerRobots(Integer idEquipo){
+        List<Robots> listaRobots = robotsRepository.findAllByIdEquipo(idEquipo);
+        List<RobotsDTO> listaRobotsDTO = new ArrayList<>();
+        for (Robots robot: listaRobots) {
+            listaRobotsDTO.add(new RobotsDTO(robot.getIdRobot(), robot.getNombre(), robot.getActivo(), robot.getIdEquipo(), robot.getClassName(), robot.getTipo()));
+        }
+        return listaRobotsDTO;
     }
 
-    public RobotsDTO validateRobotJar(String originalFileName, Path serverFile, String tempFileName, String tipo, int idEquipo, byte[] bytes) throws IOException {
+    public RobotsDTO validateRobotJar(String originalFileName, String tipo, int idEquipo, byte[] bytes) throws IOException {
         if(originalFileName != null){
             if(originalFileName.endsWith(ROBOTEXTENSION)) {
                 if (robotsRepository.findByNombre(originalFileName) != null) {
                     throw new DuplicateKeyException("Ya existe un robot con el nombre: " + "'" + originalFileName + "'");
                 } else {
-                    return validateRobot(originalFileName, bytes, serverFile, tipo, idEquipo, tempFileName);
+                    Path path = Paths.get(pathRobots);
+                    Path serverFile = Files.createTempFile(path, "robot", ".jar");
+                    String serverFileName = serverFile.toFile().getName();
+                    return validateRobot(originalFileName, bytes, serverFile, tipo, idEquipo, serverFileName);
                 }
             }else{
                 throw new RobotValidationException("El archivo que intentas cargar no es un robot empaquetado en formato JAR.");
@@ -141,15 +159,18 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
                 throw new RobotValidationException("El tipo de robot elegido no coincide con el robot a cargar");
             }
         }
+        String className = testRobot;
         testRobot += "," + testRobot;
         BattleRunner br = new BattleRunner(new Robocode(), TESTFILEID, TESTISRECORDED,
                 TESTSIZE, TESTSIZE, testRobot, TESTROUNDS);
-        br.runBattle(serverFile, pathRobots, originalFileName, pathRobocode, REPLAYTYPE);
+        br.runRobotValidationBattle(serverFile, pathRobots, originalFileName, pathRobocode, REPLAYTYPE);
         Robots robot = new Robots();
-        robot.setNombre(tempFileName);
-        robot.setActivo(0);
+        robot.setNombre(originalFileName);
+        robot.setActivo(NO_ACTIVO);
         robot.setIdEquipo(idEquipo);
-        return new RobotsDTO(robot.getNombre(), robot.getActivo(), robot.getIdEquipo(), new Equipos());
+        robot.setClassName(className);
+        robot.setTipo(tipo);
+        return new RobotsDTO(robot.getIdRobot(), robot.getNombre(), robot.getActivo(), robot.getIdEquipo(), robot.getClassName(), robot.getTipo());
     }
 
     public String validateName(String src, String extension, String tempFileName) throws NoSuchFileException {
@@ -190,7 +211,7 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
 
     public void borrarRobot(String nombreRobot) throws NoSuchFileException {
         try {
-            Files.delete(Paths.get(pathRobots + File.separator + nombreRobot + ROBOTEXTENSION));
+            Files.delete(Paths.get(pathRobots + File.separator + nombreRobot));
         } catch (IOException e) {
             throw new NoSuchFileException("El robot a borrar no existe");
         }

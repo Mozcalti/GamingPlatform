@@ -33,6 +33,7 @@ public class BattleRunner {
     private int battleFieldWidth;
     private int battleFieldHeight;
     private String robots;
+    private static final String RELEASE_ROBOTS = "sample.Fire,sample.Fire";
     private int numberOfRounds;
 
     public void prepareRobocode(String robocodePath, String recordingFormat) {
@@ -48,17 +49,27 @@ public class BattleRunner {
         robocode.setBattleField(new BattlefieldSpecification(battleFieldWidth, battleFieldHeight));
     }
 
-    public void runBattle(Path targetFile, String pathRobots, String originalFileName, String pathRobocode, String replayType) throws IOException {
+    public void runBattle(String pathRobocode, String replayType){
         RobotSpecification[] selectedRobots;
         BattleSpecification battleSpec;
-        Files.move(targetFile, targetFile.resolveSibling(pathRobots + "\\" + originalFileName));
+        prepareRobocode(pathRobocode, replayType);
+        selectedRobots = robocode.getEngine().getLocalRepository(robots);
+        battleSpec = new BattleSpecification(numberOfRounds, robocode.getBattleField(), selectedRobots);
+        robocode.getEngine().runBattle(battleSpec, true);
+        robocode.getEngine().close();
+    }
+
+    public void runRobotValidationBattle(Path targetFile, String pathRobots, String originalFileName, String pathRobocode, String replayType) throws IOException {
+        RobotSpecification[] selectedRobots;
+        BattleSpecification battleSpec;
+        Files.move(targetFile, targetFile.resolveSibling(pathRobots + File.separator + originalFileName));
         prepareRobocode(pathRobocode, replayType);
         try {
             selectedRobots = robocode.getEngine().getLocalRepository(robots);
             battleSpec = new BattleSpecification(numberOfRounds, robocode.getBattleField(), selectedRobots);
             robocode.getEngine().runBattle(battleSpec, true);
-            robocode.getEngine().close();
-            selectedRobots = robocode.getEngine().getLocalRepository("sample.Fire,sample.Fire");
+            robocode.getProperties().setOptionsCommonEnableAutoRecording(!isRecorded);
+            selectedRobots = robocode.getEngine().getLocalRepository(RELEASE_ROBOTS);
             battleSpec = new BattleSpecification(numberOfRounds, robocode.getBattleField(), selectedRobots);
             robocode.getEngine().runBattle(battleSpec, true);
         }catch(RuntimeException e) {
@@ -68,15 +79,16 @@ public class BattleRunner {
                 Después de esa excepción no encontré la manera de borrarlo, ya que inclusive intenté borrarlo manualmente y no me permite
                 "La acción no se puede completar porque Java(TM) Platform SE binary tiene abierto el archivo.
             */
-            selectedRobots = robocode.getEngine().getLocalRepository("sample.Fire,sample.Fire");
+            robocode.getProperties().setOptionsCommonEnableAutoRecording(!isRecorded);
+            selectedRobots = robocode.getEngine().getLocalRepository(RELEASE_ROBOTS);
             battleSpec = new BattleSpecification(numberOfRounds, robocode.getBattleField(), selectedRobots);
             robocode.getEngine().runBattle(battleSpec, true);
-            Path jarFile = Paths.get(pathRobots + "\\" + originalFileName);
+            Path jarFile = Paths.get(pathRobots + File.separator + originalFileName);
             String finalPath = pathRobots + File.separator + UUID.randomUUID();
             Files.move(jarFile, jarFile.resolveSibling(finalPath));
             Files.delete(Paths.get(finalPath));
             throw new RobotValidationException("El robot no es válido. Debe de ser implementado de acuerdo al procedimiento sugerido y compilado con Java 18.");
-        }finally{
+        }finally {
             robocode.getEngine().close();
         }
     }
