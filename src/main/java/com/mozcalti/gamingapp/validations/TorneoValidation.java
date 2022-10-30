@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Optional;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TorneoValidation {
@@ -63,6 +64,23 @@ public class TorneoValidation {
 
         if(torneoDTO.getNumEtapas() > Numeros.DOS.getNumero()) {
             throw new ValidacionException("Por el momento sólo se pueden dar 2 etapas en el torneo");
+        }
+
+    }
+
+    public static void validaConsultarTorneo(List<Torneos> torneos) {
+        if (torneos.isEmpty()) {
+            throw new ValidacionException("No existe torneo a consultar");
+        }
+    }
+    public static void validaEliminaTorneo(Optional<Torneos> torneos) throws ValidacionException {
+
+        if (!torneos.isPresent()) {
+            throw new ValidacionException("No existe torneo a eliminar");
+        }
+
+        if (!torneos.orElseThrow().getEtapasByIdTorneo().isEmpty()) {
+            throw new ValidacionException("No es posible eliminar el Torneo ya que existen etapas configuradas");
         }
 
     }

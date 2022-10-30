@@ -149,20 +149,8 @@ public class TorneoControlller {
     }
 
     @PostMapping("/guardar")
-    public ResponseEntity<String> guardaTorneo(@RequestBody TorneoDTO torneoDTO) {
-        try {
-            torneosService.guardaTorneo(torneoDTO);
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body("Torneo Guardado Correctamente");
-        } catch (ValidacionException e) {
-            return ResponseEntity.badRequest()
-                    .body(e.getMessage());
-        } catch (Exception e) {
-            log.error(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
-            return ResponseEntity.badRequest()
-                    .body(Constantes.OCURRIO_ERROR_INESPERADO);
-        }
-
+    public void guardaTorneo(@RequestBody TorneoDTO torneoDTO) {
+        torneosService.guardaTorneo(torneoDTO);
     }
 
     @GetMapping("/consultar")
@@ -171,20 +159,13 @@ public class TorneoControlller {
     }
 
     @PutMapping("/cambiar")
-    public ResponseEntity<String> modificaTorneo(@RequestBody TorneoDTO torneoDTO) {
-        try {
-            torneosService.modificaTorneo(torneoDTO);
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body("Torneo Modificado Correctamente");
-        } catch (ValidacionException e) {
-            return ResponseEntity.badRequest()
-                    .body(e.getMessage());
-        } catch (Exception e) {
-            log.error(Constantes.OCURRIO_ERROR_INESPERADO + e.getMessage());
-            return ResponseEntity.badRequest()
-                    .body(Constantes.OCURRIO_ERROR_INESPERADO);
-        }
+    public void modificaTorneo(@RequestBody TorneoDTO torneoDTO) {
+        torneosService.modificaTorneo(torneoDTO);
+    }
 
+    @DeleteMapping("/eliminar")
+    public void eliminaTorneo() {
+        torneosService.eliminaTorneo();
     }
 
 }

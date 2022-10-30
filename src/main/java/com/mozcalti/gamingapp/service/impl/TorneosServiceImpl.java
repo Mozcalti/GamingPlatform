@@ -242,14 +242,16 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
         List<Torneos> torneos = new ArrayList<>();
         torneosRepository.findAll().forEach(torneos::add);
 
+        TorneoValidation.validaConsultarTorneo(torneos);
+
         return torneos.stream().map(
-                o -> new TorneoDTO(
-                        o.getIdTorneo(),
-                        o.getFechaInicio(),
-                        o.getFechaFin(),
-                        o.getNumEtapas(),
-                        o.getTorneoHorasHabilesByIdTorneo())).toList()
-                .stream().findFirst().orElseThrow();
+                        o -> new TorneoDTO(
+                                o.getIdTorneo(),
+                                o.getFechaInicio(),
+                                o.getFechaFin(),
+                                o.getNumEtapas(),
+                                o.getTorneoHorasHabilesByIdTorneo()))
+                .findFirst().orElseThrow();
 
     }
 
@@ -266,6 +268,25 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
         for(HoraHabilDTO horaHabilDTO : torneoDTO.getHorasHabiles()) {
             torneoHorasHabilesRepository.save(new TorneoHorasHabiles(horaHabilDTO, torneos.getIdTorneo()));
         }
+
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void eliminaTorneo() {
+
+        List<Torneos> lstTorneos = new ArrayList<>();
+        torneosRepository.findAll().forEach(lstTorneos::add);
+
+        Optional<Torneos> torneos = lstTorneos.stream().findFirst();
+
+        TorneoValidation.validaEliminaTorneo(torneos);
+
+        for(TorneoHorasHabiles torneoHorasHabiles : torneos.orElseThrow().getTorneoHorasHabilesByIdTorneo()) {
+            torneoHorasHabilesRepository.delete(torneoHorasHabiles);
+        }
+
+        torneosRepository.delete(torneos.orElseThrow());
 
     }
 
