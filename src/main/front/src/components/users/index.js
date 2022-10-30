@@ -21,11 +21,9 @@ const UsersList = () => {
         {field: 'rol', headerName: 'Rol', width: 150},];
 
     const getUsuarios = () => {
-        console.log("Obteniendo lista de usuarios")
         UsuariosService.list()
             .then(
                 (response) => {
-                    console.info(response.data);
                     setUsuarios(response.data);
                 },
                 error => {
@@ -39,28 +37,26 @@ const UsersList = () => {
     }, []);
 
     const addUsuario = (usuario) => {
-        UsuariosService
-            .add(usuario)
-            .then(
-                () => {
-                    setResultado({...resultado, success: true})
-                    getUsuarios();
-                },
-                error => {
-                    console.error(error);
-                    setResultado({...resultado, error: true})
-                }
-            );
+        setResultado({...resultado, success: (!!usuario), error: (!usuario)})
+        getUsuarios();
     }
 
     return (
         <>
             <ResponsiveAppBar/>
-            <Snackbar open={resultado.success} autoHideDuration={6000} onClose={() => {setResultado({...resultado, success: false})}}>
+            <Snackbar
+                open={resultado.success}
+                autoHideDuration={6000}
+                onClose={() => { setResultado({...resultado, success: false})
+            }}>
                 <Alert severity="success" variant="filled">El usuario se guardó de forma correcta</Alert>
             </Snackbar>
-            <Snackbar open={resultado.error} autoHideDuration={6000}  onClose={() => {setResultado({...resultado, error: false})}}>
-                <Alert severity="error" variant="filled">Hubo un error al agregar al usuario</Alert>
+            <Snackbar
+                open={resultado.error}
+                autoHideDuration={6000}
+                onClose={() => { setResultado({...resultado, error: false})
+            }}>
+                <Alert severity="error" variant="filled">Ocurrió un error al agregar al usuario</Alert>
             </Snackbar>
 
             <AddUser addUsuario={addUsuario}/>

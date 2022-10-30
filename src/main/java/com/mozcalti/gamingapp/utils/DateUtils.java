@@ -17,6 +17,14 @@ import java.util.Locale;
 @NoArgsConstructor(access = AccessLevel.NONE)
 public final class DateUtils {
 
+    public static final java.time.format.DateTimeFormatter FORMATTER = java.time.format.DateTimeFormatter.ofPattern(Constantes.FECHA_HORA_PATTERN);
+
+    public static final String PARAMETRO_NOTNULL = "El parametro date no puede ser null";
+
+    public static String formatDate(LocalDateTime time){
+        return FORMATTER.format(time);
+    }
+
     public static Date toDate(LocalDateTime dateToConvert) {
         return Date
                 .from(dateToConvert.atZone(ZoneId.systemDefault())
@@ -54,6 +62,20 @@ public final class DateUtils {
 
     }
 
+    public static boolean isDatesRangoValid(String fechaIni, String fechaFin, String pattern) {
+
+        boolean resultado = false;
+        Calendar calendarIni = getDateFormat(fechaIni, pattern);
+        Calendar calendarFin = getDateFormat(fechaFin, pattern);
+
+        if (calendarFin.after(calendarIni) || calendarIni.equals(calendarFin)) {
+            resultado = true;
+        }
+
+        return resultado;
+
+    }
+
     public static Calendar getDateFormat(String fecha, String pattern) throws ValidacionException {
 
         DateTimeFormatter fmt;
@@ -83,7 +105,7 @@ public final class DateUtils {
         }
     }
 
- public static boolean isHoursRangoValid(String horaIni, String horaFin,
+    public static boolean isHoursRangoValid(String horaIni, String horaFin,
                                             String horaValidar, String formato) {
 
         boolean resultado = false;
@@ -94,7 +116,7 @@ public final class DateUtils {
         boolean isEquals = calendarHoraValidar.equals(calendarIni) || calendarHoraValidar.equals(calendarFin);
         boolean isValid = calendarHoraValidar.after(calendarIni) && calendarHoraValidar.before(calendarFin);
 
-        if(isEquals || isValid) {
+        if (isEquals || isValid) {
             resultado = true;
         }
 
@@ -103,8 +125,8 @@ public final class DateUtils {
     }
 
     public static boolean isHoursRangoValid(String horaIni, String horaFin,
-                                         String horaIniValid, String horaFinValid,
-                                         String formato) {
+                                            String horaIniValid, String horaFinValid,
+                                            String formato) {
 
         StringBuilder sHoraIniValid = new StringBuilder();
         StringBuilder sHoraFinValid = new StringBuilder();
@@ -117,7 +139,7 @@ public final class DateUtils {
 
         boolean resultado = true;
 
-        if(calendarIni.before(calendarIniValid) || calendarFin.after(calendarFinValid)) {
+        if (calendarIni.before(calendarIniValid) || calendarFin.after(calendarFinValid)) {
             resultado = false;
         }
 
@@ -133,7 +155,7 @@ public final class DateUtils {
             calendar.add(Calendar.MINUTE, minutos);
             return calendar.getTime();
         } else {
-            throw new ValidacionException("El parametro date no puede ser null");
+            throw new ValidacionException(PARAMETRO_NOTNULL);
         }
     }
 
@@ -142,7 +164,16 @@ public final class DateUtils {
             DateTimeFormatter fmt = DateTimeFormat.forPattern(pattern).withLocale(Locale.ENGLISH);
             return getDateFormat(fmt.parseDateTime(fecha).plusMinutes(minutos).toDate(), pattern);
         } else {
-            throw new ValidacionException("El parametro date no puede ser null");
+            throw new ValidacionException(PARAMETRO_NOTNULL);
+        }
+    }
+
+    public static String addDias(String fecha, String pattern, int dias) throws ValidacionException {
+        if (fecha != null) {
+            DateTimeFormatter fmt = DateTimeFormat.forPattern(pattern).withLocale(Locale.ENGLISH);
+            return getDateFormat(fmt.parseDateTime(fecha).plusDays(dias).toDate(), pattern);
+        } else {
+            throw new ValidacionException(PARAMETRO_NOTNULL);
         }
     }
 

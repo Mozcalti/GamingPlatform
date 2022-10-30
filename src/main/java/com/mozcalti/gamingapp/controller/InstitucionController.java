@@ -2,6 +2,7 @@ package com.mozcalti.gamingapp.controller;
 
 
 import com.mozcalti.gamingapp.model.Institucion;
+import com.mozcalti.gamingapp.model.dto.DetalleInstitucionDTO;
 import com.mozcalti.gamingapp.model.dto.InstitucionDTO;
 import com.mozcalti.gamingapp.model.dto.TablaDTO;
 import com.mozcalti.gamingapp.model.dto.TablaInstitucionDTO;
@@ -30,12 +31,12 @@ public class InstitucionController {
     }
 
     @GetMapping("/todas")
-    public TablaDTO<TablaInstitucionDTO> todasInstituciones(@RequestParam String texto, @RequestParam Integer indice){
-        return institucionService.listaInstituciones(texto,indice);
+    public TablaDTO<TablaInstitucionDTO> todasInstituciones(@RequestParam String texto, @RequestParam String fecha, @RequestParam Integer indice){
+        return institucionService.listaInstituciones(texto,fecha,indice);
     }
 
     @GetMapping("/{id}")
-    public TablaInstitucionDTO obtenerInstitucion(@PathVariable Integer id){
+    public DetalleInstitucionDTO obtenerInstitucion(@PathVariable Integer id){
         return institucionService.obtenerInstitucion(id);
     }
 

@@ -5,20 +5,18 @@ import lombok.NoArgsConstructor;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CollectionUtils {
 
-    public static List<Integer> getRandomNumbers(List<Integer> idEquipos) throws NoSuchAlgorithmException {
+    public static List<Integer> getRandomNumbers(Set<Integer> idEquipos) throws NoSuchAlgorithmException {
 
-        Collections.sort(idEquipos);
+        List<Integer> numbers = new ArrayList<>(idEquipos);
+        Collections.sort(numbers);
 
-        int min = idEquipos.get(0);
-        int max = idEquipos.get(idEquipos.size()-1);
+        int min = numbers.get(0);
+        int max = numbers.get(numbers.size()-Numeros.UNO.getNumero());
 
         List<Integer> randomNumbers = new ArrayList<>();
 
@@ -35,7 +33,7 @@ public final class CollectionUtils {
 
     private static int getRandomInt(int min, int max) throws NoSuchAlgorithmException {
         Random random = SecureRandom.getInstanceStrong();
-        return random.nextInt((max - min) + 1) + min;
+        return random.nextInt((max - min) + Numeros.UNO.getNumero()) + min;
     }
 
 }

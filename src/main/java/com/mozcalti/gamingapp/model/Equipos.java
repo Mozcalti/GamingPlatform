@@ -21,6 +21,10 @@ public class Equipos {
     @Column(name = "nombre")
     private String nombre;
 
+    @Basic
+    @Column(name = "activo")
+    private boolean activo;
+
     @OneToMany(mappedBy = "equiposByIdEquipo")
     private Collection<EtapaEquipo> etapaEquiposByIdEquipo;
 
@@ -33,4 +37,8 @@ public class Equipos {
     public Equipos(EquipoDTO equipoDTO) {
         this.nombre = equipoDTO.getNombreEquipo();
     }
+    public Equipos(boolean activo) {
+        this.activo = activo;
+    }
+
 }

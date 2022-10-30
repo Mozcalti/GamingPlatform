@@ -1,9 +1,11 @@
 package com.mozcalti.gamingapp.controller;
 
 import com.mozcalti.gamingapp.exceptions.ValidacionException;
+import com.mozcalti.gamingapp.model.torneos.EtapaDTO;
 import com.mozcalti.gamingapp.model.torneos.TorneoDTO;
 import com.mozcalti.gamingapp.model.batallas.BatallasDTO;
 import com.mozcalti.gamingapp.service.CalendarizarEtapasTorneoService;
+import com.mozcalti.gamingapp.service.TorneosService;
 import com.mozcalti.gamingapp.utils.Constantes;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "/torneo")
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -19,6 +23,8 @@ import org.springframework.web.bind.annotation.*;
 public class TorneoControlller {
 
     private CalendarizarEtapasTorneoService calendarizarEtapasTorneoService;
+
+    private TorneosService torneosService;
 
     @PostMapping(value = "/save")
     public ResponseEntity<String> saveTorneo(@RequestBody TorneoDTO torneoDTO) {
@@ -141,6 +147,46 @@ public class TorneoControlller {
                     .body(Constantes.OCURRIO_ERROR_INESPERADO);
         }
 
+    }
+
+    @PostMapping("/guardar")
+    public void guardaTorneo(@RequestBody TorneoDTO torneoDTO) {
+        torneosService.guardaTorneo(torneoDTO);
+    }
+
+    @GetMapping("/consultar")
+    public TorneoDTO obtieneTorneos() {
+        return torneosService.obtieneTorneos();
+    }
+
+    @PutMapping("/cambiar")
+    public void modificaTorneo(@RequestBody TorneoDTO torneoDTO) {
+        torneosService.modificaTorneo(torneoDTO);
+    }
+
+    @DeleteMapping("/eliminar")
+    public void eliminaTorneo() {
+        torneosService.eliminaTorneo();
+    }
+
+    @PostMapping("/etapas/guardar")
+    public void guardaEtapas(@RequestBody List<EtapaDTO> etapasDTOS) {
+        torneosService.guardaEtapas(etapasDTOS);
+    }
+
+    @GetMapping("/etapas/consultar")
+    public List<EtapaDTO> obtieneEtapas() {
+        return torneosService.obtieneEtapas();
+    }
+
+    @DeleteMapping("/etapas/eliminar")
+    public void eliminaEtapas() {
+        torneosService.eliminarEtapas();
+    }
+
+    @PutMapping("/etapas/cambiar")
+    public void modificaTorneo(@RequestBody List<EtapaDTO> etapasDTOS) {
+        torneosService.modificaEtapas(etapasDTOS);
     }
 
 }

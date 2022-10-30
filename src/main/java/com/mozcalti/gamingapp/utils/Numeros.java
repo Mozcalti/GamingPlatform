@@ -14,7 +14,10 @@ public enum Numeros {
     CINCO(5),
     SEIS(6),
     SIETE(7),
-    OCHO(8);
+    OCHO(8),
+
+    DOS_NEGATIVO(-2);
+
     private final int numero;
 
 }

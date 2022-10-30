@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 @Entity
@@ -40,8 +41,9 @@ public class Participantes {
     @Column(name = "foto")
     private String foto;
     @Column(name = "fecha_creacion")
-    private String fechaCreacion;
-    @ManyToOne
+    private LocalDateTime fechaCreacion;
+
+    @ManyToOne(optional = false)
     @JoinColumn(name = "id_institucion")
     private Institucion institucion;
 

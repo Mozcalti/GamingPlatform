@@ -1,4 +1,4 @@
-package com.mozcalti.gamingapp.service.correos.Impl;
+package com.mozcalti.gamingapp.service.correos.impl;
 
 import com.mozcalti.gamingapp.exceptions.SendMailException;
 import com.mozcalti.gamingapp.exceptions.UtilsException;
@@ -11,8 +11,10 @@ import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateExceptionHandler;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import javax.activation.DataHandler;
@@ -24,14 +26,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class SendMailServiceImpl implements SendMailService {
+
+    private final MessageSource mailMessageSource;
 
     @Value("${mail.host}")
     private String mailHost;
@@ -49,10 +51,17 @@ public class SendMailServiceImpl implements SendMailService {
     private String mailFrom;
 
     @Override
-    public void sendMail(String toAddress, String subject, String templateMessage, Map<String, String> imagesMessage)
+    public void sendMail(String toAddress, String templateKey, Map<String, Object> templateParameters)
             throws SendMailException, UtilsException {
 
+        String subject = mailMessageSource.getMessage("mail.%s.subject".formatted(templateKey), null, Locale.getDefault());
+        String mailTemplate = mailMessageSource.getMessage("mail.%s.template".formatted(templateKey), null, Locale.getDefault());
+
+        String templateMessage = readMailTemplate(mailTemplate, templateParameters);
+
         try {
+            Map<String, String> imagesMessage = new HashMap<>();
+            imagesMessage.put("logo_plai", Constantes.IMAGES_PLAI_LOGO);
             // SMTP server properties
             Properties properties = new Properties();
             properties.put("mail.smtp.host", mailHost);
@@ -103,8 +112,7 @@ public class SendMailServiceImpl implements SendMailService {
 
     }
 
-    @Override
-    public String readMailTemplate(String pathname, Map<String, Object> parameters) throws SendMailException, UtilsException {
+    private String readMailTemplate(String pathname, Map<String, Object> parameters) throws SendMailException, UtilsException {
 
         Configuration configuration;
         TemplateLoader templateLoader;

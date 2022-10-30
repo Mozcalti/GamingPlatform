@@ -1,7 +1,6 @@
 package com.mozcalti.gamingapp.controller;
 
 
-import com.mozcalti.gamingapp.model.Participantes;
 import com.mozcalti.gamingapp.model.dto.ParticipanteDTO;
 import com.mozcalti.gamingapp.model.dto.TablaParticipantesDTO;
 import com.mozcalti.gamingapp.service.ParticipantesService;
@@ -26,13 +25,13 @@ public class ParticipanteController {
     }
 
     @PostMapping(value = "/guardar")
-    public void guardar(@RequestBody List<Participantes> participantes) {
-        participantesService.guardarParticipantes(participantes);
+    public void guardar(@RequestBody List<ParticipanteDTO> participantesDTO) {
+        participantesService.guardarParticipantes(participantesDTO);
     }
 
     @GetMapping("/todos")
-    public List<TablaParticipantesDTO> todosParticipantes(@RequestParam String texto){
-        return participantesService.listaParticipantes(texto);
+    public List<TablaParticipantesDTO> todosParticipantes(@RequestParam String texto,@RequestParam String fecha){
+        return participantesService.listaParticipantes(texto,fecha);
     }
 
     @GetMapping("/{id}")
