@@ -6,6 +6,9 @@ import com.mozcalti.gamingapp.model.batallas.BatallaFechaHoraInicioDTO;
 import com.mozcalti.gamingapp.model.batallas.BatallaParticipanteDTO;
 import com.mozcalti.gamingapp.model.participantes.EquiposDTO;
 import com.mozcalti.gamingapp.model.participantes.InstitucionEquiposDTO;
+import com.mozcalti.gamingapp.model.torneos.EtapaDTO;
+import com.mozcalti.gamingapp.model.torneos.HoraHabilDTO;
+import com.mozcalti.gamingapp.model.torneos.TorneoDTO;
 import com.mozcalti.gamingapp.service.TorneosService;
 import com.mozcalti.gamingapp.model.*;
 import com.mozcalti.gamingapp.repository.*;
@@ -13,6 +16,7 @@ import com.mozcalti.gamingapp.utils.Constantes;
 import com.mozcalti.gamingapp.utils.DateUtils;
 import com.mozcalti.gamingapp.utils.Numeros;
 import com.mozcalti.gamingapp.utils.TorneoUtils;
+import com.mozcalti.gamingapp.validations.TorneoValidation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +36,13 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
     private EtapasRepository etapasRepository;
     private BatallasRepository batallasRepository;
     private InstitucionRepository institucionRepository;
-
     private EquiposRepository equiposRepository;
     private ParticipantesRepository participantesRepository;
+    private TorneoHorasHabilesRepository torneoHorasHabilesRepository;
+    private EtapaEquipoRepository etapaEquipoRepository;
+    private ReglasRepository reglasRepository;
+
+    private ParticipanteEquipoRepository participanteEquipoRepository;
 
     @Override
     public CrudRepository<Torneos, Integer> getDao() {
@@ -213,6 +221,152 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
                 idEquipo,
                 nombreParticipantes.substring(Numeros.CERO.getNumero(), nombreParticipantes.length()-Numeros.DOS.getNumero()));
 
+    }
+
+    @Override
+    public List<Torneos> getTorneos() throws ValidacionException {
+        List<Torneos> lstTorneos = new ArrayList<>();
+        torneosRepository.findAll().forEach(lstTorneos::add);
+        return lstTorneos;
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class, RuntimeException.class})
+    public void guardaTorneo(TorneoDTO torneoDTO) throws ValidacionException {
+
+        TorneoValidation.validaGuardarTorneo(getTorneos(), torneoDTO, true);
+
+        Torneos torneos = torneosRepository.save(new Torneos(torneoDTO));
+
+        for(HoraHabilDTO horaHabilDTO : torneoDTO.getHorasHabiles()) {
+            torneoHorasHabilesRepository.save(new TorneoHorasHabiles(horaHabilDTO, torneos.getIdTorneo()));
+        }
+
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public TorneoDTO obtieneTorneos() {
+
+        List<Torneos> torneos = getTorneos();
+
+        TorneoValidation.validaConsultarTorneo(torneos);
+
+        return torneos.stream().map(
+                        o -> new TorneoDTO(
+                                o.getIdTorneo(),
+                                o.getFechaInicio(),
+                                o.getFechaFin(),
+                                o.getNumEtapas(),
+                                o.getTorneoHorasHabilesByIdTorneo()))
+                .findFirst().orElseThrow();
+
+    }
+
+    @Override
+    public void modificaTorneo(TorneoDTO torneoDTO) throws ValidacionException {
+
+        TorneoValidation.validaGuardarTorneo(getTorneos(), torneoDTO, false);
+
+        Torneos torneos = torneosRepository.save(new Torneos(torneoDTO));
+
+        for(HoraHabilDTO horaHabilDTO : torneoDTO.getHorasHabiles()) {
+            torneoHorasHabilesRepository.save(new TorneoHorasHabiles(horaHabilDTO, torneos.getIdTorneo()));
+        }
+
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void eliminaTorneo() {
+
+        Optional<Torneos> torneos = getTorneos().stream().findFirst();
+
+        TorneoValidation.validaEliminaTorneo(torneos);
+
+        for(TorneoHorasHabiles torneoHorasHabiles : torneos.orElseThrow().getTorneoHorasHabilesByIdTorneo()) {
+            torneoHorasHabilesRepository.delete(torneoHorasHabiles);
+        }
+
+        torneosRepository.delete(torneos.orElseThrow());
+
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class, RuntimeException.class})
+    public void persisteEtapas(List<EtapaDTO> etapasDTOS, boolean esAlta) throws ValidacionException {
+
+        List<Torneos> lstTorneos = getTorneos();
+
+        List<Etapas> lstEtapas = new ArrayList<>();
+        etapasRepository.findAll().forEach(lstEtapas::add);
+
+        TorneoValidation.validaGuardarEtapas(lstTorneos, etapasDTOS, lstEtapas, esAlta);
+
+        Torneos torneos = lstTorneos.stream().findFirst().orElseThrow();
+
+        for(EtapaDTO etapaDTO : etapasDTOS) {
+            // Etapa
+            Etapas etapas = new Etapas(etapaDTO, torneos.getIdTorneo());
+            etapas = etapasRepository.save(etapas);
+
+            // Reglas
+            reglasRepository.save(new Reglas(etapaDTO.getReglas(), etapas.getIdEtapa()));
+
+            // Participantes
+            if(etapaDTO.getReglas().getTrabajo().equals(Constantes.INDIVIDUAL)) {
+                List<Participantes> lstParticipantes = new ArrayList<>();
+                participantesRepository.findAll().forEach(lstParticipantes::add);
+
+                for(Participantes participantes : lstParticipantes) {
+                    Equipos equipos = equiposRepository.save(new Equipos(true));
+
+                    etapaEquipoRepository.save(new EtapaEquipo(etapas.getIdEtapa(), equipos.getIdEquipo()));
+
+                    participanteEquipoRepository.save(new ParticipanteEquipo(participantes.getIdParticipante(), equipos.getIdEquipo()));
+                }
+            }
+        }
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class, RuntimeException.class})
+    public void guardaEtapas(List<EtapaDTO> etapasDTOS) throws ValidacionException {
+        persisteEtapas(etapasDTOS, true);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public List<EtapaDTO> obtieneEtapas() throws ValidacionException {
+
+        obtieneTorneos();
+
+        List<Etapas> etapas = new ArrayList<>();
+        etapasRepository.findAll().forEach(etapas::add);
+
+        List<EtapaDTO> etapaDTOS = new ArrayList<>();
+        for(Etapas etapa : etapas) {
+            etapaDTOS.add(new EtapaDTO(etapa));
+        }
+
+        return etapaDTOS;
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class, RuntimeException.class})
+    public void eliminarEtapas() {
+        obtieneTorneos();
+        reglasRepository.deleteAll();
+        etapaEquipoRepository.deleteAll();
+        participanteEquipoRepository.deleteAll();
+        equiposRepository.deleteAll();
+        etapasRepository.deleteAll();
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class, RuntimeException.class})
+    public void modificaEtapas(List<EtapaDTO> etapasDTOS) throws ValidacionException {
+        persisteEtapas(etapasDTOS, false);
     }
 
 }

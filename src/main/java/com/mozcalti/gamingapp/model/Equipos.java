@@ -37,4 +37,8 @@ public class Equipos {
     public Equipos(EquipoDTO equipoDTO) {
         this.nombre = equipoDTO.getNombreEquipo();
     }
+    public Equipos(boolean activo) {
+        this.activo = activo;
+    }
+
 }
