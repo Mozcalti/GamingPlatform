@@ -141,24 +141,28 @@
             <groupId>net.sf.robocode</groupId>
             <artifactId>robocode.api</artifactId>
             <version>1.9.4.7</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>net.sf.robocode</groupId>
             <artifactId>robocode.host</artifactId>
             <version>1.9.4.7</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>net.sf.robocode</groupId>
             <artifactId>robocode.battle</artifactId>
             <version>1.9.4.7</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>net.sf.robocode</groupId>
             <artifactId>robocode.repository</artifactId>
             <version>1.9.4.7</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/net.sf.robocode/robocode.core -->

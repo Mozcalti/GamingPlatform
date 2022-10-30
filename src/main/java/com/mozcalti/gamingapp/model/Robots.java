@@ -31,4 +31,11 @@ public class Robots {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_equipo", referencedColumnName = "id_equipo", insertable = false, updatable = false)
     private Equipos equiposByIdEquipo;
+    @Basic
+    @Column(name = "class_name")
+    private String className;
+    @Basic
+    @Column(name = "tipo")
+    private String tipo;
+
 }

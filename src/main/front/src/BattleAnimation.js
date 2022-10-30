@@ -20,6 +20,7 @@ hitWallSound.autoplay = true;
 const explodedSound = new Audio();
 explodedSound.src = "sounds/explode.wav";
 explodedSound.autoplay = true;
+
 /*
     Prevents user accidentally leaving or refreshing tab
     Will show pop up asking for confirmation
@@ -133,6 +134,8 @@ function createCustomElement(tag, value, id, className){
  */
 
 function init(){
+    let pathRobots = ProcessInfo.processInfo.enviroment["PATH_ROBOTS"];
+    console.log(pathRobots);
     let battleDate = new Date(2022, 9, 14, 14, 19);
     let interval = 400;
     let minutesOffset = 1;
