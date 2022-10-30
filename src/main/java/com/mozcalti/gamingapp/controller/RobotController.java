@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.NoSuchFileException;
 import java.util.List;
 
 @RestController
@@ -30,6 +29,7 @@ public class RobotController {
     @PostMapping(value = "/guardarRobot")
     public void guardarRobot(@RequestBody RobotsDTO robotDTO) {
         Robots robot = new Robots();
+        robot.setIdRobot(robotDTO.getIdRobot());
         robot.setNombre(robotDTO.getNombre());
         robot.setActivo(robotDTO.getActivo());
         robot.setIdEquipo(robotDTO.getIdEquipo());
@@ -40,8 +40,8 @@ public class RobotController {
 
     @Transactional
     @DeleteMapping(value = "/eliminarRobot")
-    public void eliminarRobot(@RequestParam(value="nombre") String nombre) throws IOException {
-        robotsService.eliminarRobot(nombre);
+    public void eliminarRobot(@RequestParam(value="idRobot") int idRobot) throws IOException {
+        robotsService.eliminarRobot(idRobot);
     }
 
     @GetMapping(value ="/verRobots")

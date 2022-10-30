@@ -73,25 +73,23 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
 
     @Override
     public Robots guardarRobot(Robots robot) {
-        log.error("DIOS AYUDA");
-
-        log.error(String.valueOf(robot.getIdEquipo()));
-        log.error("NOOOOOO");
         Optional<Equipos> equipo = equiposRepository.findById(4);
-        log.error("WHATTTTT");
-        if(equipo.isPresent()){log.error("PRESENT");
+        if(equipo.isPresent()){
             robot.setEquiposByIdEquipo(equipo.get());
         }
         return robotsRepository.save(robot);
     }
 
     @Override
-    public void eliminarRobot(String nombre) throws IOException {
-        Path jarFile = Paths.get(pathRobots + File.separator + nombre);
-        String finalPath = pathRobots + File.separator + UUID.randomUUID();
-        Files.move(jarFile, jarFile.resolveSibling(finalPath));
-        borrarRobot(String.valueOf(Paths.get(finalPath).getFileName()));
-        robotsRepository.deleteByNombre(nombre);
+    public void eliminarRobot(int idRobot) throws IOException {
+        Optional<Robots> robot = robotsRepository.findById(idRobot);
+        if(robot.isPresent()){
+            Path jarFile = Paths.get(pathRobots + File.separator + robot.get().getNombre());
+            String finalPath = pathRobots + File.separator + UUID.randomUUID();
+            Files.move(jarFile, jarFile.resolveSibling(finalPath));
+            borrarRobot(String.valueOf(Paths.get(finalPath).getFileName()));
+            robotsRepository.deleteById(idRobot);
+        }
     }
 
     @Override
@@ -106,7 +104,7 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
         List<Robots> listaRobots = robotsRepository.findAllByIdEquipo(idEquipo);
         List<RobotsDTO> listaRobotsDTO = new ArrayList<>();
         for (Robots robot: listaRobots) {
-            listaRobotsDTO.add(new RobotsDTO(robot.getNombre(), robot.getActivo(), robot.getIdEquipo(), robot.getClassName(), robot.getTipo()));
+            listaRobotsDTO.add(new RobotsDTO(robot.getIdRobot(), robot.getNombre(), robot.getActivo(), robot.getIdEquipo(), robot.getClassName(), robot.getTipo()));
         }
         return listaRobotsDTO;
     }
@@ -172,7 +170,7 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
         robot.setIdEquipo(idEquipo);
         robot.setClassName(className);
         robot.setTipo(tipo);
-        return new RobotsDTO(robot.getNombre(), robot.getActivo(), robot.getIdEquipo(), robot.getClassName(), robot.getTipo());
+        return new RobotsDTO(robot.getIdRobot(), robot.getNombre(), robot.getActivo(), robot.getIdEquipo(), robot.getClassName(), robot.getTipo());
     }
 
     public String validateName(String src, String extension, String tempFileName) throws NoSuchFileException {

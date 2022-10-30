@@ -10,6 +10,7 @@ import lombok.Setter;
 @RequiredArgsConstructor
 public class RobotsDTO {
 
+    private final Integer idRobot;
     private final String nombre;
     private final Integer activo;
     private final Integer idEquipo;

@@ -7,14 +7,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.NoSuchFileException;
 import java.util.List;
 
 public interface RobotsService extends GenericServiceAPI<Robots, Integer> {
 
     RobotsDTO cargarRobot(int idEquipo ,String tipo, MultipartFile file) throws IOException;
     Robots guardarRobot(Robots robot);
-    void eliminarRobot(String nombre) throws IOException;
+    void eliminarRobot(int idRobot) throws IOException;
     @PostMapping(value = "/seleccionarRobot")
     int seleccionarRobot(String nombre, int idEquipo);
     List<RobotsDTO> obtenerRobots(Integer idEquipo);
