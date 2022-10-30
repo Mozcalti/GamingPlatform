@@ -55,6 +55,8 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
     private static final int TESTROUNDS = 1;
     private static final Character[] INVALID_WINDOWS_SPECIFIC_CHARS = {'"', '*', '<', '>', '?', '|'};
     private static final Character[] INVALID_UNIX_SPECIFIC_CHARS = {'\000'};
+    private static final int NO_ACTIVO = 0;
+    private static final int ACTIVO = 1;
 
     @Override
     public RobotsDTO cargarRobot(int idEquipo, String tipo, MultipartFile file) throws IOException {
@@ -82,19 +84,15 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
 
     @Override
     public void eliminarRobot(String nombre) throws NoSuchFileException {
-        //Optional<Robots> robot = Optional.ofNullable(robotsRepository.findByIdRobot(idRobot));
-        //if(robot.isPresent()){
-            //borrarRobot(robot.get().getNombre());
         borrarRobot(nombre);
         robotsRepository.deleteByNombre(nombre);
-        //}
     }
 
     @Override
     @Transactional
     public int seleccionarRobot(String nombre, int idEquipo){
-        robotsRepository.resetRobotsActivo(0, idEquipo);
-        return robotsRepository.updateActivo(1, nombre);
+        robotsRepository.resetRobotsActivo(NO_ACTIVO, idEquipo);
+        return robotsRepository.updateActivo(ACTIVO, nombre);
     }
 
     @Override
@@ -164,7 +162,7 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
         br.runRobotValidationBattle(serverFile, pathRobots, originalFileName, pathRobocode, REPLAYTYPE);
         Robots robot = new Robots();
         robot.setNombre(originalFileName);
-        robot.setActivo(0);
+        robot.setActivo(NO_ACTIVO);
         robot.setIdEquipo(idEquipo);
         robot.setClassName(className);
         robot.setTipo(tipo);

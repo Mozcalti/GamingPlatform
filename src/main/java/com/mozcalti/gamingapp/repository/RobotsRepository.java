@@ -11,22 +11,14 @@ import java.util.List;
 @Repository
 public interface RobotsRepository extends JpaRepository<Robots, Integer> {
 
-    //borrar estos ya que vienen por default en la interfaz
     Robots findByNombre(String nombre);
-    void deleteByIdRobot(int idRobot);
-    Robots findByIdRobot(int idRobot);
-
+    void deleteByNombre(String nombre);
     @Modifying
     @Query("UPDATE Robots robot SET robot.activo = ?1 where robot.nombre = ?2")
     int updateActivo(Integer activo, String nombre);
-
     @Modifying
     @Query("UPDATE Robots robot SET robot.activo = ?1 where robot.idEquipo = ?2")
     int resetRobotsActivo(Integer activo, int idEquipo);
-
     List<Robots> findAllByIdEquipo(Integer idEquipo);
-
     List<Robots> findAllByNombre(String nombre);
-
-    void deleteByNombre(String nombre);
 }
