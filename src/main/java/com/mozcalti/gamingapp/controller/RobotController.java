@@ -40,7 +40,7 @@ public class RobotController {
 
     @Transactional
     @DeleteMapping(value = "/eliminarRobot")
-    public void eliminarRobot(@RequestParam(value="nombre") String nombre) throws NoSuchFileException {
+    public void eliminarRobot(@RequestParam(value="nombre") String nombre) throws IOException {
         robotsService.eliminarRobot(nombre);
     }
 

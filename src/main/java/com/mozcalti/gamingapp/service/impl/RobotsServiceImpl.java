@@ -25,10 +25,8 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
 @Service
 @Slf4j
 public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> implements RobotsService {
@@ -75,16 +73,24 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
 
     @Override
     public Robots guardarRobot(Robots robot) {
-        Optional<Equipos> equipo = equiposRepository.findById(robot.getIdEquipo());
-        if(equipo.isPresent()){
+        log.error("DIOS AYUDA");
+
+        log.error(String.valueOf(robot.getIdEquipo()));
+        log.error("NOOOOOO");
+        Optional<Equipos> equipo = equiposRepository.findById(4);
+        log.error("WHATTTTT");
+        if(equipo.isPresent()){log.error("PRESENT");
             robot.setEquiposByIdEquipo(equipo.get());
         }
         return robotsRepository.save(robot);
     }
 
     @Override
-    public void eliminarRobot(String nombre) throws NoSuchFileException {
-        borrarRobot(nombre);
+    public void eliminarRobot(String nombre) throws IOException {
+        Path jarFile = Paths.get(pathRobots + File.separator + nombre);
+        String finalPath = pathRobots + File.separator + UUID.randomUUID();
+        Files.move(jarFile, jarFile.resolveSibling(finalPath));
+        borrarRobot(String.valueOf(Paths.get(finalPath).getFileName()));
         robotsRepository.deleteByNombre(nombre);
     }
 
@@ -207,7 +213,6 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
 
     public void borrarRobot(String nombreRobot) throws NoSuchFileException {
         try {
-            log.info(nombreRobot);
             Files.delete(Paths.get(pathRobots + File.separator + nombreRobot));
         } catch (IOException e) {
             throw new NoSuchFileException("El robot a borrar no existe");

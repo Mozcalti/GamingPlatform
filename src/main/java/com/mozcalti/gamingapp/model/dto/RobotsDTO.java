@@ -2,9 +2,11 @@ package com.mozcalti.gamingapp.model.dto;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 
 @Getter
+@Setter
 @RequiredArgsConstructor
 public class RobotsDTO {
 

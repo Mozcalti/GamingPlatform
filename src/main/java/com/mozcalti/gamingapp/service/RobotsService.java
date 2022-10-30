@@ -14,7 +14,7 @@ public interface RobotsService extends GenericServiceAPI<Robots, Integer> {
 
     RobotsDTO cargarRobot(int idEquipo ,String tipo, MultipartFile file) throws IOException;
     Robots guardarRobot(Robots robot);
-    void eliminarRobot(String nombre) throws NoSuchFileException;
+    void eliminarRobot(String nombre) throws IOException;
     @PostMapping(value = "/seleccionarRobot")
     int seleccionarRobot(String nombre, int idEquipo);
     List<RobotsDTO> obtenerRobots(Integer idEquipo);
