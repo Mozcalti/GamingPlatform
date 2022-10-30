@@ -8,7 +8,6 @@ import com.mozcalti.gamingapp.model.participantes.EquiposDTO;
 import com.mozcalti.gamingapp.model.participantes.InstitucionEquiposDTO;
 import com.mozcalti.gamingapp.model.torneos.EtapaDTO;
 import com.mozcalti.gamingapp.model.torneos.HoraHabilDTO;
-import com.mozcalti.gamingapp.model.torneos.ParticipanteDTO;
 import com.mozcalti.gamingapp.model.torneos.TorneoDTO;
 import com.mozcalti.gamingapp.service.TorneosService;
 import com.mozcalti.gamingapp.model.*;
@@ -249,8 +248,7 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
     @Transactional(propagation = Propagation.REQUIRED)
     public TorneoDTO obtieneTorneos() {
 
-        List<Torneos> torneos = new ArrayList<>();
-        torneosRepository.findAll().forEach(torneos::add);
+        List<Torneos> torneos = getTorneos();
 
         TorneoValidation.validaConsultarTorneo(torneos);
 
@@ -282,10 +280,7 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
     @Transactional(propagation = Propagation.REQUIRED)
     public void eliminaTorneo() {
 
-        List<Torneos> lstTorneos = new ArrayList<>();
-        torneosRepository.findAll().forEach(lstTorneos::add);
-
-        Optional<Torneos> torneos = lstTorneos.stream().findFirst();
+        Optional<Torneos> torneos = getTorneos().stream().findFirst();
 
         TorneoValidation.validaEliminaTorneo(torneos);
 
@@ -299,14 +294,14 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class, RuntimeException.class})
-    public void guardaEtapas(List<EtapaDTO> etapasDTOS) throws ValidacionException {
+    public void persisteEtapas(List<EtapaDTO> etapasDTOS, boolean esAlta) throws ValidacionException {
 
         List<Torneos> lstTorneos = getTorneos();
 
         List<Etapas> lstEtapas = new ArrayList<>();
         etapasRepository.findAll().forEach(lstEtapas::add);
 
-        TorneoValidation.validaGuardarEtapas(lstTorneos, etapasDTOS, lstEtapas);
+        TorneoValidation.validaGuardarEtapas(lstTorneos, etapasDTOS, lstEtapas, esAlta);
 
         Torneos torneos = lstTorneos.stream().findFirst().orElseThrow();
 
@@ -332,7 +327,46 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
                 }
             }
         }
+    }
 
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class, RuntimeException.class})
+    public void guardaEtapas(List<EtapaDTO> etapasDTOS) throws ValidacionException {
+        persisteEtapas(etapasDTOS, true);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public List<EtapaDTO> obtieneEtapas() throws ValidacionException {
+
+        obtieneTorneos();
+
+        List<Etapas> etapas = new ArrayList<>();
+        etapasRepository.findAll().forEach(etapas::add);
+
+        List<EtapaDTO> etapaDTOS = new ArrayList<>();
+        for(Etapas etapa : etapas) {
+            etapaDTOS.add(new EtapaDTO(etapa));
+        }
+
+        return etapaDTOS;
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class, RuntimeException.class})
+    public void eliminarEtapas() {
+        obtieneTorneos();
+        reglasRepository.deleteAll();
+        etapaEquipoRepository.deleteAll();
+        participanteEquipoRepository.deleteAll();
+        equiposRepository.deleteAll();
+        etapasRepository.deleteAll();
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class, RuntimeException.class})
+    public void modificaEtapas(List<EtapaDTO> etapasDTOS) throws ValidacionException {
+        persisteEtapas(etapasDTOS, false);
     }
 
 }

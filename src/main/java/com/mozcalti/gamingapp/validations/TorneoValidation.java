@@ -73,7 +73,7 @@ public class TorneoValidation {
 
     public static void validaConsultarTorneo(@NonNull List<Torneos> torneos) {
         if (torneos.isEmpty()) {
-            throw new ValidacionException("No existe torneo a consultar");
+            throw new ValidacionException("No existe torneo");
         }
     }
     public static void validaEliminaTorneo(@NonNull Optional<Torneos> torneos) throws ValidacionException {
@@ -89,13 +89,13 @@ public class TorneoValidation {
     }
 
     public static void validaGuardarEtapas(@NonNull List<Torneos> torneos, List<EtapaDTO> etapasDTOS,
-                                           List<Etapas> lstEtapas) {
+                                           List<Etapas> lstEtapas, boolean esAlta) {
 
         if (torneos.isEmpty()) {
             throw new ValidacionException("No existe torneo al cual agregar las etapas");
         }
 
-        if(!lstEtapas.isEmpty()) {
+        if(!lstEtapas.isEmpty() && esAlta) {
             throw new ValidacionException("Ya existen etapas guardadas");
         }
 

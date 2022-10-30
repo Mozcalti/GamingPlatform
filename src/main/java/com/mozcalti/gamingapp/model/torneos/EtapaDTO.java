@@ -27,11 +27,11 @@ public class EtapaDTO {
     @JsonIgnore
     private List<EquipoDTO> equipos;
 
-    public EtapaDTO(Etapas etapas) {
-        this.idEtapa = etapas.getIdEtapa();
-        this.numeroEtapa = etapas.getNumeroEtapa();
-        this.fechaInicio = etapas.getFechaInicio();
-        this.fechaFin = etapas.getFechaFin();
-        this.reglas = new ReglasDTO(etapas.getReglas());
+    public EtapaDTO(Etapas etapa) {
+        this.idEtapa = etapa.getIdEtapa();
+        this.numeroEtapa = etapa.getNumeroEtapa();
+        this.fechaInicio = etapa.getFechaInicio();
+        this.fechaFin = etapa.getFechaFin();
+        this.reglas = new ReglasDTO(etapa.getReglas());
     }
 }

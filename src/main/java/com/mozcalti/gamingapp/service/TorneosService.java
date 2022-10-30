@@ -31,6 +31,14 @@ public interface TorneosService extends GenericServiceAPI<Torneos, Integer> {
 
     void eliminaTorneo();
 
+    void persisteEtapas(List<EtapaDTO> etapasDTOS, boolean esAlta) throws ValidacionException;
+
     void guardaEtapas(List<EtapaDTO> etapasDTOS) throws ValidacionException;
+
+    List<EtapaDTO> obtieneEtapas() throws ValidacionException;
+
+    void eliminarEtapas();
+
+    void modificaEtapas(List<EtapaDTO> etapasDTOS) throws ValidacionException;
 
 }

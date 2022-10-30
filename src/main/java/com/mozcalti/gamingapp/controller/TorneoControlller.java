@@ -174,4 +174,19 @@ public class TorneoControlller {
         torneosService.guardaEtapas(etapasDTOS);
     }
 
+    @GetMapping("/etapas/consultar")
+    public List<EtapaDTO> obtieneEtapas() {
+        return torneosService.obtieneEtapas();
+    }
+
+    @DeleteMapping("/etapas/eliminar")
+    public void eliminaEtapas() {
+        torneosService.eliminarEtapas();
+    }
+
+    @PutMapping("/etapas/cambiar")
+    public void modificaTorneo(@RequestBody List<EtapaDTO> etapasDTOS) {
+        torneosService.modificaEtapas(etapasDTOS);
+    }
+
 }
