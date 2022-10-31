@@ -4,6 +4,7 @@ import com.mozcalti.gamingapp.commons.GenericServiceImpl;
 import com.mozcalti.gamingapp.exceptions.ValidacionException;
 import com.mozcalti.gamingapp.model.batallas.BatallaFechaHoraInicioDTO;
 import com.mozcalti.gamingapp.model.batallas.BatallaParticipanteDTO;
+import com.mozcalti.gamingapp.model.correos.DatosCorreoBatallaDTO;
 import com.mozcalti.gamingapp.model.participantes.EquiposDTO;
 import com.mozcalti.gamingapp.model.participantes.InstitucionEquiposDTO;
 import com.mozcalti.gamingapp.model.torneos.EtapaDTO;
@@ -19,6 +20,7 @@ import com.mozcalti.gamingapp.utils.TorneoUtils;
 import com.mozcalti.gamingapp.validations.TorneoValidation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
@@ -180,7 +182,9 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
                 if(equipos.isPresent()) {
                     for(ParticipanteEquipo participanteEquipo : equipos.orElseThrow().getParticipanteEquiposByIdEquipo()) {
                         Optional<Participantes> participantes = participantesRepository.findById(participanteEquipo.getIdParticipante());
-                        nombreParticipantes.append(participantes.orElseThrow().getNombre()).append(Constantes.SEPARA_NOM_PARTICIPANTES);
+                        nombreParticipantes.append(participantes.orElseThrow().getNombre()).append(Constantes.ESPACIO)
+                                .append(participantes.orElseThrow().getApellidos())
+                                .append(Constantes.SEPARA_NOM_PARTICIPANTES);
                     }
                 }
 
@@ -367,6 +371,57 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class, RuntimeException.class})
     public void modificaEtapas(List<EtapaDTO> etapasDTOS) throws ValidacionException {
         persisteEtapas(etapasDTOS, false);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public List<DatosCorreoBatallaDTO> getDatosCorreoBatalla() throws ValidacionException {
+
+        List<DatosCorreoBatallaDTO> mailsbatallas = new ArrayList<>();
+
+        String fechaSistema = DateUtils.getDateFormat(Calendar.getInstance().getTime(), Constantes.FECHA_PATTERN);
+
+        List<Batallas> lstBatallas = new ArrayList<>();
+        batallasRepository.findAll().forEach(lstBatallas::add);
+        StringBuilder mailToParticipantes = new StringBuilder();
+
+        for(Batallas batalla : lstBatallas) {
+
+            if(fechaSistema.equals(DateUtils.addDias(
+                    batalla.getFecha(), Constantes.FECHA_PATTERN, Numeros.UNO_NEGATIVO.getNumero()))
+                    && batalla.getBndEnvioCorreo().equals(Numeros.CERO.getNumero())) {
+
+                DatosCorreoBatallaDTO mailBatallasDTO = new DatosCorreoBatallaDTO(batalla.getFecha(),
+                        batalla.getHoraInicio(), batalla.getHoraFin(),
+                        batalla.getRondas());
+
+                List<String> participante = new ArrayList<>();
+                mailToParticipantes.delete(Numeros.CERO.getNumero(), mailToParticipantes.length());
+                for(BatallaParticipantes batallaParticipantes : batalla.getBatallaParticipantesByIdBatalla()) {
+                    participante.add(batallaParticipantes.getNombre());
+
+                    Equipos equipos = equiposRepository.findById(batallaParticipantes.getIdParticipanteEquipo())
+                            .orElseThrow();
+
+                    for(ParticipanteEquipo participanteEquipo : equipos.getParticipanteEquiposByIdEquipo()) {
+                        mailToParticipantes.append(participantesRepository.findById(participanteEquipo.getIdParticipante())
+                                .orElseThrow().getCorreo()).append(Constantes.SEPARA_MAILS);
+                    }
+
+                    mailBatallasDTO.setMailToParticipantes(
+                            mailToParticipantes.substring(Numeros.CERO.getNumero(),
+                                    mailToParticipantes.length()-Numeros.UNO.getNumero()));
+                }
+                mailBatallasDTO.setParticipantes(participante);
+                mailsbatallas.add(mailBatallasDTO);
+
+                batalla.setBndEnvioCorreo(Numeros.UNO.getNumero());
+                batallasRepository.save(batalla);
+            }
+
+        }
+
+        return mailsbatallas;
     }
 
 }
