@@ -56,10 +56,10 @@ cron:
   resultados-batallas: ${CRON_RESULTADOS_BATTALLAS:0 */5 * * * *}
 
 mail:
-  host: ${MAIL_HOST:smtp.gmail.com}
-  port: ${MAIL_PORT:587}
-  user: ${MAIL_USER:juceruta3x@gmail.com}
-  password: ${MAIL_PASSWORD:ptkjhwpeupkfwodi}
-  from: ${MAIL_FROM:juceruta3x@gmail.com}
+  host: ${MAIL_HOST:host}
+  port: ${MAIL_PORT:port}
+  user: ${MAIL_USER:user}
+  password: ${MAIL_PASSWORD:password}
+  from: ${MAIL_FROM:from}
   
 
