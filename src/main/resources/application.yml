@@ -39,7 +39,7 @@ resources:
   static:
     instituciones: ${PATH_INSTITUCIONES:path}
     participantes: ${PATH_PARTICIPANTES:path}
-    resultados-batalla: ${PATH_RESULTADOS_BATALLA:C:\tmp\robocode\resultados}
+    resultados-batalla: ${PATH_RESULTADOS_BATALLA:path}
 
 robocode:
   executable: ${PATH_ROBOCODE:path}
