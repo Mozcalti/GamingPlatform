@@ -10,7 +10,9 @@ import com.mozcalti.gamingapp.repository.*;
 import com.mozcalti.gamingapp.service.BatallasService;
 import com.mozcalti.gamingapp.service.resultados.DashboardService;
 import com.mozcalti.gamingapp.utils.Constantes;
+import com.mozcalti.gamingapp.utils.DateUtils;
 import com.mozcalti.gamingapp.utils.FileUtils;
+import com.mozcalti.gamingapp.utils.Numeros;
 import com.mozcalti.gamingapp.validations.DashboardsGlobalResultadosValidation;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.security.NoTypePermission;
@@ -33,6 +35,8 @@ import java.util.*;
 @RequiredArgsConstructor
 public class DashboardServiceImpl implements DashboardService {
 
+    private static final String ALLOW = "com.mozcalti.gamingapp.model.batallas.resultado.**";
+
     @Autowired
     private BatallasService batallasService;
 
@@ -50,9 +54,6 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Autowired
     private ParticipantesRepository participantesRepository;
-
-    @Autowired
-    private EtapaEquipoRepository etapaEquipoRepository;
 
     @Autowired
     private InstitucionRepository institucionRepository;
@@ -73,57 +74,52 @@ public class DashboardServiceImpl implements DashboardService {
 
         for(Batallas batallas : batallasService.getAll()) {
 
-            horaInicioBatalla.delete(0, horaInicioBatalla.length());
-            horaInicioBatalla.append(batallas.getFecha()).append(" ").append(batallas.getHoraInicio());
+            horaInicioBatalla.delete(Numeros.CERO.getNumero(), horaInicioBatalla.length());
+            horaInicioBatalla.append(batallas.getFecha()).append(Constantes.ESPACIO).append(batallas.getHoraInicio());
 
-            horaFinBatalla.delete(0, horaFinBatalla.length());
-            horaFinBatalla.append(batallas.getFecha()).append(" ").append(batallas.getHoraFin());
+            horaFinBatalla.delete(Numeros.CERO.getNumero(), horaFinBatalla.length());
+            horaFinBatalla.append(batallas.getFecha()).append(Constantes.ESPACIO).append(batallas.getHoraFin());
 
             try {
                 DashboardsGlobalResultadosValidation.validaBatalla(batallas);
-                DashboardsGlobalResultadosValidation.validaFechaHoraBatalla(horaInicioBatalla.toString(), horaFinBatalla.toString());
 
-                for(BatallaParticipantes batallaParticipantes : batallas.getBatallaParticipantesByIdBatalla()) {
-                    Optional<Equipos> equipos = equiposRepository.findById(batallaParticipantes.getIdParticipanteEquipo());
+                String fechaSistema = DateUtils.getDateFormat(Calendar.getInstance().getTime(), Constantes.FECHA_HORA_PATTERN);
 
-                    Optional<Robots> robot = robotsRepository.findAllByIdEquipo(equipos.orElseThrow().getIdEquipo()).stream()
-                            .filter(r -> r.getActivo().equals(1))
-                            .findFirst();
+                if(DateUtils.isHoursRangoValid(horaInicioBatalla.toString(), horaFinBatalla.toString(),
+                        fechaSistema, Constantes.FECHA_HORA_PATTERN)) {
+                    fileResultadoBatallas.delete(Numeros.CERO.getNumero(), fileResultadoBatallas.length());
+                    fileResultadoBatallas.append(pathResultadosBatalla).append(Constantes.DIAGONAL)
+                            .append(batallas.getIdBatalla()).append(Constantes.XML);
 
-                    if(robot.isPresent()) {
-                        fileResultadoBatallas.delete(0, fileResultadoBatallas.length());
-                        fileResultadoBatallas.append(pathResultadosBatalla).append("/").append(robot.get().getIdRobot()).append(".xml");
+                    DashboardsGlobalResultadosValidation.validaExisteArchivoXML(fileResultadoBatallas.toString());
 
-                        DashboardsGlobalResultadosValidation.validaExisteArchivoXML(fileResultadoBatallas.toString());
+                    StringBuilder lineas = FileUtils.getRecordInfo(fileResultadoBatallas.toString(),
+                            Constantes.RECORD_INFO_INICIO,
+                            Constantes.RECORD_INFO_FIN);
 
-                        StringBuilder lineas = FileUtils.getRecordInfo(fileResultadoBatallas.toString(),
-                                Constantes.RECORD_INFO_INICIO,
-                                Constantes.RECORD_INFO_FIN);
+                    XStream xStream = new XStream();
+                    xStream.addPermission(NoTypePermission.NONE);
+                    xStream.addPermission(NullPermission.NULL);
+                    xStream.addPermission(PrimitiveTypePermission.PRIMITIVES);
 
-                        XStream xStream = new XStream();
-                        xStream.addPermission(NoTypePermission.NONE);
-                        xStream.addPermission(NullPermission.NULL);
-                        xStream.addPermission(PrimitiveTypePermission.PRIMITIVES);
+                    xStream.allowTypesByWildcard(new String[] {ALLOW});
 
-                        xStream.allowTypesByWildcard(new String[] {
-                                "com.mozcalti.gamingapp.model.batallas.resultado.**"
-                        });
+                    xStream.processAnnotations(RecordInfo.class);
 
-                        xStream.processAnnotations(RecordInfo.class);
+                    RecordInfo recordInfo = (RecordInfo) xStream.fromXML(lineas.toString());
 
-                        RecordInfo recordInfo = (RecordInfo) xStream.fromXML(lineas.toString());
-
-                        for(Result result : recordInfo.getResults()) {
-                            resultadosRepository.save(new Resultados(result, batallas.getIdBatalla()));
-                        }
-
-                        batallas.setBndTermina(1);
+                    for(Result result : recordInfo.getResults()) {
+                        resultadosRepository.save(new Resultados(result, batallas.getIdBatalla()));
                     }
+
+                    batallas.setBndTermina(Numeros.UNO.getNumero());
+                    batallasService.save(batallas);
+                    log.info("Se han cargado los resultados de la batalla " + batallas.getIdBatalla());
                 }
-                batallasService.save(batallas);
             } catch (ValidacionException | UtilsException e) {
                 log.info(e.getMessage());
             }
+
         }
 
     }

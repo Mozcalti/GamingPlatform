@@ -20,7 +20,6 @@ import com.mozcalti.gamingapp.utils.TorneoUtils;
 import com.mozcalti.gamingapp.validations.TorneoValidation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
