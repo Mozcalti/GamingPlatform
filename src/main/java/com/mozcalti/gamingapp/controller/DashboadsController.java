@@ -29,8 +29,8 @@ public class DashboadsController {
 
     @GetMapping("/consulta")
     public List<ResultadosParticipantesDTO> getResultadosParticipantes(@RequestParam Integer idEtapas,
-                                                                       @RequestParam(defaultValue = Constantes.TODOS) String nombreInstitucion){
-        return dashboardService.listaResultadosParticipantesBatalla(idEtapas, nombreInstitucion);
+                                                                       @RequestParam(defaultValue = Constantes.TODOS) String idInstitucion){
+        return dashboardService.listaResultadosParticipantesBatalla(idEtapas, idInstitucion);
     }
 
     @GetMapping("/agrupar")

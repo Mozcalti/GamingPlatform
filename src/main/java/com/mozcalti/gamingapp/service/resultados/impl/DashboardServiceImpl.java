@@ -156,7 +156,7 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public List<ResultadosParticipantesDTO> listaResultadosParticipantesBatalla(Integer idEtapa, String nombreInstitucion) {
+    public List<ResultadosParticipantesDTO> listaResultadosParticipantesBatalla(Integer idEtapa, String idInstitucion) {
 
         Optional<Etapas> etapas = etapasRepository.findById(idEtapa);
 
@@ -168,8 +168,8 @@ public class DashboardServiceImpl implements DashboardService {
             for(Resultados resultados : batallas.orElseThrow().getResultadosByIdBatalla().stream()
                         .sorted(Comparator.comparing(Resultados::getScore).reversed()).toList()) {
 
-                Optional<Robots> robot = robotsRepository.findAllByNombre(resultados.getTeamleadername())
-                        .stream()
+                Optional<Robots> robot = robotsRepository.findAllByClassName(resultados.getTeamleadername())
+                        .stream().filter(r -> r.getActivo().equals(Numeros.UNO.getNumero()))
                         .findFirst();
 
                 if(robot.isPresent()) {
@@ -180,15 +180,19 @@ public class DashboardServiceImpl implements DashboardService {
                     for(ParticipanteEquipo participanteEquipo : equipos.orElseThrow().getParticipanteEquiposByIdEquipo()) {
                         Optional<Participantes> participante = participantesRepository.findById(participanteEquipo.getIdParticipante());
 
-                        participantes.append(participante.orElseThrow().getNombre()).append(" ").append(participante.orElseThrow().getApellidos()).append(",");
+                        participantes.append(participante.orElseThrow().getNombre())
+                                .append(Constantes.ESPACIO).append(participante.orElseThrow().getApellidos())
+                                .append(Constantes.SEPARA_NOM_PARTICIPANTES);
 
                         if(!institucion.isPresent()) {
-                            institucion = institucionRepository.findById(participante.orElseThrow().getInstitucion().getId());
+                            institucion = institucionRepository.findById(
+                                    participante.orElseThrow().getInstitucion().getId());
                         }
                     }
 
                     resultadosParticipantesDTOS.add(new ResultadosParticipantesDTO(
-                            participantes.substring(0 , participantes.length()-1),
+                            participantes.substring(Numeros.CERO.getNumero() , participantes.length()-Numeros.DOS.getNumero()),
+                            institucion.orElseThrow().getId(),
                             institucion.orElseThrow().getNombre(),
                             robot.orElseThrow().getNombre(),
                             resultados.getScore()
@@ -198,7 +202,7 @@ public class DashboardServiceImpl implements DashboardService {
             }
         }
 
-        resultadosParticipantesDTOS = filtraInstituciones(resultadosParticipantesDTOS, nombreInstitucion);
+        resultadosParticipantesDTOS = filtraInstituciones(resultadosParticipantesDTOS, idInstitucion);
 
         return resultadosParticipantesDTOS;
     }
@@ -218,9 +222,10 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     private List<ResultadosParticipantesDTO> filtraInstituciones(List<ResultadosParticipantesDTO> resultadosParticipantesDTOS,
-                                                                 String nombreInstitucion) {
-        if(!nombreInstitucion.equals(Constantes.TODOS)) {
-            return resultadosParticipantesDTOS.stream().filter(o -> o.getNombreInstitucion().equals(nombreInstitucion)).toList();
+                                                                 String idInstitucion) {
+        if(!idInstitucion.equals(Constantes.TODOS)) {
+            return resultadosParticipantesDTOS.stream()
+                    .filter(o -> o.getIdInstitucion().toString().equals(idInstitucion)).toList();
         } else {
             return resultadosParticipantesDTOS;
         }

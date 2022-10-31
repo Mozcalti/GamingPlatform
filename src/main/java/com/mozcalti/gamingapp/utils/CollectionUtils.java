@@ -23,7 +23,7 @@ public final class CollectionUtils {
         while (randomNumbers.size() < idEquipos.size()) {
             int random = getRandomInt(min, max);
 
-            if (!randomNumbers.contains(random)) {
+            if (!randomNumbers.contains(random) && idEquipos.contains(random)) {
                 randomNumbers.add(random);
             }
         }
