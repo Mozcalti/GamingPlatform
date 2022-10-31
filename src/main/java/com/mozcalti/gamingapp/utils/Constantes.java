@@ -26,7 +26,9 @@ public final class Constantes {
     public static final String TODOS = "todos";
     public static final String SEPARA_NOM_PARTICIPANTES = ", ";
     public static final String SEPARA_MAILS = ",";
-
     public static final String ESPACIO = " ";
+    public static final String DIAGONAL = "/";
+
+    public static final String XML = ".xml";
 
 }
