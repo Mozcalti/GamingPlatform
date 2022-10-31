@@ -20,4 +20,6 @@ public interface RobotsRepository extends JpaRepository<Robots, Integer> {
     int resetRobotsActivo(Integer activo, int idEquipo);
     List<Robots> findAllByIdEquipo(Integer idEquipo);
     List<Robots> findAllByNombre(String nombre);
+    List<Robots> findAllByClassName(String className);
+
 }

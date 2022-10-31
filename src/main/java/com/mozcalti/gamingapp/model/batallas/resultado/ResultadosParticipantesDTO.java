@@ -12,6 +12,7 @@ import lombok.Setter;
 public class ResultadosParticipantesDTO {
 
     private String nombreParticipantes;
+    private Integer idInstitucion;
     private String nombreInstitucion;
     private String nombreRobot;
     private Double score;

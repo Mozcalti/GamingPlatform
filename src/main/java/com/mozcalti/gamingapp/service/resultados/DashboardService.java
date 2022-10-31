@@ -13,7 +13,7 @@ public interface DashboardService {
 
     TablaDTO<ResultadosDTO> listaResultadosBatalla(Integer indice);
 
-    List<ResultadosParticipantesDTO> listaResultadosParticipantesBatalla(Integer idEtapa, String nombreInstitucion);
+    List<ResultadosParticipantesDTO> listaResultadosParticipantesBatalla(Integer idEtapa, String idInstitucion);
 
     List<ResultadosInstitucionGpoDTO> gruopResultadosParticipantesBatalla(Integer idEtapa);
 
