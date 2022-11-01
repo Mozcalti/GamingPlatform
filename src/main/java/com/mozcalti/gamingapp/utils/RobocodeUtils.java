@@ -21,10 +21,10 @@ public final class RobocodeUtils {
                 ZipEntry ze = entries.nextElement();
                 if (!ze.isDirectory() && ze.getName().endsWith(type)) {
                     String className = ze.getName().replace('/', '.');
-                    classNames.add(className.substring(0, className.length() - type.length()));
+                    classNames.add(className.substring(Numeros.CERO.getNumero(), className.length() - type.length()));
                 }
             }
-            return classNames.get(0);
+            return classNames.get(Numeros.CERO.getNumero());
         }catch (IOException e){
             throw new FileNotFoundException("No se abrir el archivo jar para obtener el class name.");
         }

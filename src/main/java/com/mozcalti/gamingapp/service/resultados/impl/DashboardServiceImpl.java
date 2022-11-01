@@ -296,18 +296,20 @@ public class DashboardServiceImpl implements DashboardService {
 
                 );
             }
-            listaDetalleBatallaDTO.add(
-                    new DetalleBatallaDTO(
-                            batallas.get().getIdBatalla(),
-                            batallas.get().getFecha(),
-                            batallas.get().getHoraInicio(),
-                            batallas.get().getHoraFin(),
-                            batallas.get().getEstatus(),
-                            reglasDTO,
-                            listaResultadosDTO
-                    )
+            if(batallas.isPresent()){
+                listaDetalleBatallaDTO.add(
+                        new DetalleBatallaDTO(
+                                batallas.get().getIdBatalla(),
+                                batallas.get().getFecha(),
+                                batallas.get().getHoraInicio(),
+                                batallas.get().getHoraFin(),
+                                batallas.get().getEstatus(),
+                                reglasDTO,
+                                listaResultadosDTO
+                        )
 
-            );
+                );
+            }
         }
         return listaDetalleBatallaDTO;
     }

@@ -2,6 +2,7 @@ package com.mozcalti.gamingapp.model;
 
 import com.mozcalti.gamingapp.model.batallas.BatallaDTO;
 import com.mozcalti.gamingapp.utils.EstadosBatalla;
+import com.mozcalti.gamingapp.utils.Numeros;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -58,7 +59,7 @@ public class Batallas {
         this.horaInicio = batallaDTO.getHoraInicio();
         this.horaFin = batallaDTO.getHoraFin();
         this.rondas = batallaDTO.getRondas();
-        this.bndEnvioCorreo = 0;
+        this.bndEnvioCorreo = Numeros.CERO.getNumero();
         this.estatus = EstadosBatalla.PENDIENTE.getEstado();
     }
 
