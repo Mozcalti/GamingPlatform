@@ -138,12 +138,6 @@
         <!-- Robocode -->
         <dependency>
             <groupId>net.sf.robocode</groupId>
-            <artifactId>robocode</artifactId>
-            <version>1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>net.sf.robocode</groupId>
             <artifactId>robocode.api</artifactId>
             <version>1.9.4.7</version>
             <scope>provided</scope>
