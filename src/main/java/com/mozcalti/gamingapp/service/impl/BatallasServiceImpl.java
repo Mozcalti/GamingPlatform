@@ -59,25 +59,22 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class, RuntimeException.class})
     public void ejecutaBatalla() {
 
-        StringBuilder horaInicioBatalla = new StringBuilder();
-        StringBuilder horaFinBatalla = new StringBuilder();
+        String horaInicioBatalla;
+        String horaFinBatalla ;
 
         List<Batallas> lstBatallas = new ArrayList<>();
         batallasRepository.findAll().forEach(lstBatallas::add);
 
         for(Batallas batallas : lstBatallas) {
-            horaInicioBatalla.delete(Numeros.CERO.getNumero(), horaInicioBatalla.length());
-            horaInicioBatalla.append(batallas.getFecha()).append(Constantes.ESPACIO).append(batallas.getHoraInicio());
-
-            horaFinBatalla.delete(Numeros.CERO.getNumero(), horaFinBatalla.length());
-            horaFinBatalla.append(batallas.getFecha()).append(Constantes.ESPACIO).append(batallas.getHoraFin());
+            horaInicioBatalla = batallas.getFecha() + Constantes.ESPACIO + batallas.getHoraInicio();
+            horaFinBatalla = batallas.getFecha() + Constantes.ESPACIO + batallas.getHoraFin();
 
             try {
                 DashboardsGlobalResultadosValidation.validaBatalla(batallas);
 
                 String fechaSistema = DateUtils.getDateFormat(Calendar.getInstance().getTime(), Constantes.FECHA_HORA_PATTERN);
 
-                if(DateUtils.isHoursRangoValid(horaInicioBatalla.toString(), horaFinBatalla.toString(),
+                if(DateUtils.isHoursRangoValid(horaInicioBatalla, horaFinBatalla,
                     fechaSistema, Constantes.FECHA_HORA_PATTERN) && batallas.getBndTermina().equals(Numeros.CERO.getNumero())) {
 
                     log.info("Ejecutando la batalla: " + batallas.getIdBatalla());
