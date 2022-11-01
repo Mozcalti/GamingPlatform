@@ -8,6 +8,7 @@ import ActivationLanding from "./components/activacion/ActivationLanding";
 import ActivationForm from "./components/activacion";
 import ParticipantesList from "./components/participantes";
 import InstitucionesList from "./components/instituciones";
+import Robots from "./components/robots";
 
 function App() {
     return (
@@ -49,6 +50,14 @@ function App() {
                             <InstitucionesList />
                         </Protected>
                 }/>
+
+                <Route
+                    path="/robots"
+                    element={
+                        <Protected>
+                            <Robots />
+                        </Protected>
+                    }/>
             </Routes>
         </BrowserRouter>
     );
