@@ -3,6 +3,7 @@ package com.mozcalti.gamingapp.controller;
 import com.mozcalti.gamingapp.model.batallas.resultado.ResultadosDTO;
 import com.mozcalti.gamingapp.model.batallas.resultado.ResultadosInstitucionGpoDTO;
 import com.mozcalti.gamingapp.model.batallas.resultado.ResultadosParticipantesDTO;
+import com.mozcalti.gamingapp.model.dto.DetalleBatallaDTO;
 import com.mozcalti.gamingapp.model.dto.TablaDTO;
 import com.mozcalti.gamingapp.service.resultados.DashboardService;
 import com.mozcalti.gamingapp.utils.Constantes;
@@ -38,4 +39,8 @@ public class DashboadsController {
         return dashboardService.gruopResultadosParticipantesBatalla(idEtapas);
     }
 
+    @GetMapping("/batallasIndividuales")
+    public List<DetalleBatallaDTO> getDetalleBatallasIndividuales(@RequestParam Integer idEtapas){
+        return dashboardService.listaDetalleBatallasIndividuales(idEtapas);
+    }
 }
