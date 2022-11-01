@@ -17,6 +17,22 @@ class InstitucionesService {
                 return respuesta
             });
     }
+
+    validaExcelInstitucion(instituciones){
+        return axios.post("institucion/cargarArchivo", instituciones, {headers: {"Content-Type": "multipart/form-data"}})
+        .then(respuesta =>{
+            this.guardarInstitucion(respuesta.data);
+            return respuesta
+        });
+    }
+
+    guardarInstitucion(guardar){
+        return axios.post("/institucion/guardar",guardar)
+        .then(response => {
+            console.log('guardar',response);
+            return response;
+        });
+    }
 }
 
 export default new InstitucionesService();
