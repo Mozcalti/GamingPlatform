@@ -106,6 +106,17 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
         for (Robots robot: listaRobots) {
             listaRobotsDTO.add(new RobotsDTO(robot.getIdRobot(), robot.getNombre(), robot.getActivo(), robot.getIdEquipo(), robot.getClassName(), robot.getTipo()));
         }
+        //for (Robots robot: listaRobots) {
+        //  Optional<Equipos> equipos  = equiposRepository.findById(robot.getIdEquipo());
+        //relacion EAGER
+        //for(ParticipanteEquipo participanteEquipo : equipos.getParticipanteEquiposByIdEquipo()){
+        //  participanteEquipo.getIdParticipante();
+        //con participantesrepository obtengo el objeto de participante
+        //regresar una lista de strings
+        //}
+//        listaRobotsDTO.add(new RobotsDTO(robot.getIdRobot(), robot.getNombre(), robot.getActivo(), robot.getIdEquipo(), robot.getClassName(), robot.getTipo()));
+        //}
+
         return listaRobotsDTO;
     }
 
@@ -160,25 +171,40 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
             }
         }
         String className = testRobot;
-        testRobot += "," + testRobot;
-        BattleRunner br = new BattleRunner(new Robocode(), TESTFILEID, TESTISRECORDED,
-                TESTSIZE, TESTSIZE, testRobot, TESTROUNDS);
-        br.runRobotValidationBattle(serverFile, pathRobots, originalFileName, pathRobocode, REPLAYTYPE);
-        Robots robot = new Robots();
-        robot.setNombre(originalFileName);
-        robot.setActivo(NO_ACTIVO);
-        robot.setIdEquipo(idEquipo);
-        robot.setClassName(className);
-        robot.setTipo(tipo);
-        return new RobotsDTO(robot.getIdRobot(), robot.getNombre(), robot.getActivo(), robot.getIdEquipo(), robot.getClassName(), robot.getTipo());
+        //aqui validar que el className no exista en la base de datos....
+        if(robotsRepository.findByClassName(className) != null) {
+            borrarRobot(tempFileName);
+            throw new DuplicateKeyException("Ya existe un robot con el class name: " + "'" + className + "'");
+        }else{
+            testRobot += "," + testRobot;
+            BattleRunner br = new BattleRunner(new Robocode(), TESTFILEID, TESTISRECORDED,
+                    TESTSIZE, TESTSIZE, testRobot, TESTROUNDS);
+            br.runRobotValidationBattle(serverFile, pathRobots, originalFileName, pathRobocode, REPLAYTYPE);
+            Robots robot = new Robots();
+            robot.setNombre(originalFileName);
+            robot.setActivo(NO_ACTIVO);
+            robot.setIdEquipo(idEquipo);
+            robot.setClassName(className);
+            robot.setTipo(tipo);
+            return new RobotsDTO(robot.getIdRobot(), robot.getNombre(), robot.getActivo(), robot.getIdEquipo(), robot.getClassName(), robot.getTipo());
+        }
     }
 
     public String validateName(String src, String extension, String tempFileName) throws NoSuchFileException {
+        /*String robotClassName = RobocodeUtils.getRobotClassName(src, extension);
+        if(robotClassName != null){
+            return robotClassName;
+        }else{
+            borrarRobot(tempFileName);
+            throw new IndexOutOfBoundsException("El archivo del robot esta corrupto. Verificar al momento de empaquetarlo.");
+        }*/
         try{
             return RobocodeUtils.getRobotClassName(src, extension);
-        }catch (IOException e){
+        }catch (IndexOutOfBoundsException e){
             borrarRobot(tempFileName);
-            throw new IndexOutOfBoundsException("El robot no contiene un className apropiado.");
+            throw new RobotValidationException("El archivo del robot esta corrupto. Verificar al momento de empaquetarlo.");
+        }catch (IOException e){
+            throw new RobotValidationException("El archivo del robot que se intenta validar no existe.");
         }
     }
 

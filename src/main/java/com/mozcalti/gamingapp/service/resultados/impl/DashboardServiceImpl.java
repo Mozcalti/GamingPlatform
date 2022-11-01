@@ -3,16 +3,17 @@ package com.mozcalti.gamingapp.service.resultados.impl;
 import com.mozcalti.gamingapp.exceptions.UtilsException;
 import com.mozcalti.gamingapp.exceptions.ValidacionException;
 import com.mozcalti.gamingapp.model.*;
+import com.mozcalti.gamingapp.model.batallas.BatallaDTO;
+import com.mozcalti.gamingapp.model.batallas.BatallaParticipanteDTO;
 import com.mozcalti.gamingapp.model.batallas.resultado.*;
+import com.mozcalti.gamingapp.model.dto.DetalleBatallaDTO;
 import com.mozcalti.gamingapp.model.dto.PaginadoDTO;
 import com.mozcalti.gamingapp.model.dto.TablaDTO;
+import com.mozcalti.gamingapp.model.torneos.ReglasDTO;
 import com.mozcalti.gamingapp.repository.*;
 import com.mozcalti.gamingapp.service.BatallasService;
 import com.mozcalti.gamingapp.service.resultados.DashboardService;
-import com.mozcalti.gamingapp.utils.Constantes;
-import com.mozcalti.gamingapp.utils.DateUtils;
-import com.mozcalti.gamingapp.utils.FileUtils;
-import com.mozcalti.gamingapp.utils.Numeros;
+import com.mozcalti.gamingapp.utils.*;
 import com.mozcalti.gamingapp.validations.DashboardsGlobalResultadosValidation;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.security.NoTypePermission;
@@ -85,8 +86,10 @@ public class DashboardServiceImpl implements DashboardService {
 
                 String fechaSistema = DateUtils.getDateFormat(Calendar.getInstance().getTime(), Constantes.FECHA_HORA_PATTERN);
 
+
                 if(DateUtils.isHoursRangoValid(horaInicioBatalla.toString(), horaFinBatalla.toString(),
-                        fechaSistema, Constantes.FECHA_HORA_PATTERN)) {
+                        fechaSistema, Constantes.FECHA_HORA_PATTERN) &&
+                batallas.getEstatus().equals(EstadosBatalla.PENDIENTE.getEstado())) {
                     fileResultadoBatallas.delete(Numeros.CERO.getNumero(), fileResultadoBatallas.length());
                     fileResultadoBatallas.append(pathResultadosBatalla).append(Constantes.DIAGONAL)
                             .append(batallas.getIdBatalla()).append(Constantes.XML);
@@ -112,7 +115,7 @@ public class DashboardServiceImpl implements DashboardService {
                         resultadosRepository.save(new Resultados(result, batallas.getIdBatalla()));
                     }
 
-                    batallas.setBndTermina(Numeros.UNO.getNumero());
+                    batallas.setEstatus(EstadosBatalla.TERMINADA.getEstado());
                     batallasService.save(batallas);
                     log.info("Se han cargado los resultados de la batalla " + batallas.getIdBatalla());
                 }
@@ -258,4 +261,54 @@ public class DashboardServiceImpl implements DashboardService {
         return resultadosInstitucionGpoDTOS;
     }
 
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public List<DetalleBatallaDTO> listaDetalleBatallasIndividuales(Integer idEtapa) {
+        //obtenemos todas las etapas de una etapa
+        Optional<Etapas> etapas = etapasRepository.findById(idEtapa);
+        List<DetalleBatallaDTO> listaDetalleBatallaDTO = new ArrayList<>();
+        //iteramos una etapa batalla,
+        for(EtapaBatalla etapaBatalla : etapas.orElseThrow().getEtapaBatallasByIdEtapa()) {
+            //obtenemos todas las batallas de una etapa batalla
+            log.error(String.valueOf(etapaBatalla.getIdBatalla()));
+            Optional<Batallas> batallas = batallasRepository.findById(etapaBatalla.getIdBatalla());
+            ReglasDTO reglasDTO = new ReglasDTO(etapas.orElseThrow().getReglas());
+            List<ResultadosDTO> listaResultadosDTO = new ArrayList<>();
+
+            for(Resultados resultados : batallas.orElseThrow().getResultadosByIdBatalla().stream()
+                    .sorted(Comparator.comparing(Resultados::getScore).reversed()).toList()) {
+                listaResultadosDTO.add(
+                        new ResultadosDTO(
+                                resultados.getTeamleadername(),
+                                resultados.getRank(),
+                                resultados.getScore(),
+                                resultados.getSurvival(),
+                                resultados.getLastsurvivorbonus(),
+                                resultados.getBulletdamage(),
+                                resultados.getBulletdamagebonus(),
+                                resultados.getRamdamage(),
+                                resultados.getBulletdamagebonus(),
+                                resultados.getFirsts(),
+                                resultados.getSeconds(),
+                                resultados.getThirds(),
+                                resultados.getVer()
+                        )
+
+                );
+            }
+            listaDetalleBatallaDTO.add(
+                    new DetalleBatallaDTO(
+                            batallas.get().getIdBatalla(),
+                            batallas.get().getFecha(),
+                            batallas.get().getHoraInicio(),
+                            batallas.get().getHoraFin(),
+                            batallas.get().getEstatus(),
+                            reglasDTO,
+                            listaResultadosDTO
+                    )
+
+            );
+        }
+        return listaDetalleBatallaDTO;
+    }
 }

@@ -26,7 +26,7 @@ public final class RobocodeUtils {
             }
             return classNames.get(0);
         }catch (IOException e){
-            throw new FileNotFoundException("No se pudo corroboar un className válido.");
+            throw new FileNotFoundException("No se abrir el archivo jar para obtener el class name.");
         }
 
     }

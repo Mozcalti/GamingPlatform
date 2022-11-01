@@ -12,6 +12,7 @@ import java.util.List;
 public interface RobotsRepository extends JpaRepository<Robots, Integer> {
 
     Robots findByNombre(String nombre);
+    Robots findByClassName(String className);
     @Modifying
     @Query("UPDATE Robots robot SET robot.activo = ?1 where robot.nombre = ?2")
     int updateActivo(Integer activo, String nombre);

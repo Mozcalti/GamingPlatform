@@ -1,6 +1,7 @@
 package com.mozcalti.gamingapp.model;
 
 import com.mozcalti.gamingapp.model.batallas.BatallaDTO;
+import com.mozcalti.gamingapp.utils.EstadosBatalla;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -40,8 +41,8 @@ public class Batallas {
     private Integer bndEnvioCorreo;
 
     @Basic
-    @Column(name = "bnd_termina")
-    private Integer bndTermina;
+    @Column(name = "estatus")
+    private String estatus;
 
     @OneToMany(mappedBy = "batallasByIdBatalla", fetch = FetchType.EAGER)
     private Collection<BatallaParticipantes> batallaParticipantesByIdBatalla;
@@ -58,7 +59,7 @@ public class Batallas {
         this.horaFin = batallaDTO.getHoraFin();
         this.rondas = batallaDTO.getRondas();
         this.bndEnvioCorreo = 0;
-        this.bndTermina = 0;
+        this.estatus = EstadosBatalla.PENDIENTE.getEstado();
     }
 
 }
