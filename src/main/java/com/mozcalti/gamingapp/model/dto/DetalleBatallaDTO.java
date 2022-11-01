@@ -1,7 +1,6 @@
 package com.mozcalti.gamingapp.model.dto;
 
 import java.util.*;
-import com.mozcalti.gamingapp.model.Reglas;
 import com.mozcalti.gamingapp.model.batallas.resultado.ResultadosDTO;
 import com.mozcalti.gamingapp.model.torneos.ReglasDTO;
 import lombok.AllArgsConstructor;

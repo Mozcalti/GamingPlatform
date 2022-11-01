@@ -106,17 +106,6 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
         for (Robots robot: listaRobots) {
             listaRobotsDTO.add(new RobotsDTO(robot.getIdRobot(), robot.getNombre(), robot.getActivo(), robot.getIdEquipo(), robot.getClassName(), robot.getTipo()));
         }
-        //for (Robots robot: listaRobots) {
-        //  Optional<Equipos> equipos  = equiposRepository.findById(robot.getIdEquipo());
-        //relacion EAGER
-        //for(ParticipanteEquipo participanteEquipo : equipos.getParticipanteEquiposByIdEquipo()){
-        //  participanteEquipo.getIdParticipante();
-        //con participantesrepository obtengo el objeto de participante
-        //regresar una lista de strings
-        //}
-//        listaRobotsDTO.add(new RobotsDTO(robot.getIdRobot(), robot.getNombre(), robot.getActivo(), robot.getIdEquipo(), robot.getClassName(), robot.getTipo()));
-        //}
-
         return listaRobotsDTO;
     }
 
@@ -191,13 +180,6 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
     }
 
     public String validateName(String src, String extension, String tempFileName) throws NoSuchFileException {
-        /*String robotClassName = RobocodeUtils.getRobotClassName(src, extension);
-        if(robotClassName != null){
-            return robotClassName;
-        }else{
-            borrarRobot(tempFileName);
-            throw new IndexOutOfBoundsException("El archivo del robot esta corrupto. Verificar al momento de empaquetarlo.");
-        }*/
         try{
             return RobocodeUtils.getRobotClassName(src, extension);
         }catch (IndexOutOfBoundsException e){
