@@ -6,7 +6,7 @@ import InstitucionesService from "./Instituciones.service";
 import DetalleInstitucion from "./DetalleInstitucion";
 import * as Yup from "yup";
 import {
-    Alert, Avatar,
+    Alert,
     Container,
     Divider,
     Grid, Snackbar,
