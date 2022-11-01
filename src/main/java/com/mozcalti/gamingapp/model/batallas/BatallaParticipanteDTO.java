@@ -15,8 +15,16 @@ public class BatallaParticipanteDTO {
     private Integer idParticipante;
     private String nombre;
 
+    private Integer idRobot;
+
     public BatallaParticipanteDTO(BatallaParticipantes batallaParticipantes) {
         this.idParticipante = batallaParticipantes.getIdParticipanteEquipo();
         this.nombre = batallaParticipantes.getNombre();
     }
+
+    public BatallaParticipanteDTO(Integer idParticipante, String nombre) {
+        this.idParticipante = idParticipante;
+        this.nombre = nombre;
+    }
+
 }

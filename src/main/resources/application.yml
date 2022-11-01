@@ -39,7 +39,7 @@ resources:
   static:
     instituciones: ${PATH_INSTITUCIONES:path}
     participantes: ${PATH_PARTICIPANTES:path}
-    resultados-batalla: ${PATH_RESULTADOS_BATALLA:C:\tmp\robocode\resultados}
+    resultados-batalla: ${PATH_RESULTADOS_BATALLA:path}
 
 robocode:
   executable: ${PATH_ROBOCODE:path}
@@ -53,7 +53,8 @@ server:
 
 cron:
   mail-batallas: ${CRON_MAIL_BATTALLAS:0 */5 * * * *}
-  resultados-batallas: ${CRON_RESULTADOS_BATTALLAS:0 */1 * * * *}
+  resultados-batallas: ${CRON_RESULTADOS_BATTALLAS:0 */5 * * * *}
+  ejecuta-batallas: ${CRON_EJECUTA_BATTALLAS:0 */1 * * * *}
 
 mail:
   host: ${MAIL_HOST:host}

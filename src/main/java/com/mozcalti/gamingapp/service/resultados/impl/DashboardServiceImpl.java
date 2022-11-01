@@ -86,7 +86,7 @@ public class DashboardServiceImpl implements DashboardService {
                 String fechaSistema = DateUtils.getDateFormat(Calendar.getInstance().getTime(), Constantes.FECHA_HORA_PATTERN);
 
                 if(DateUtils.isHoursRangoValid(horaInicioBatalla.toString(), horaFinBatalla.toString(),
-                        fechaSistema, Constantes.FECHA_HORA_PATTERN)) {
+                        fechaSistema, Constantes.FECHA_HORA_PATTERN) && batallas.getBndTermina().equals(Numeros.UNO.getNumero())) {
                     fileResultadoBatallas.delete(Numeros.CERO.getNumero(), fileResultadoBatallas.length());
                     fileResultadoBatallas.append(pathResultadosBatalla).append(Constantes.DIAGONAL)
                             .append(batallas.getIdBatalla()).append(Constantes.XML);
@@ -112,7 +112,7 @@ public class DashboardServiceImpl implements DashboardService {
                         resultadosRepository.save(new Resultados(result, batallas.getIdBatalla()));
                     }
 
-                    batallas.setBndTermina(Numeros.UNO.getNumero());
+                    batallas.setBndTermina(Numeros.CUATRO.getNumero());
                     batallasService.save(batallas);
                     log.info("Se han cargado los resultados de la batalla " + batallas.getIdBatalla());
                 }
