@@ -38,8 +38,6 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
 
     private static final String REPLAY_TYPE = "xml";
 
-    private static final int TMP = 800;
-
     @Autowired
     private BatallasRepository batallasRepository;
 
@@ -89,7 +87,8 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
                     batallasRepository.save(batallas);
 
                     BattleRunner br = new BattleRunner(new Robocode(), String.valueOf(batallas.getIdBatalla()), RECORDER,
-                            TMP, TMP, obtieneRobots(batallas.getBatallaParticipantesByIdBatalla().stream().toList()),
+                            etapa.getReglas().getArenaAncho(), etapa.getReglas().getArenaAlto(),
+                            obtieneRobots(batallas.getBatallaParticipantesByIdBatalla().stream().toList()),
                             etapa.getReglas().getNumRondas());
 
                     br.runBattle(pathRobocode, REPLAY_TYPE);

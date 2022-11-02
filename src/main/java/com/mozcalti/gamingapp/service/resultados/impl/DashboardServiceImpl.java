@@ -108,7 +108,10 @@ public class DashboardServiceImpl implements DashboardService {
 
                     RecordInfo recordInfo = (RecordInfo) xStream.fromXML(lineas.toString());
 
-                    for(Result result : recordInfo.getResults()) {
+                    int rank = 1;
+                    for(Result result : recordInfo.getResults().stream()
+                            .sorted(Comparator.comparing(Result::getScore).reversed()).toList()) {
+                        result.setRank(rank++);
                         resultadosRepository.save(new Resultados(result, batallas.getIdBatalla()));
                     }
 
@@ -168,7 +171,7 @@ public class DashboardServiceImpl implements DashboardService {
             for(Resultados resultados : batallas.orElseThrow().getResultadosByIdBatalla().stream()
                         .sorted(Comparator.comparing(Resultados::getScore).reversed()).toList()) {
 
-                Optional<Robots> robot = robotsRepository.findAllByNombre(resultados.getTeamleadername())
+                Optional<Robots> robot = robotsRepository.findAllByClassName(resultados.getTeamleadername())
                         .stream()
                         .findFirst();
 
