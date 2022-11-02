@@ -61,6 +61,8 @@ public class Reglas {
         this.tiempoBatallaAprox = reglasDTO.getTiempoBatallaAprox();
         this.trabajo = reglasDTO.getTrabajo();
         this.tiempoEspera = reglasDTO.getTiempoEspera();
+        this.arenaAncho = reglasDTO.getArenaAncho();
+        this.arenaAlto = reglasDTO.getArenaAlto();
         this.idEtapa = idEtapa;
     }
 }
