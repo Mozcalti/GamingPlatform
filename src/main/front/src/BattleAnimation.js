@@ -134,8 +134,6 @@ function createCustomElement(tag, value, id, className){
  */
 
 function init(){
-    let pathRobots = ProcessInfo.processInfo.enviroment["PATH_ROBOTS"];
-    console.log(pathRobots);
     let battleDate = new Date(2022, 9, 14, 14, 19);
     let interval = 400;
     let minutesOffset = 1;

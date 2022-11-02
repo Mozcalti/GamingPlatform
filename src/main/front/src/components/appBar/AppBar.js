@@ -18,6 +18,7 @@ const pages = [
     {title: 'Usuarios', path: '/usuarios'},
     {title: 'Instituciones', path: '/instituciones'},
     {title: 'Participantes', path: '/participantes'},
+    {title: 'Robots', path: '/robots'},
 ];
 
 function ResponsiveAppBar() {

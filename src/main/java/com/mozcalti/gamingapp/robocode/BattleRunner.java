@@ -47,8 +47,8 @@ public class BattleRunner {
         robocode.setBattleEventDispatcher(new BattleEventDispatcher());
         robocode.getRecordManager().attachRecorder(robocode.getBattleEventDispatcher());
         robocode.setBattleField(new BattlefieldSpecification(battleFieldWidth, battleFieldHeight));
-        //robocode.getEngine().addBattleListener(robocode.getRecordManager().getRecorder().getBattleObserver());
-        //robocode.getRecordManager().getRecorder().setFileId(xmlFileId);
+        robocode.getEngine().addBattleListener(robocode.getRecordManager().getRecorder().getBattleObserver());
+        robocode.getRecordManager().getRecorder().setFileId(xmlFileId);
     }
 
     public void runBattle(String pathRobocode, String replayType){
@@ -91,7 +91,7 @@ public class BattleRunner {
             Files.delete(Paths.get(finalPath));
             throw new RobotValidationException("El robot no es válido. Debe de ser implementado de acuerdo al procedimiento sugerido y compilado con Java 18.");
         }finally {
-            //robocode.getEngine().reloadLocalRepository();
+            robocode.getEngine().reloadLocalRepository();
             robocode.getEngine().close();
         }
     }

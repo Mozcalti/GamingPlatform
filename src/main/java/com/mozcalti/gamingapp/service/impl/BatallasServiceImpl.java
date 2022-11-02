@@ -12,6 +12,7 @@ import com.mozcalti.gamingapp.robocode.Robocode;
 import com.mozcalti.gamingapp.service.BatallasService;
 import com.mozcalti.gamingapp.utils.Constantes;
 import com.mozcalti.gamingapp.utils.DateUtils;
+import com.mozcalti.gamingapp.utils.EstadosBatalla;
 import com.mozcalti.gamingapp.utils.Numeros;
 import com.mozcalti.gamingapp.validations.DashboardsGlobalResultadosValidation;
 import lombok.RequiredArgsConstructor;
@@ -75,7 +76,8 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
                 String fechaSistema = DateUtils.getDateFormat(Calendar.getInstance().getTime(), Constantes.FECHA_HORA_PATTERN);
 
                 if(DateUtils.isHoursRangoValid(horaInicioBatalla, horaFinBatalla,
-                    fechaSistema, Constantes.FECHA_HORA_PATTERN) && batallas.getBndTermina().equals(Numeros.CERO.getNumero())) {
+                    fechaSistema, Constantes.FECHA_HORA_PATTERN)
+                        && batallas.getEstatus().equals(EstadosBatalla.PENDIENTE.getEstado())) {
 
                     log.info("Ejecutando la batalla: " + batallas.getIdBatalla());
 
@@ -83,7 +85,7 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
                             batallas.getEtapaBatallasByIdBatalla().stream().findFirst().orElseThrow()
                                     .getIdEtapa()).orElseThrow();
 
-                    batallas.setBndTermina(Numeros.DOS.getNumero());
+                    batallas.setEstatus(EstadosBatalla.EN_PROCESO.getEstado());
                     batallasRepository.save(batallas);
 
                     BattleRunner br = new BattleRunner(new Robocode(), String.valueOf(batallas.getIdBatalla()), RECORDER,
@@ -92,7 +94,7 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
 
                     br.runBattle(pathRobocode, REPLAY_TYPE);
 
-                    batallas.setBndTermina(Numeros.UNO.getNumero());
+                    batallas.setEstatus(EstadosBatalla.TERMINADA.getEstado());
                     batallasRepository.save(batallas);
                 }
 
