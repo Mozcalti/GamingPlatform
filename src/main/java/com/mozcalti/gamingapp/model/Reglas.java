@@ -36,8 +36,17 @@ public class Reglas {
     private Integer tiempoEspera;
 
     @Basic
+    @Column(name = "arena_ancho")
+    private Integer arenaAncho;
+
+    @Basic
+    @Column(name = "arena_alto")
+    private Integer arenaAlto;
+
+    @Basic
     @Column(name = "id_etapa")
     private Integer idEtapa;
+
     @OneToOne
     @JoinColumn(name = "id_etapa", referencedColumnName = "id_etapa",insertable = false, updatable = false)
     @JsonIgnore
