@@ -29,7 +29,6 @@ public class RobotController {
     @PostMapping(value = "/guardarRobot")
     public void guardarRobot(@RequestBody RobotsDTO robotDTO) {
         Robots robot = new Robots();
-        robot.setIdRobot(robotDTO.getIdRobot());
         robot.setNombre(robotDTO.getNombre());
         robot.setActivo(robotDTO.getActivo());
         robot.setIdEquipo(robotDTO.getIdEquipo());

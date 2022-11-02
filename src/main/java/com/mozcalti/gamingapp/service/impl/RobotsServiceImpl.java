@@ -10,6 +10,7 @@ import com.mozcalti.gamingapp.repository.RobotsRepository;
 import com.mozcalti.gamingapp.robocode.BattleRunner;
 import com.mozcalti.gamingapp.robocode.Robocode;
 import com.mozcalti.gamingapp.service.RobotsService;
+import com.mozcalti.gamingapp.utils.Numeros;
 import com.mozcalti.gamingapp.utils.RobocodeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,7 +74,7 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
 
     @Override
     public Robots guardarRobot(Robots robot) {
-        Optional<Equipos> equipo = equiposRepository.findById(4);
+        Optional<Equipos> equipo = equiposRepository.findById(robot.getIdRobot());
         if(equipo.isPresent()){
             robot.setEquiposByIdEquipo(equipo.get());
         }
@@ -94,11 +95,19 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
 
     @Override
     @Transactional
-    public int seleccionarRobot(String nombre, int idEquipo){
-        robotsRepository.resetRobotsActivo(NO_ACTIVO, idEquipo);
-        return robotsRepository.updateActivo(ACTIVO, nombre);
+    public void seleccionarRobot(String nombre, int idEquipo){
+        deseleccionarRobots(idEquipo);
+        Robots robot = robotsRepository.findByNombre(nombre);
+        robot.setActivo(Numeros.UNO.getNumero());
     }
 
+    public void deseleccionarRobots(int idEquipo){
+        List<Robots> listaRobots = robotsRepository.findAllByIdEquipo(idEquipo);
+        for (Robots robot: listaRobots) {
+            robot.setActivo(Numeros.CERO.getNumero());
+            robotsRepository.save(robot);
+        }
+    }
     @Override
     public List<RobotsDTO> obtenerRobots(Integer idEquipo){
         List<Robots> listaRobots = robotsRepository.findAllByIdEquipo(idEquipo);
@@ -112,6 +121,7 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
     public RobotsDTO validateRobotJar(String originalFileName, String tipo, int idEquipo, byte[] bytes) throws IOException {
         if(originalFileName != null){
             if(originalFileName.endsWith(ROBOTEXTENSION)) {
+                log.error(originalFileName);
                 if (robotsRepository.findByNombre(originalFileName) != null) {
                     throw new DuplicateKeyException("Ya existe un robot con el nombre: " + "'" + originalFileName + "'");
                 } else {
