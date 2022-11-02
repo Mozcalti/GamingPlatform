@@ -1,32 +1,36 @@
 import ResponsiveAppBar from "../appBar/AppBar";
 import React, {useEffect, useState} from "react";
+import {Alert, Avatar, Container, Divider, Grid, Snackbar, TextField, Typography} from "@mui/material";
 import Button from "@mui/material/Button";
 import {DataGrid} from "@mui/x-data-grid";
 import InstitucionesService from "./Instituciones.service";
 import DetalleInstitucion from "./DetalleInstitucion";
 import * as Yup from "yup";
-import {
-    Alert,
-    Container,
-    Divider,
-    Grid, Snackbar,
-    TextField,
-    Typography
-} from "@mui/material";
+import moment from "moment/moment";
+import {AdapterMoment} from '@mui/x-date-pickers/AdapterMoment';
+import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
+import {DatePicker} from "@mui/x-date-pickers/DatePicker";
 import { CargaMasivaInstituciones } from "./CargaMasivaInstituciones";
 const InstitucionesList = () => {
     const [instituciones, setInstituciones] = useState([]);
     const [message, setMessage] = useState("");
+    const [fecha, setFecha] = useState(null);
     const [resultado, setResultado] = useState({
         sucess: false,
         error: false
     })
     const [errorResponse, setErrorResponse] = useState("");
-    const getInstituciones = (texto, indice) => {
-        InstitucionesService.lista(texto,indice)
+    const getInstituciones = (texto, fechaCreacion, indice) => {
+        if (fechaCreacion === '' || fechaCreacion === null)
+            fechaCreacion = '';
+        else
+            fechaCreacion = moment(fechaCreacion).format("yyyy-MM-DD HH:mm:ss.SSSSSS")
+
+        InstitucionesService.lista(texto, fechaCreacion, indice)
             .then(
                 (response) => {
                     setInstituciones(response.data.lista);
+                    setFecha(null)
                 },
                 error => {
                     console.log(error)
@@ -49,6 +53,7 @@ const InstitucionesList = () => {
 
 
     useEffect(() => {
+        getInstituciones("", "", 0)
         getInstitucionMasiva();
     }, []);
     
@@ -86,11 +91,26 @@ const InstitucionesList = () => {
 
 
     const columns = [
-        {field: 'nombre', headerName: 'Nombre', filterable: false ,width: 300},
-        {field: 'correo', headerName: 'Correo Electronico', filterable: false , width: 300},
-        {field: 'fechaCreacion', headerName: 'Fecha de Creación', filterable: false , width: 300},
         {
-            field: 'id', headerName: 'Acciones', filterable: false , width: 225, renderCell: (p) => {
+            field: 'logo', headerName: 'Logo', filterable: false, width: 60, renderCell: (params) => {
+                return (
+                    <Avatar src={params.value} alt="Remy Sharp" sx={{width: 40, height: 40,}}/>
+                );
+            }
+        },
+        {field: 'nombre', headerName: 'Nombre', filterable: false, width: 300},
+        {field: 'correo', headerName: 'Correo Electronico', filterable: false, width: 300},
+        {
+            field: 'fechaCreacion',
+            headerName: 'Fecha de Creación',
+            filterable: false,
+            width: 300,
+            renderCell: (params) => {
+                return moment(params.value).format("DD/MM/yyyy HH:mm:SS a");
+            }
+        },
+        {
+            field: 'id', headerName: 'Acciones', filterable: false, width: 150, renderCell: (p) => {
                 return (
                     <Grid container spacing={2}>
                         <Grid item xs={6}>
@@ -98,7 +118,6 @@ const InstitucionesList = () => {
                         </Grid>
                     </Grid>
                 )
-
             }
         }];
 
@@ -108,24 +127,42 @@ const InstitucionesList = () => {
             <ResponsiveAppBar/>
             <br/>
             <Container fluid>
-                <Typography variant="h4">Instituciones</Typography>
+                <Grid container spacing={2}>
+                    <Grid item xs={10} md={10}>
+                        <Typography variant="h4">Instituciones</Typography>
+                    </Grid>
+                    <Grid item xs={2} md={2}>
+                        <CargaMasivaInstituciones
+                            validaExcel={validaExcel}
+                            ValidaFormCargaMasiva={ValidaFormCargaMasiva}></CargaMasivaInstituciones>
+                    </Grid>
+                </Grid>
+                <br/>
                 <Divider/>
                 <br/>
+
                 <div style={{height: 400}}>
                     <Grid container spacing={2}>
                         <Grid item xs={6} md={6}>
                             <TextField label="Busqueda" variant="outlined" fullWidth  onChange={(e) => setMessage(e.target.value)}/>
                         </Grid>
-                        <Grid item xs={2} md={2}>
-                            <Button onClick={() => getInstituciones(message,0)} variant="contained" size="large">Buscar</Button>
+                        <Grid item xs={4} md={4}>
+                            <LocalizationProvider dateAdapter={AdapterMoment}>
+                                <DatePicker
+                                    renderInput={(props) => <TextField {...props} />}
+                                    inputFormat="DD/MM/YYYY"
+                                    label="Fecha de creación"
+                                    value={fecha}
+                                    onChange={(e) => {
+                                        setFecha(e)
+                                    }}
+                                />
+                            </LocalizationProvider>
                         </Grid>
                         <Grid item xs={2} md={2}>
-                            <CargaMasivaInstituciones 
-                            validaExcel={validaExcel}
-                            ValidaFormCargaMasiva={ValidaFormCargaMasiva}></CargaMasivaInstituciones>
+                            <Button onClick={() => getInstituciones(message, fecha, 0)} variant="contained" size="large">Buscar</Button>
                         </Grid>
-                        <Grid item xs={2} md={2}>
-                        </Grid>
+
                     </Grid>
                     <br/>
                     <DataGrid
