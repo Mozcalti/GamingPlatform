@@ -53,7 +53,8 @@ server:
 
 cron:
   mail-batallas: ${CRON_MAIL_BATTALLAS:0 */5 * * * *}
-  resultados-batallas: ${CRON_RESULTADOS_BATTALLAS:0 */1 * * * *}
+  resultados-batallas: ${CRON_RESULTADOS_BATTALLAS:0 */5 * * * *}
+  ejecuta-batallas: ${CRON_EJECUTA_BATTALLAS:0 */1 * * * *}
 
 mail:
   host: ${MAIL_HOST:host}

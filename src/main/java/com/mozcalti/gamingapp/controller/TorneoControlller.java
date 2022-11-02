@@ -26,7 +26,7 @@ public class TorneoControlller {
 
     private TorneosService torneosService;
 
-    @PostMapping(value = "/save")
+    //@PostMapping(value = "/save")
     public ResponseEntity<String> saveTorneo(@RequestBody TorneoDTO torneoDTO) {
 
         try {
@@ -67,12 +67,12 @@ public class TorneoControlller {
 
     }
 
-    @GetMapping("/consulta/{idTorneo}")
+    //@GetMapping("/consulta/{idTorneo}")
     public TorneoDTO getTorneo(@PathVariable Integer idTorneo) {
         return calendarizarEtapasTorneoService.getTorneo(idTorneo);
     }
 
-    @PutMapping(value = "/update")
+    //@PutMapping(value = "/update")
     public ResponseEntity<String> updateTorneo(@RequestBody TorneoDTO torneoDTO) {
 
         try {
@@ -90,7 +90,7 @@ public class TorneoControlller {
 
     }
 
-    @DeleteMapping("/delete/{idTorneo}")
+    //@DeleteMapping("/delete/{idTorneo}")
     public ResponseEntity<String> deleteTorneo(@PathVariable Integer idTorneo) {
 
         try {
