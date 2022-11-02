@@ -3,8 +3,6 @@ package com.mozcalti.gamingapp.service.resultados.impl;
 import com.mozcalti.gamingapp.exceptions.UtilsException;
 import com.mozcalti.gamingapp.exceptions.ValidacionException;
 import com.mozcalti.gamingapp.model.*;
-import com.mozcalti.gamingapp.model.batallas.BatallaDTO;
-import com.mozcalti.gamingapp.model.batallas.BatallaParticipanteDTO;
 import com.mozcalti.gamingapp.model.batallas.resultado.*;
 import com.mozcalti.gamingapp.model.dto.DetalleBatallaDTO;
 import com.mozcalti.gamingapp.model.dto.PaginadoDTO;
@@ -86,10 +84,9 @@ public class DashboardServiceImpl implements DashboardService {
 
                 String fechaSistema = DateUtils.getDateFormat(Calendar.getInstance().getTime(), Constantes.FECHA_HORA_PATTERN);
 
-
                 if(DateUtils.isHoursRangoValid(horaInicioBatalla.toString(), horaFinBatalla.toString(),
-                        fechaSistema, Constantes.FECHA_HORA_PATTERN) &&
-                batallas.getEstatus().equals(EstadosBatalla.PENDIENTE.getEstado())) {
+                        fechaSistema, Constantes.FECHA_HORA_PATTERN)
+                        && batallas.getEstatus().equals(EstadosBatalla.TERMINADA.getEstado())) {
                     fileResultadoBatallas.delete(Numeros.CERO.getNumero(), fileResultadoBatallas.length());
                     fileResultadoBatallas.append(pathResultadosBatalla).append(Constantes.DIAGONAL)
                             .append(batallas.getIdBatalla()).append(Constantes.XML);
@@ -115,7 +112,7 @@ public class DashboardServiceImpl implements DashboardService {
                         resultadosRepository.save(new Resultados(result, batallas.getIdBatalla()));
                     }
 
-                    batallas.setEstatus(EstadosBatalla.TERMINADA.getEstado());
+                    batallas.setEstatus(EstadosBatalla.RESULTADOS.getEstado());
                     batallasService.save(batallas);
                     log.info("Se han cargado los resultados de la batalla " + batallas.getIdBatalla());
                 }
@@ -159,7 +156,7 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public List<ResultadosParticipantesDTO> listaResultadosParticipantesBatalla(Integer idEtapa, String idInstitucion) {
+    public List<ResultadosParticipantesDTO> listaResultadosParticipantesBatalla(Integer idEtapa, String nombreInstitucion) {
 
         Optional<Etapas> etapas = etapasRepository.findById(idEtapa);
 
@@ -171,8 +168,8 @@ public class DashboardServiceImpl implements DashboardService {
             for(Resultados resultados : batallas.orElseThrow().getResultadosByIdBatalla().stream()
                         .sorted(Comparator.comparing(Resultados::getScore).reversed()).toList()) {
 
-                Optional<Robots> robot = robotsRepository.findAllByClassName(resultados.getTeamleadername())
-                        .stream().filter(r -> r.getActivo().equals(Numeros.UNO.getNumero()))
+                Optional<Robots> robot = robotsRepository.findAllByNombre(resultados.getTeamleadername())
+                        .stream()
                         .findFirst();
 
                 if(robot.isPresent()) {
@@ -183,13 +180,10 @@ public class DashboardServiceImpl implements DashboardService {
                     for(ParticipanteEquipo participanteEquipo : equipos.orElseThrow().getParticipanteEquiposByIdEquipo()) {
                         Optional<Participantes> participante = participantesRepository.findById(participanteEquipo.getIdParticipante());
 
-                        participantes.append(participante.orElseThrow().getNombre())
-                                .append(Constantes.ESPACIO).append(participante.orElseThrow().getApellidos())
-                                .append(Constantes.SEPARA_NOM_PARTICIPANTES);
+                        participantes.append(participante.orElseThrow().getNombre()).append(" ").append(participante.orElseThrow().getApellidos()).append(",");
 
                         if(!institucion.isPresent()) {
-                            institucion = institucionRepository.findById(
-                                    participante.orElseThrow().getInstitucion().getId());
+                            institucion = institucionRepository.findById(participante.orElseThrow().getInstitucion().getId());
                         }
                     }
 
@@ -205,7 +199,7 @@ public class DashboardServiceImpl implements DashboardService {
             }
         }
 
-        resultadosParticipantesDTOS = filtraInstituciones(resultadosParticipantesDTOS, idInstitucion);
+        resultadosParticipantesDTOS = filtraInstituciones(resultadosParticipantesDTOS, nombreInstitucion);
 
         return resultadosParticipantesDTOS;
     }
@@ -318,4 +312,5 @@ public class DashboardServiceImpl implements DashboardService {
         }
         return listaDetalleBatallaDTO;
     }
+
 }

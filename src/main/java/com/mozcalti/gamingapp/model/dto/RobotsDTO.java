@@ -16,4 +16,5 @@ public class RobotsDTO {
     private final Integer idEquipo;
     private final String className;
     private final String tipo;
+
 }

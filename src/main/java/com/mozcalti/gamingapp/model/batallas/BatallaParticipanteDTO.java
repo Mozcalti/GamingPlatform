@@ -19,4 +19,5 @@ public class BatallaParticipanteDTO {
         this.idParticipante = batallaParticipantes.getIdParticipanteEquipo();
         this.nombre = batallaParticipantes.getNombre();
     }
+
 }
