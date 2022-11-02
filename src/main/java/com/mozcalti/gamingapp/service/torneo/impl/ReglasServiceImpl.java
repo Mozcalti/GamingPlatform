@@ -1,7 +1,7 @@
-package com.mozcalti.gamingapp.service.impl;
+package com.mozcalti.gamingapp.service.torneo.impl;
 
 import com.mozcalti.gamingapp.commons.GenericServiceImpl;
-import com.mozcalti.gamingapp.service.ReglasService;
+import com.mozcalti.gamingapp.service.torneo.ReglasService;
 import com.mozcalti.gamingapp.model.Reglas;
 import com.mozcalti.gamingapp.repository.ReglasRepository;
 import lombok.AllArgsConstructor;

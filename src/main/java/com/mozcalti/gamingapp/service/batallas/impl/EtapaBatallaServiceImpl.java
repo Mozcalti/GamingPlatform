@@ -1,9 +1,9 @@
-package com.mozcalti.gamingapp.service.impl;
+package com.mozcalti.gamingapp.service.batallas.impl;
 
 import com.mozcalti.gamingapp.commons.GenericServiceImpl;
 import com.mozcalti.gamingapp.model.EtapaBatalla;
 import com.mozcalti.gamingapp.repository.EtapaBatallaRepository;
-import com.mozcalti.gamingapp.service.EtapaBatallaService;
+import com.mozcalti.gamingapp.service.batallas.EtapaBatallaService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;

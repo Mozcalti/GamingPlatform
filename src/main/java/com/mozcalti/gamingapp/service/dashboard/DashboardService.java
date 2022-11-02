@@ -1,4 +1,4 @@
-package com.mozcalti.gamingapp.service.resultados;
+package com.mozcalti.gamingapp.service.dashboard;
 
 import com.mozcalti.gamingapp.model.batallas.resultado.ResultadosDTO;
 import com.mozcalti.gamingapp.model.batallas.resultado.ResultadosInstitucionGpoDTO;

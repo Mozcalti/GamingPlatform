@@ -1,4 +1,4 @@
-package com.mozcalti.gamingapp.service.resultados.impl;
+package com.mozcalti.gamingapp.service.dashboard.impl;
 
 import com.mozcalti.gamingapp.exceptions.UtilsException;
 import com.mozcalti.gamingapp.exceptions.ValidacionException;
@@ -9,8 +9,8 @@ import com.mozcalti.gamingapp.model.dto.PaginadoDTO;
 import com.mozcalti.gamingapp.model.dto.TablaDTO;
 import com.mozcalti.gamingapp.model.torneos.ReglasDTO;
 import com.mozcalti.gamingapp.repository.*;
-import com.mozcalti.gamingapp.service.BatallasService;
-import com.mozcalti.gamingapp.service.resultados.DashboardService;
+import com.mozcalti.gamingapp.service.batallas.BatallasService;
+import com.mozcalti.gamingapp.service.dashboard.DashboardService;
 import com.mozcalti.gamingapp.utils.*;
 import com.mozcalti.gamingapp.validations.DashboardsGlobalResultadosValidation;
 import com.thoughtworks.xstream.XStream;
@@ -210,15 +210,7 @@ public class DashboardServiceImpl implements DashboardService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public List<ResultadosInstitucionGpoDTO> gruopResultadosParticipantesBatalla(Integer idEtapa) {
-
-        List<ResultadosInstitucionGpoDTO> resultadosInstitucionGpoDTOS;
-
-        List<ResultadosParticipantesDTO> resultadosParticipantesDTOS = listaResultadosParticipantesBatalla(idEtapa, Constantes.TODOS);
-
-        resultadosInstitucionGpoDTOS = groupInstituciones(resultadosParticipantesDTOS);
-
-        return resultadosInstitucionGpoDTOS;
-
+        return groupInstituciones(listaResultadosParticipantesBatalla(idEtapa, Constantes.TODOS));
     }
 
     private List<ResultadosParticipantesDTO> filtraInstituciones(List<ResultadosParticipantesDTO> resultadosParticipantesDTOS,

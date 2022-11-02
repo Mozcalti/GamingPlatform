@@ -1,6 +1,6 @@
 package com.mozcalti.gamingapp.jobs;
 
-import com.mozcalti.gamingapp.service.resultados.DashboardService;
+import com.mozcalti.gamingapp.service.dashboard.DashboardService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

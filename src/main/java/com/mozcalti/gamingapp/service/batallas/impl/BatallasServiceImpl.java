@@ -1,4 +1,4 @@
-package com.mozcalti.gamingapp.service.impl;
+package com.mozcalti.gamingapp.service.batallas.impl;
 
 import com.mozcalti.gamingapp.commons.GenericServiceImpl;
 import com.mozcalti.gamingapp.exceptions.UtilsException;
@@ -9,7 +9,7 @@ import com.mozcalti.gamingapp.repository.EquiposRepository;
 import com.mozcalti.gamingapp.repository.EtapasRepository;
 import com.mozcalti.gamingapp.robocode.BattleRunner;
 import com.mozcalti.gamingapp.robocode.Robocode;
-import com.mozcalti.gamingapp.service.BatallasService;
+import com.mozcalti.gamingapp.service.batallas.BatallasService;
 import com.mozcalti.gamingapp.utils.Constantes;
 import com.mozcalti.gamingapp.utils.DateUtils;
 import com.mozcalti.gamingapp.utils.EstadosBatalla;
@@ -117,7 +117,7 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
                     .filter(r -> r.getActivo().equals(Numeros.UNO.getNumero())).findFirst();
 
             if(robot.isPresent()) {
-                robotClassName.append(robot.orElseThrow().getClassName()).append(Constantes.SEPARA_MAILS);
+                robotClassName.append(robot.orElseThrow().getClassName()).append(Constantes.COMA);
             }
         }
 

@@ -1,9 +1,9 @@
-package com.mozcalti.gamingapp.service.impl;
+package com.mozcalti.gamingapp.service.equipo.impl;
 
 import com.mozcalti.gamingapp.commons.GenericServiceImpl;
 import com.mozcalti.gamingapp.model.EtapaEquipo;
 import com.mozcalti.gamingapp.repository.EtapaEquipoRepository;
-import com.mozcalti.gamingapp.service.EtapaEquipoService;
+import com.mozcalti.gamingapp.service.equipo.EtapaEquipoService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
