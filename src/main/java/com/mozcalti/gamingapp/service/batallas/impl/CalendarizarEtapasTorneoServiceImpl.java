@@ -62,17 +62,19 @@ public class CalendarizarEtapasTorneoServiceImpl implements CalendarizarEtapasTo
 
         if(etapas.getReglas().getTrabajo().equals(TipoBatalla.INDIVIDUAL.getTrabajo())) {
             for(InstitucionEquiposDTO institucionEquiposDTO : equiposDTO.getEquiposByInstitucion()) {
-                List<Integer> randomNumbers = TorneoUtils.armaEquipos(institucionEquiposDTO.getIdEquipos());
-                List<List<BatallaParticipanteDTO>> lists = torneosService.obtieneParticipantes(
-                        randomNumbers, numCompetidores);
+                if(!institucionEquiposDTO.getIdEquipos().isEmpty()) {
+                    List<Integer> randomNumbers = TorneoUtils.armaEquipos(institucionEquiposDTO.getIdEquipos());
+                    List<List<BatallaParticipanteDTO>> lists = torneosService.obtieneParticipantes(
+                            randomNumbers, numCompetidores);
 
-                for(int x=Numeros.CERO.getNumero(); x<lists.size(); x++) {
-                    BatallaDTO batallaDTO = new BatallaDTO(batallaFechaHoraInicioDTOS.get(x));
-                    batallaDTO.setIdEtapa(idEtapa);
-                    batallaDTO.setIdInstitucion(institucionEquiposDTO.getIdInstitucion());
-                    batallaDTO.setBatallaParticipantes(lists.get(x));
-                    batallaDTO.setRondas(numRondas);
-                    batallasDTO.getBatallas().add(batallaDTO);
+                    for(int x=Numeros.CERO.getNumero(); x<batallaFechaHoraInicioDTOS.size(); x++) {
+                        BatallaDTO batallaDTO = new BatallaDTO(batallaFechaHoraInicioDTOS.get(x));
+                        batallaDTO.setIdEtapa(idEtapa);
+                        batallaDTO.setIdInstitucion(institucionEquiposDTO.getIdInstitucion());
+                        batallaDTO.setBatallaParticipantes(lists.get(x));
+                        batallaDTO.setRondas(numRondas);
+                        batallasDTO.getBatallas().add(batallaDTO);
+                    }
                 }
             }
         } else if(etapas.getReglas().getTrabajo().equals(TipoBatalla.EQUIPO.getTrabajo())) {

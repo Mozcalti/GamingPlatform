@@ -53,6 +53,9 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
     @Autowired
     private ParticipantesRepository participantesRepository;
 
+    @Autowired
+    private ParticipanteEquipoRepository participanteEquipoRepository;
+
     @Override
     public CrudRepository<Batallas, Integer> getDao() {
         return batallasRepository;
@@ -170,9 +173,36 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public List<ParticipanteDTO> getParticipantesByIdInstitucion(Integer idInstitucion) throws ValidacionException {
-        return participantesRepository.findAllByInstitucionId(idInstitucion).stream()
-                .map(ParticipanteDTO::new).toList();
+
+        List<ParticipanteDTO> participanteDTOS = new ArrayList<>();
+        for(Participantes participantes : participantesRepository.findAllByInstitucionId(idInstitucion)
+                .stream().filter(p -> !p.getParticipanteEquiposByIdParticipante().isEmpty()).toList()) {
+            for(ParticipanteEquipo participanteEquipo : participantes.getParticipanteEquiposByIdParticipante()) {
+                Optional<Equipos> equipos = equiposRepository.findById(participanteEquipo.getIdEquipo())
+                        .filter(Equipos::isActivo);
+
+                if(equipos.isPresent()) {
+                    participanteDTOS.add(new ParticipanteDTO(participanteEquipo.getIdEquipo()));
+                }
+            }
+        }
+
+        for(ParticipanteDTO participanteDTO : participanteDTOS) {
+            Equipos equipos = equiposRepository.findById(participanteDTO.getIdParticipante()).orElseThrow();
+
+            StringBuilder nombres = new StringBuilder();
+            for(ParticipanteEquipo participanteEquipo : equipos.getParticipanteEquiposByIdEquipo()) {
+                Participantes participantes = participantesRepository.findById(participanteEquipo.getIdParticipante()).orElseThrow();
+                nombres.append(participantes.getNombre()).append(Constantes.ESPACIO)
+                        .append(participantes.getApellidos()).append(Constantes.COMA_ESPACIO);
+            }
+
+            participanteDTO.setNombre(nombres.substring(Numeros.CERO.getNumero(), nombres.length()-Numeros.DOS.getNumero()));
+        }
+
+        return participanteDTOS;
     }
 
 }
