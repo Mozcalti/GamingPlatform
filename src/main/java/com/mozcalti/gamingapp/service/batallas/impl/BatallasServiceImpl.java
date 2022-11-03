@@ -4,9 +4,10 @@ import com.mozcalti.gamingapp.commons.GenericServiceImpl;
 import com.mozcalti.gamingapp.exceptions.UtilsException;
 import com.mozcalti.gamingapp.exceptions.ValidacionException;
 import com.mozcalti.gamingapp.model.*;
-import com.mozcalti.gamingapp.repository.BatallasRepository;
-import com.mozcalti.gamingapp.repository.EquiposRepository;
-import com.mozcalti.gamingapp.repository.EtapasRepository;
+import com.mozcalti.gamingapp.model.catalogos.EtapasDTO;
+import com.mozcalti.gamingapp.model.catalogos.InstitucionDTO;
+import com.mozcalti.gamingapp.model.catalogos.ParticipanteDTO;
+import com.mozcalti.gamingapp.repository.*;
 import com.mozcalti.gamingapp.robocode.BattleRunner;
 import com.mozcalti.gamingapp.robocode.Robocode;
 import com.mozcalti.gamingapp.service.batallas.BatallasService;
@@ -45,6 +46,15 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
     private EtapasRepository etapasRepository;
     @Autowired
     private EquiposRepository equiposRepository;
+
+    @Autowired
+    private InstitucionRepository institucionRepository;
+
+    @Autowired
+    private ParticipantesRepository participantesRepository;
+
+    @Autowired
+    private ParticipanteEquipoRepository participanteEquipoRepository;
 
     @Override
     public CrudRepository<Batallas, Integer> getDao() {
@@ -134,6 +144,65 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
         }
 
         return robots;
+    }
+
+    @Override
+    public List<EtapasDTO> getEtapas() throws ValidacionException {
+
+        List<Etapas> lstEtapas = new ArrayList<>();
+        etapasRepository.findAll().forEach(lstEtapas::add);
+
+        if(lstEtapas.isEmpty()) {
+            throw new ValidacionException("No existen etapas a mostrar");
+        }
+
+        return lstEtapas.stream().map(EtapasDTO::new).toList();
+    }
+
+    @Override
+    public List<InstitucionDTO> getInstituciones() throws ValidacionException {
+
+        List<Institucion> lstInstituciones = new ArrayList<>();
+        institucionRepository.findAll().forEach(lstInstituciones::add);
+
+        if(lstInstituciones.isEmpty()) {
+            throw new ValidacionException("No existen instituciones a mostrar");
+        }
+
+        return lstInstituciones.stream().map(InstitucionDTO::new).toList();
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public List<ParticipanteDTO> getParticipantesByIdInstitucion(Integer idInstitucion) throws ValidacionException {
+
+        List<ParticipanteDTO> participanteDTOS = new ArrayList<>();
+        for(Participantes participantes : participantesRepository.findAllByInstitucionId(idInstitucion)
+                .stream().filter(p -> !p.getParticipanteEquiposByIdParticipante().isEmpty()).toList()) {
+            for(ParticipanteEquipo participanteEquipo : participantes.getParticipanteEquiposByIdParticipante()) {
+                Optional<Equipos> equipos = equiposRepository.findById(participanteEquipo.getIdEquipo())
+                        .filter(Equipos::isActivo);
+
+                if(equipos.isPresent()) {
+                    participanteDTOS.add(new ParticipanteDTO(participanteEquipo.getIdEquipo()));
+                }
+            }
+        }
+
+        for(ParticipanteDTO participanteDTO : participanteDTOS) {
+            Equipos equipos = equiposRepository.findById(participanteDTO.getIdParticipante()).orElseThrow();
+
+            StringBuilder nombres = new StringBuilder();
+            for(ParticipanteEquipo participanteEquipo : equipos.getParticipanteEquiposByIdEquipo()) {
+                Participantes participantes = participantesRepository.findById(participanteEquipo.getIdParticipante()).orElseThrow();
+                nombres.append(participantes.getNombre()).append(Constantes.ESPACIO)
+                        .append(participantes.getApellidos()).append(Constantes.COMA_ESPACIO);
+            }
+
+            participanteDTO.setNombre(nombres.substring(Numeros.CERO.getNumero(), nombres.length()-Numeros.DOS.getNumero()));
+        }
+
+        return participanteDTOS;
     }
 
 }
