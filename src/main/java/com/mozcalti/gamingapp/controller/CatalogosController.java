@@ -1,6 +1,7 @@
 package com.mozcalti.gamingapp.controller;
 
 import com.mozcalti.gamingapp.model.catalogos.EtapasDTO;
+import com.mozcalti.gamingapp.model.catalogos.InstitucionDTO;
 import com.mozcalti.gamingapp.service.batallas.BatallasService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,11 @@ public class CatalogosController {
     @GetMapping("/etapas")
     public List<EtapasDTO> getEtapas() {
         return batallasService.getEtapas();
+    }
+
+    @GetMapping("/instituciones")
+    public List<InstitucionDTO> getInstituciones() {
+        return batallasService.getInstituciones();
     }
 
 }

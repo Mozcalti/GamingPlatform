@@ -5,9 +5,11 @@ import com.mozcalti.gamingapp.exceptions.UtilsException;
 import com.mozcalti.gamingapp.exceptions.ValidacionException;
 import com.mozcalti.gamingapp.model.*;
 import com.mozcalti.gamingapp.model.catalogos.EtapasDTO;
+import com.mozcalti.gamingapp.model.catalogos.InstitucionDTO;
 import com.mozcalti.gamingapp.repository.BatallasRepository;
 import com.mozcalti.gamingapp.repository.EquiposRepository;
 import com.mozcalti.gamingapp.repository.EtapasRepository;
+import com.mozcalti.gamingapp.repository.InstitucionRepository;
 import com.mozcalti.gamingapp.robocode.BattleRunner;
 import com.mozcalti.gamingapp.robocode.Robocode;
 import com.mozcalti.gamingapp.service.batallas.BatallasService;
@@ -46,6 +48,9 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
     private EtapasRepository etapasRepository;
     @Autowired
     private EquiposRepository equiposRepository;
+
+    @Autowired
+    private InstitucionRepository institucionRepository;
 
     @Override
     public CrudRepository<Batallas, Integer> getDao() {
@@ -148,6 +153,19 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
         }
 
         return lstEtapas.stream().map(EtapasDTO::new).toList();
+    }
+
+    @Override
+    public List<InstitucionDTO> getInstituciones() throws ValidacionException {
+
+        List<Institucion> lstInstituciones = new ArrayList<>();
+        institucionRepository.findAll().forEach(lstInstituciones::add);
+
+        if(lstInstituciones.isEmpty()) {
+            throw new ValidacionException("No existen instituciones a mostrar");
+        }
+
+        return lstInstituciones.stream().map(InstitucionDTO::new).toList();
     }
 
 }
