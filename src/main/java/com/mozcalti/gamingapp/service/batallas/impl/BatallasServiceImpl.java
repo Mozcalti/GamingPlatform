@@ -93,12 +93,15 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
                                  etapa.getReglas().getNumRondas());
 
                          br.runBattle(pathRobocode, REPLAY_TYPE);
+
+                         batallas.setEstatus(EstadosBatalla.TERMINADA.getEstado());
+                         batallasRepository.save(batallas);
                      } else {
                          log.info("No existen robots para la batalla: " + batallas.getIdBatalla());
+                         batallas.setEstatus(EstadosBatalla.CANCELADA.getEstado());
+                         batallasRepository.save(batallas);
                      }
 
-                    batallas.setEstatus(EstadosBatalla.TERMINADA.getEstado());
-                    batallasRepository.save(batallas);
                 }
 
             } catch (ValidacionException | UtilsException e) {

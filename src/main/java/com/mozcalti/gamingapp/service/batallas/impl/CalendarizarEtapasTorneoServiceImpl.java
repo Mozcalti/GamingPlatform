@@ -80,7 +80,7 @@ public class CalendarizarEtapasTorneoServiceImpl implements CalendarizarEtapasTo
             List<List<BatallaParticipanteDTO>> lists = torneosService.obtieneParticipantes(
                     randomNumbers, numCompetidores);
 
-            for(int x=Numeros.CERO.getNumero(); x<lists.size(); x++) {
+            for(int x=Numeros.CERO.getNumero(); x<batallaFechaHoraInicioDTOS.size(); x++) {
                 BatallaDTO batallaDTO = new BatallaDTO(batallaFechaHoraInicioDTOS.get(x));
                 batallaDTO.setIdEtapa(idEtapa);
                 batallaDTO.setBatallaParticipantes(lists.get(x));

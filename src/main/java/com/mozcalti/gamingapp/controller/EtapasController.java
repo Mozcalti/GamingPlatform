@@ -17,12 +17,17 @@ public class EtapasController {
 
     @GetMapping("/getParticipantes/{idEtapa}")
     public List<ResultadosInstitucionGpoDTO> obtieneParticipantes(@PathVariable Integer idEtapa) {
-        return etapasService.obtieneParticipantes(idEtapa);
+        return etapasService.obtieneParticipantesByInstitucion(idEtapa);
     }
 
-    @GetMapping("/finEtapaInstitucion")
-    public void obtieneParticipantes(@RequestParam Integer idEtapa, @RequestParam Integer numParticipantes) {
+    @PostMapping("/finEtapaInstitucion")
+    public void finEtapaInstitucion(@RequestParam Integer idEtapa, @RequestParam Integer numParticipantes) {
         etapasService.finEtapaInstitucion(idEtapa, numParticipantes);
+    }
+
+    @PostMapping("/finEtapaGlobal")
+    public void finEtapaGlobal(@RequestParam Integer idEtapa, @RequestParam Integer numParticipantes) {
+        etapasService.finEtapaGlobal(idEtapa, numParticipantes);
     }
 
 }

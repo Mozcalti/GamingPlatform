@@ -198,7 +198,9 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
 
         }
 
-        listaBatallas.add(batallaParticipanteDTOS);
+        if(countCompetidores > Numeros.CERO.getNumero()) {
+            listaBatallas.add(batallaParticipanteDTOS);
+        }
 
         return listaBatallas;
 
