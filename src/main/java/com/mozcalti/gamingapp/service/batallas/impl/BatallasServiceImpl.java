@@ -6,10 +6,8 @@ import com.mozcalti.gamingapp.exceptions.ValidacionException;
 import com.mozcalti.gamingapp.model.*;
 import com.mozcalti.gamingapp.model.catalogos.EtapasDTO;
 import com.mozcalti.gamingapp.model.catalogos.InstitucionDTO;
-import com.mozcalti.gamingapp.repository.BatallasRepository;
-import com.mozcalti.gamingapp.repository.EquiposRepository;
-import com.mozcalti.gamingapp.repository.EtapasRepository;
-import com.mozcalti.gamingapp.repository.InstitucionRepository;
+import com.mozcalti.gamingapp.model.catalogos.ParticipanteDTO;
+import com.mozcalti.gamingapp.repository.*;
 import com.mozcalti.gamingapp.robocode.BattleRunner;
 import com.mozcalti.gamingapp.robocode.Robocode;
 import com.mozcalti.gamingapp.service.batallas.BatallasService;
@@ -51,6 +49,9 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
 
     @Autowired
     private InstitucionRepository institucionRepository;
+
+    @Autowired
+    private ParticipantesRepository participantesRepository;
 
     @Override
     public CrudRepository<Batallas, Integer> getDao() {
@@ -166,6 +167,12 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
         }
 
         return lstInstituciones.stream().map(InstitucionDTO::new).toList();
+    }
+
+    @Override
+    public List<ParticipanteDTO> getParticipantesByIdInstitucion(Integer idInstitucion) throws ValidacionException {
+        return participantesRepository.findAllByInstitucionId(idInstitucion).stream()
+                .map(ParticipanteDTO::new).toList();
     }
 
 }
