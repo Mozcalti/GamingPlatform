@@ -127,15 +127,12 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
         List<Institucion> instituciones = new ArrayList<>();
         institucionRepository.findAll().forEach(instituciones::add);
         for(Institucion institucion : instituciones) {
-            log.info("--> IdInstitucion: " + institucion.getId());
             Set<Integer> idEquiposActivos = new HashSet<>();
             boolean bndInsVacio = true;
             for(Participantes participantes : participantesRepository.findAllByInstitucionId(institucion.getId())
                     .stream().filter(p -> !p.getParticipanteEquiposByIdParticipante().isEmpty()).toList()) {
                 bndInsVacio = false;
                 for(ParticipanteEquipo participanteEquipo : participantes.getParticipanteEquiposByIdParticipante()) {
-                    log.info("--> IdEquipo: " + participanteEquipo.getIdEquipo());
-
                     Optional<Equipos> equipos = equiposRepository.findById(participanteEquipo.getIdEquipo())
                             .filter(Equipos::isActivo);
 

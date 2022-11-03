@@ -5,6 +5,7 @@ import com.mozcalti.gamingapp.exceptions.ValidacionException;
 import com.mozcalti.gamingapp.model.TorneoHorasHabiles;
 import com.mozcalti.gamingapp.model.Torneos;
 import com.mozcalti.gamingapp.model.batallas.BatallaFechaHoraInicioDTO;
+import com.mozcalti.gamingapp.model.batallas.resultado.ResultadosInstitucionGpoDTO;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -101,6 +102,29 @@ public final class TorneoUtils {
         }
 
         return randomNumbers;
+
+    }
+
+    public static List<ResultadosInstitucionGpoDTO>
+    obtieneParticipantesInstitucion(List<ResultadosInstitucionGpoDTO> resultadosInstitucionGpoDTOS, Integer numParticipantes)
+            throws ValidacionException {
+
+        List<ResultadosInstitucionGpoDTO> salida = new ArrayList<>();
+
+        for(ResultadosInstitucionGpoDTO resultado : resultadosInstitucionGpoDTOS) {
+
+            ResultadosInstitucionGpoDTO resultadosInstitucionGpoDTO = new ResultadosInstitucionGpoDTO();
+            resultadosInstitucionGpoDTO.setNombreInstitucion(resultado.getNombreInstitucion());
+
+            for(int x=0; x<numParticipantes; x++) {
+                if(resultado.getParticipantes().size()>x) {
+                    resultadosInstitucionGpoDTO.getParticipantes().add(resultado.getParticipantes().get(x));
+                }
+            }
+            salida.add(resultadosInstitucionGpoDTO);
+        }
+
+        return salida;
 
     }
 

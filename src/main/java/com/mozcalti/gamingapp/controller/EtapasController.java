@@ -4,10 +4,7 @@ import com.mozcalti.gamingapp.model.batallas.resultado.ResultadosInstitucionGpoD
 import com.mozcalti.gamingapp.service.torneo.EtapasService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,6 +18,11 @@ public class EtapasController {
     @GetMapping("/getParticipantes/{idEtapa}")
     public List<ResultadosInstitucionGpoDTO> obtieneParticipantes(@PathVariable Integer idEtapa) {
         return etapasService.obtieneParticipantes(idEtapa);
+    }
+
+    @GetMapping("/finEtapaInstitucion")
+    public void obtieneParticipantes(@RequestParam Integer idEtapa, @RequestParam Integer numParticipantes) {
+        etapasService.finEtapaInstitucion(idEtapa, numParticipantes);
     }
 
 }

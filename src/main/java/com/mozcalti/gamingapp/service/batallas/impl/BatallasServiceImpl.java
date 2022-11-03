@@ -86,12 +86,16 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
                     batallas.setEstatus(EstadosBatalla.EN_PROCESO.getEstado());
                     batallasRepository.save(batallas);
 
-                    BattleRunner br = new BattleRunner(new Robocode(), String.valueOf(batallas.getIdBatalla()), RECORDER,
-                            etapa.getReglas().getArenaAncho(), etapa.getReglas().getArenaAlto(),
-                            obtieneRobots(batallas.getBatallaParticipantesByIdBatalla().stream().toList()),
-                            etapa.getReglas().getNumRondas());
+                     if(obtieneRobots(batallas.getBatallaParticipantesByIdBatalla().stream().toList()) != null) {
+                         BattleRunner br = new BattleRunner(new Robocode(), String.valueOf(batallas.getIdBatalla()), RECORDER,
+                                 etapa.getReglas().getArenaAncho(), etapa.getReglas().getArenaAlto(),
+                                 obtieneRobots(batallas.getBatallaParticipantesByIdBatalla().stream().toList()),
+                                 etapa.getReglas().getNumRondas());
 
-                    br.runBattle(pathRobocode, REPLAY_TYPE);
+                         br.runBattle(pathRobocode, REPLAY_TYPE);
+                     } else {
+                         log.info("No existen robots para la batalla: " + batallas.getIdBatalla());
+                     }
 
                     batallas.setEstatus(EstadosBatalla.TERMINADA.getEstado());
                     batallasRepository.save(batallas);
@@ -109,6 +113,7 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
     public String obtieneRobots(List<BatallaParticipantes> batallaParticipantes) {
 
         StringBuilder robotClassName = new StringBuilder();
+        String robots = null;
         for(BatallaParticipantes batallaParticipante : batallaParticipantes) {
             Equipos equipos = equiposRepository
                     .findById(batallaParticipante.getIdParticipanteEquipo()).orElseThrow();
@@ -121,7 +126,11 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
             }
         }
 
-        return robotClassName.substring(Numeros.CERO.getNumero(), robotClassName.length()-Numeros.UNO.getNumero());
+        if(!robotClassName.isEmpty()) {
+            robots = robotClassName.substring(Numeros.CERO.getNumero(), robotClassName.length()-Numeros.UNO.getNumero());
+        }
+
+        return robots;
     }
 
 }

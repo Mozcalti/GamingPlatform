@@ -180,7 +180,9 @@ public class DashboardServiceImpl implements DashboardService {
 
                     StringBuilder participantes = new StringBuilder();
                     Optional<Institucion> institucion = Optional.empty();
+                    Integer idParticipante = Numeros.CERO.getNumero();
                     for(ParticipanteEquipo participanteEquipo : equipos.orElseThrow().getParticipanteEquiposByIdEquipo()) {
+                        idParticipante = participanteEquipo.getIdParticipante();
                         Optional<Participantes> participante = participantesRepository.findById(participanteEquipo.getIdParticipante());
 
                         participantes.append(participante.orElseThrow().getNombre()).append(" ").append(participante.orElseThrow().getApellidos()).append(",");
@@ -191,6 +193,7 @@ public class DashboardServiceImpl implements DashboardService {
                     }
 
                     resultadosParticipantesDTOS.add(new ResultadosParticipantesDTO(
+                            idParticipante,
                             participantes.substring(Numeros.CERO.getNumero() , participantes.length()-Numeros.DOS.getNumero()),
                             institucion.orElseThrow().getId(),
                             institucion.orElseThrow().getNombre(),
@@ -238,6 +241,7 @@ public class DashboardServiceImpl implements DashboardService {
             }
 
             participantes.add(new ResultadosParticipantesGpoDTO(
+                    resultadosParticipantesDTO.getIdParticipante(),
                     resultadosParticipantesDTO.getNombreParticipantes(),
                     resultadosParticipantesDTO.getNombreRobot(),
                     resultadosParticipantesDTO.getScore()
