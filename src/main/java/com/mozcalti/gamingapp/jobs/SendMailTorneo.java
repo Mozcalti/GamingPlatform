@@ -2,8 +2,8 @@ package com.mozcalti.gamingapp.jobs;
 
 import com.mozcalti.gamingapp.exceptions.UtilsException;
 import com.mozcalti.gamingapp.model.correos.DatosCorreoBatallaDTO;
-import com.mozcalti.gamingapp.service.*;
 import com.mozcalti.gamingapp.service.correos.SendMailService;
+import com.mozcalti.gamingapp.service.torneo.TorneosService;
 import com.mozcalti.gamingapp.utils.StackTraceUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

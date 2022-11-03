@@ -1,9 +1,9 @@
-package com.mozcalti.gamingapp.service.impl;
+package com.mozcalti.gamingapp.service.torneo.impl;
 
 import com.mozcalti.gamingapp.commons.GenericServiceImpl;
 import com.mozcalti.gamingapp.model.TorneoHorasHabiles;
 import com.mozcalti.gamingapp.repository.TorneoHorasHabilesRepository;
-import com.mozcalti.gamingapp.service.TorneoHorasHabilesService;
+import com.mozcalti.gamingapp.service.torneo.TorneoHorasHabilesService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;

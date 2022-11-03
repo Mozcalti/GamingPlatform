@@ -1,4 +1,4 @@
-package com.mozcalti.gamingapp.service.impl;
+package com.mozcalti.gamingapp.service.torneo.impl;
 
 import com.mozcalti.gamingapp.commons.GenericServiceImpl;
 import com.mozcalti.gamingapp.exceptions.ValidacionException;
@@ -10,13 +10,10 @@ import com.mozcalti.gamingapp.model.participantes.InstitucionEquiposDTO;
 import com.mozcalti.gamingapp.model.torneos.EtapaDTO;
 import com.mozcalti.gamingapp.model.torneos.HoraHabilDTO;
 import com.mozcalti.gamingapp.model.torneos.TorneoDTO;
-import com.mozcalti.gamingapp.service.TorneosService;
+import com.mozcalti.gamingapp.service.torneo.TorneosService;
 import com.mozcalti.gamingapp.model.*;
 import com.mozcalti.gamingapp.repository.*;
-import com.mozcalti.gamingapp.utils.Constantes;
-import com.mozcalti.gamingapp.utils.DateUtils;
-import com.mozcalti.gamingapp.utils.Numeros;
-import com.mozcalti.gamingapp.utils.TorneoUtils;
+import com.mozcalti.gamingapp.utils.*;
 import com.mozcalti.gamingapp.validations.TorneoValidation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -130,15 +127,12 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
         List<Institucion> instituciones = new ArrayList<>();
         institucionRepository.findAll().forEach(instituciones::add);
         for(Institucion institucion : instituciones) {
-            log.info("--> IdInstitucion: " + institucion.getId());
             Set<Integer> idEquiposActivos = new HashSet<>();
             boolean bndInsVacio = true;
             for(Participantes participantes : participantesRepository.findAllByInstitucionId(institucion.getId())
                     .stream().filter(p -> !p.getParticipanteEquiposByIdParticipante().isEmpty()).toList()) {
                 bndInsVacio = false;
                 for(ParticipanteEquipo participanteEquipo : participantes.getParticipanteEquiposByIdParticipante()) {
-                    log.info("--> IdEquipo: " + participanteEquipo.getIdEquipo());
-
                     Optional<Equipos> equipos = equiposRepository.findById(participanteEquipo.getIdEquipo())
                             .filter(Equipos::isActivo);
 
@@ -186,7 +180,7 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
                         Optional<Participantes> participantes = participantesRepository.findById(participanteEquipo.getIdParticipante());
                         nombreParticipantes.append(participantes.orElseThrow().getNombre()).append(Constantes.ESPACIO)
                                 .append(participantes.orElseThrow().getApellidos())
-                                .append(Constantes.SEPARA_NOM_PARTICIPANTES);
+                                .append(Constantes.COMA_ESPACIO);
                     }
                 }
 
@@ -204,7 +198,9 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
 
         }
 
-        listaBatallas.add(batallaParticipanteDTOS);
+        if(countCompetidores > Numeros.CERO.getNumero()) {
+            listaBatallas.add(batallaParticipanteDTOS);
+        }
 
         return listaBatallas;
 
@@ -219,7 +215,7 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
             if(equipos.isPresent()) {
                 for(ParticipanteEquipo participanteEquipo : equipos.orElseThrow().getParticipanteEquiposByIdEquipo()) {
                     Optional<Participantes> participantes = participantesRepository.findById(participanteEquipo.getIdParticipante());
-                    nombreParticipantes.append(participantes.orElseThrow().getNombre()).append(Constantes.SEPARA_NOM_PARTICIPANTES);
+                    nombreParticipantes.append(participantes.orElseThrow().getNombre()).append(Constantes.COMA_ESPACIO);
                 }
             }
 
@@ -320,7 +316,7 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
             reglasRepository.save(new Reglas(etapaDTO.getReglas(), etapas.getIdEtapa()));
 
             // Participantes
-            if(etapaDTO.getReglas().getTrabajo().equals(Constantes.INDIVIDUAL)) {
+            if(etapaDTO.getReglas().getTrabajo().equals(TipoBatalla.INDIVIDUAL.getTrabajo())) {
                 List<Participantes> lstParticipantes = new ArrayList<>();
                 participantesRepository.findAll().forEach(lstParticipantes::add);
 
@@ -407,7 +403,7 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
 
                     for(ParticipanteEquipo participanteEquipo : equipos.getParticipanteEquiposByIdEquipo()) {
                         mailToParticipantes.append(participantesRepository.findById(participanteEquipo.getIdParticipante())
-                                .orElseThrow().getCorreo()).append(Constantes.SEPARA_MAILS);
+                                .orElseThrow().getCorreo()).append(Constantes.COMA);
                     }
 
                     mailBatallasDTO.setMailToParticipantes(

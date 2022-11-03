@@ -1,4 +1,4 @@
-package com.mozcalti.gamingapp.service;
+package com.mozcalti.gamingapp.service.batallas;
 
 import com.mozcalti.gamingapp.commons.GenericServiceAPI;
 import com.mozcalti.gamingapp.model.BatallaParticipantes;

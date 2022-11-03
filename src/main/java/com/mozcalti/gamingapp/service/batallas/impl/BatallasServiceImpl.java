@@ -1,4 +1,4 @@
-package com.mozcalti.gamingapp.service.impl;
+package com.mozcalti.gamingapp.service.batallas.impl;
 
 import com.mozcalti.gamingapp.commons.GenericServiceImpl;
 import com.mozcalti.gamingapp.exceptions.UtilsException;
@@ -9,7 +9,7 @@ import com.mozcalti.gamingapp.repository.EquiposRepository;
 import com.mozcalti.gamingapp.repository.EtapasRepository;
 import com.mozcalti.gamingapp.robocode.BattleRunner;
 import com.mozcalti.gamingapp.robocode.Robocode;
-import com.mozcalti.gamingapp.service.BatallasService;
+import com.mozcalti.gamingapp.service.batallas.BatallasService;
 import com.mozcalti.gamingapp.utils.Constantes;
 import com.mozcalti.gamingapp.utils.DateUtils;
 import com.mozcalti.gamingapp.utils.EstadosBatalla;
@@ -86,15 +86,22 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
                     batallas.setEstatus(EstadosBatalla.EN_PROCESO.getEstado());
                     batallasRepository.save(batallas);
 
-                    BattleRunner br = new BattleRunner(new Robocode(), String.valueOf(batallas.getIdBatalla()), RECORDER,
-                            etapa.getReglas().getArenaAncho(), etapa.getReglas().getArenaAlto(),
-                            obtieneRobots(batallas.getBatallaParticipantesByIdBatalla().stream().toList()),
-                            etapa.getReglas().getNumRondas());
+                     if(obtieneRobots(batallas.getBatallaParticipantesByIdBatalla().stream().toList()) != null) {
+                         BattleRunner br = new BattleRunner(new Robocode(), String.valueOf(batallas.getIdBatalla()), RECORDER,
+                                 etapa.getReglas().getArenaAncho(), etapa.getReglas().getArenaAlto(),
+                                 obtieneRobots(batallas.getBatallaParticipantesByIdBatalla().stream().toList()),
+                                 etapa.getReglas().getNumRondas());
 
-                    br.runBattle(pathRobocode, REPLAY_TYPE);
+                         br.runBattle(pathRobocode, REPLAY_TYPE);
 
-                    batallas.setEstatus(EstadosBatalla.TERMINADA.getEstado());
-                    batallasRepository.save(batallas);
+                         batallas.setEstatus(EstadosBatalla.TERMINADA.getEstado());
+                         batallasRepository.save(batallas);
+                     } else {
+                         log.info("No existen robots para la batalla: " + batallas.getIdBatalla());
+                         batallas.setEstatus(EstadosBatalla.CANCELADA.getEstado());
+                         batallasRepository.save(batallas);
+                     }
+
                 }
 
             } catch (ValidacionException | UtilsException e) {
@@ -109,6 +116,7 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
     public String obtieneRobots(List<BatallaParticipantes> batallaParticipantes) {
 
         StringBuilder robotClassName = new StringBuilder();
+        String robots = null;
         for(BatallaParticipantes batallaParticipante : batallaParticipantes) {
             Equipos equipos = equiposRepository
                     .findById(batallaParticipante.getIdParticipanteEquipo()).orElseThrow();
@@ -117,11 +125,15 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
                     .filter(r -> r.getActivo().equals(Numeros.UNO.getNumero())).findFirst();
 
             if(robot.isPresent()) {
-                robotClassName.append(robot.orElseThrow().getClassName()).append(Constantes.SEPARA_MAILS);
+                robotClassName.append(robot.orElseThrow().getClassName()).append(Constantes.COMA);
             }
         }
 
-        return robotClassName.substring(Numeros.CERO.getNumero(), robotClassName.length()-Numeros.UNO.getNumero());
+        if(!robotClassName.isEmpty()) {
+            robots = robotClassName.substring(Numeros.CERO.getNumero(), robotClassName.length()-Numeros.UNO.getNumero());
+        }
+
+        return robots;
     }
 
 }

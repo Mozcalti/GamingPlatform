@@ -1,4 +1,4 @@
-package com.mozcalti.gamingapp.service.resultados.impl;
+package com.mozcalti.gamingapp.service.dashboard.impl;
 
 import com.mozcalti.gamingapp.exceptions.UtilsException;
 import com.mozcalti.gamingapp.exceptions.ValidacionException;
@@ -9,8 +9,8 @@ import com.mozcalti.gamingapp.model.dto.PaginadoDTO;
 import com.mozcalti.gamingapp.model.dto.TablaDTO;
 import com.mozcalti.gamingapp.model.torneos.ReglasDTO;
 import com.mozcalti.gamingapp.repository.*;
-import com.mozcalti.gamingapp.service.BatallasService;
-import com.mozcalti.gamingapp.service.resultados.DashboardService;
+import com.mozcalti.gamingapp.service.batallas.BatallasService;
+import com.mozcalti.gamingapp.service.dashboard.DashboardService;
 import com.mozcalti.gamingapp.utils.*;
 import com.mozcalti.gamingapp.validations.DashboardsGlobalResultadosValidation;
 import com.thoughtworks.xstream.XStream;
@@ -180,7 +180,9 @@ public class DashboardServiceImpl implements DashboardService {
 
                     StringBuilder participantes = new StringBuilder();
                     Optional<Institucion> institucion = Optional.empty();
+                    Integer idParticipante = Numeros.CERO.getNumero();
                     for(ParticipanteEquipo participanteEquipo : equipos.orElseThrow().getParticipanteEquiposByIdEquipo()) {
+                        idParticipante = participanteEquipo.getIdParticipante();
                         Optional<Participantes> participante = participantesRepository.findById(participanteEquipo.getIdParticipante());
 
                         participantes.append(participante.orElseThrow().getNombre()).append(" ").append(participante.orElseThrow().getApellidos()).append(",");
@@ -191,6 +193,7 @@ public class DashboardServiceImpl implements DashboardService {
                     }
 
                     resultadosParticipantesDTOS.add(new ResultadosParticipantesDTO(
+                            idParticipante,
                             participantes.substring(Numeros.CERO.getNumero() , participantes.length()-Numeros.DOS.getNumero()),
                             institucion.orElseThrow().getId(),
                             institucion.orElseThrow().getNombre(),
@@ -210,15 +213,7 @@ public class DashboardServiceImpl implements DashboardService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public List<ResultadosInstitucionGpoDTO> gruopResultadosParticipantesBatalla(Integer idEtapa) {
-
-        List<ResultadosInstitucionGpoDTO> resultadosInstitucionGpoDTOS;
-
-        List<ResultadosParticipantesDTO> resultadosParticipantesDTOS = listaResultadosParticipantesBatalla(idEtapa, Constantes.TODOS);
-
-        resultadosInstitucionGpoDTOS = groupInstituciones(resultadosParticipantesDTOS);
-
-        return resultadosInstitucionGpoDTOS;
-
+        return groupInstituciones(listaResultadosParticipantesBatalla(idEtapa, Constantes.TODOS));
     }
 
     private List<ResultadosParticipantesDTO> filtraInstituciones(List<ResultadosParticipantesDTO> resultadosParticipantesDTOS,
@@ -246,6 +241,7 @@ public class DashboardServiceImpl implements DashboardService {
             }
 
             participantes.add(new ResultadosParticipantesGpoDTO(
+                    resultadosParticipantesDTO.getIdParticipante(),
                     resultadosParticipantesDTO.getNombreParticipantes(),
                     resultadosParticipantesDTO.getNombreRobot(),
                     resultadosParticipantesDTO.getScore()
