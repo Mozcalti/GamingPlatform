@@ -4,6 +4,7 @@ import com.mozcalti.gamingapp.commons.GenericServiceImpl;
 import com.mozcalti.gamingapp.exceptions.UtilsException;
 import com.mozcalti.gamingapp.exceptions.ValidacionException;
 import com.mozcalti.gamingapp.model.*;
+import com.mozcalti.gamingapp.model.catalogos.EtapasDTO;
 import com.mozcalti.gamingapp.repository.BatallasRepository;
 import com.mozcalti.gamingapp.repository.EquiposRepository;
 import com.mozcalti.gamingapp.repository.EtapasRepository;
@@ -134,6 +135,19 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
         }
 
         return robots;
+    }
+
+    @Override
+    public List<EtapasDTO> getEtapas() throws ValidacionException {
+
+        List<Etapas> lstEtapas = new ArrayList<>();
+        etapasRepository.findAll().forEach(lstEtapas::add);
+
+        if(lstEtapas.isEmpty()) {
+            throw new ValidacionException("No existen etapas a mostrar");
+        }
+
+        return lstEtapas.stream().map(EtapasDTO::new).toList();
     }
 
 }
