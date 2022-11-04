@@ -19,7 +19,7 @@ import java.util.Optional;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TorneoValidation {
 
-    public static void validaGuardarTorneo(@NonNull List<Torneos> lstTorneos, TorneoDTO torneoDTO)
+    public static void validaGuardarTorneo(@NonNull List<Torneos> lstTorneos, TorneoDTO torneoDTO, boolean esAlta)
             throws ValidacionException {
 
         DateUtils.isValidDate(torneoDTO.getFechaInicio(),
@@ -35,7 +35,7 @@ public class TorneoValidation {
                 Constantes.FECHA_PATTERN,
                 "Fecha inicio del torneo no puede ser mayor a la fecha fin");
 
-        if(!lstTorneos.isEmpty()) {
+        if(!lstTorneos.isEmpty() && esAlta) {
             Torneos torneos = lstTorneos.get(lstTorneos.size()-Numeros.UNO.getNumero());
             DateUtils.isDatesRangoValid(
                     DateUtils.addDias(torneos.getFechaFin(), Constantes.FECHA_PATTERN, Numeros.UNO.getNumero()),
