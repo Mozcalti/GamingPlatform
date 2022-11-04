@@ -1,15 +1,34 @@
 package com.mozcalti.gamingapp.model.dto;
 
+import com.mozcalti.gamingapp.model.Participantes;
 import com.mozcalti.gamingapp.model.Usuario;
+import com.mozcalti.gamingapp.utils.Constantes;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-import javax.validation.constraints.NotBlank;
+@Setter
+@Getter
+@AllArgsConstructor
+public class UsuarioDTO {
 
-public record UsuarioDTO(@NotBlank String nombre,
-                         @NotBlank String apellidos,
-                         @NotBlank String email,
-                         @NotBlank String rol) {
+    private String nombre;
+    private String apellidos;
+    private String email;
+    private String rol;
 
     public UsuarioDTO(Usuario usuario) {
-        this(usuario.getNombre(), usuario.getApellidos(), usuario.getEmail(), usuario.getRol());
+        this.nombre = usuario.getNombre();
+        this.apellidos = usuario.getApellidos();
+        this.email = usuario.getEmail();
+        this.rol = usuario.getRol();
     }
+
+    public UsuarioDTO(Participantes participante) {
+        this.nombre = participante.getNombre();
+        this.apellidos = participante.getApellidos();
+        this.email = participante.getCorreo();
+        this.rol = Constantes.ROL_PUBLIC;
+    }
+
 }
