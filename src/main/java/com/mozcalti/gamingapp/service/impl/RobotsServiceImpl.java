@@ -124,14 +124,11 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
                     throw new DuplicateKeyException("Ya existe un robot con el nombre: " + "'" + originalFileName + "'");
                 } else {
                     if(Files.exists(Paths.get(pathRobots + File.separator + originalFileName))){
-
-                        Path jarFile = Paths.get(pathRobots + File.separator + originalFileName);
-                        File newFile = jarFile.toFile();
-                        if(FileUtils.directoryContains(new File(pathRobots), newFile)){
-                            String finalPath = pathRobots + File.separator + UUID.randomUUID();
-                            Files.move(jarFile, jarFile.resolveSibling(finalPath));
-                            borrarRobot(String.valueOf(Paths.get(finalPath).getFileName()));
-                        }
+                        List<Path> files = RobocodeUtils.findByFileName(Paths.get(pathRobots), originalFileName);
+                        Path jarFile = files.get(Numeros.CERO.getNumero());
+                        String finalPath = pathRobots + File.separator + UUID.randomUUID();
+                        Files.move(jarFile, jarFile.resolveSibling(finalPath));
+                        borrarRobot(String.valueOf(Paths.get(finalPath).getFileName()));
                     }
                     Path path = Paths.get(pathRobots);
                     Path serverFile = Files.createTempFile(path, "robot", ".jar");
@@ -242,4 +239,6 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
             throw new NoSuchFileException("El robot a borrar no existe");
         }
     }
+
+
 }

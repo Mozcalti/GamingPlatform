@@ -3,9 +3,14 @@ package com.mozcalti.gamingapp.utils;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
+import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,5 +49,20 @@ public final class RobocodeUtils {
         }catch (IOException e){
             throw new FileNotFoundException("No se pudo corroborar que el archivo fuera de robot fuera equipo o individual.");
         }
+    }
+
+    public static List<Path> findByFileName(Path path, String fileName)
+            throws IOException {
+
+        List<Path> result;
+        try (Stream<Path> pathStream = Files.find(path,
+                Integer.MAX_VALUE,
+                (p, basicFileAttributes) ->
+                        p.getFileName().toString().equalsIgnoreCase(fileName))
+        ) {
+            result = pathStream.collect(Collectors.toList());
+        }
+        return result;
+
     }
 }
