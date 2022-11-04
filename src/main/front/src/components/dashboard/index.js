@@ -4,8 +4,11 @@ import {
     Typography,
     Container,
     Divider,
-    Grid, Alert, Snackbar, CardContent, CardActions, Card, FormControl, InputLabel, Select,
-    MenuItem, TextField
+    Grid,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
 } from "@mui/material";
 import {DataGrid} from "@mui/x-data-grid";
 import DashboardService from "./Dashboard.service";
@@ -18,9 +21,6 @@ const Batallas = () => {
     const [batallas, setBatallas] = useState([]);
     const [reglas, setReglas] = useState([]);
     const [resultados, setResultados] = useState([]);
-
-    const [errorResponse, setErrorResponse] = useState("");
-    const [successResponse, setSuccessResponse] = useState("");
 
     const getEtapas = () => {
         DashboardService.obtenerEtapas()
@@ -38,37 +38,12 @@ const Batallas = () => {
         DashboardService.listaBatallasIndividuales(idEtapa)
             .then(
                 (response) => {
-                    console.log(resultados);
                     setBatallas(response.data);
-                    setReglas(getReglas(response.data));
-                    setResultados(getResultados(response.data));
-                    console.log(typeof batallas, batallas);
-                    console.log(typeof reglas, reglas);
-                    console.log(typeof resultados, resultados);
                 },
                 error => {
                     console.log(error)
                 }
             )
-    }
-
-    const getReglas = (datos) =>{
-        let aReglas = [];
-        {datos.map((b) => (
-            aReglas.push(b.reglasDTO)
-        ))}
-
-        return aReglas;
-    }
-
-    const getResultados = (datos) =>{
-        let aResultados = [];
-        {datos.map((b) => (
-            aResultados.push(b.listaResultadosDTO)
-        ))}
-        console.log(aResultados);
-        console.log(aResultados[0]);
-        return aResultados;
     }
 
     const gridStyle = {
@@ -77,10 +52,6 @@ const Batallas = () => {
 
     useEffect(() => {
         getEtapas()
-    }, []);
-
-    useEffect(()=>{
-        console.log(resultados);
     }, []);
 
     const columns = [

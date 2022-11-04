@@ -43,7 +43,6 @@ const ParticipantesList = () => {
                 (response) => {
                     setParticipantes(response.data);
                     setFecha(null);
-                    console.log(typeof response.data, response.data);
                 },
                 error => {
                     console.log(error)
@@ -214,7 +213,7 @@ const ParticipantesList = () => {
                 <br/>
                 <div style={{height: 400}}>
                     <Grid container spacing={2}>
-                        <Grid item xs={6} md={6}    >
+                        <Grid item xs={6} md={6}>
                             <TextField label="Busqueda" variant="outlined" fullWidth
                                        onChange={(e) => setMessage(e.target.value)}/>
 
