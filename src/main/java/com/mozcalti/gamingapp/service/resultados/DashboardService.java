@@ -5,6 +5,7 @@ import com.mozcalti.gamingapp.model.batallas.resultado.ResultadosInstitucionGpoD
 import com.mozcalti.gamingapp.model.batallas.resultado.ResultadosParticipantesDTO;
 import com.mozcalti.gamingapp.model.dto.DetalleBatallaDTO;
 import com.mozcalti.gamingapp.model.dto.TablaDTO;
+import com.mozcalti.gamingapp.model.torneos.EtapaDTO;
 
 import java.util.List;
 
@@ -20,4 +21,5 @@ public interface DashboardService {
 
     List<DetalleBatallaDTO> listaDetalleBatallasIndividuales(Integer idEtapa);
 
+    List<EtapaDTO> listaEtapas();
 }

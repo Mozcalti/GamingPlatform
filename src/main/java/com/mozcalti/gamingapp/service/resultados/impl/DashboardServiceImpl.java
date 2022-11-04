@@ -7,6 +7,7 @@ import com.mozcalti.gamingapp.model.batallas.resultado.*;
 import com.mozcalti.gamingapp.model.dto.DetalleBatallaDTO;
 import com.mozcalti.gamingapp.model.dto.PaginadoDTO;
 import com.mozcalti.gamingapp.model.dto.TablaDTO;
+import com.mozcalti.gamingapp.model.torneos.EtapaDTO;
 import com.mozcalti.gamingapp.model.torneos.ReglasDTO;
 import com.mozcalti.gamingapp.repository.*;
 import com.mozcalti.gamingapp.service.BatallasService;
@@ -168,7 +169,7 @@ public class DashboardServiceImpl implements DashboardService {
             for(Resultados resultados : batallas.orElseThrow().getResultadosByIdBatalla().stream()
                         .sorted(Comparator.comparing(Resultados::getScore).reversed()).toList()) {
 
-                Optional<Robots> robot = robotsRepository.findAllByNombre(resultados.getTeamleadername())
+                Optional<Robots> robot = robotsRepository.findAllByClassName(resultados.getTeamleadername())
                         .stream()
                         .findFirst();
 
@@ -313,4 +314,14 @@ public class DashboardServiceImpl implements DashboardService {
         return listaDetalleBatallaDTO;
     }
 
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public List<EtapaDTO> listaEtapas(){
+        List<EtapaDTO> listaEtapas = new ArrayList<>();
+        Iterable<Etapas> etapas = etapasRepository.findAll();
+        for (Etapas etapa: etapas) {
+            listaEtapas.add(new EtapaDTO(etapa));
+        }
+        return listaEtapas;
+    }
 }

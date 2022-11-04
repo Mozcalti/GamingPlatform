@@ -18,7 +18,8 @@ public class ReglasDTO {
     private Integer tiempoBatallaAprox;
     private String trabajo;
     private Integer tiempoEspera;
-
+    private Integer arenaAncho;
+    private Integer arenaAlto;
     public ReglasDTO(Reglas reglas) {
         this.idRegla = reglas.getIdRegla();
         this.numCompetidores = reglas.getNumCompetidores();
@@ -26,5 +27,7 @@ public class ReglasDTO {
         this.tiempoBatallaAprox = reglas.getTiempoBatallaAprox();
         this.trabajo = reglas.getTrabajo();
         this.tiempoEspera = reglas.getTiempoEspera();
+        this.arenaAncho = reglas.getArenaAncho();
+        this.arenaAlto = reglas.getArenaAlto();
     }
 }
