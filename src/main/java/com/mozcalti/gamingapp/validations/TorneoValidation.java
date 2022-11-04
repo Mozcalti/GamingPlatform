@@ -19,7 +19,7 @@ import java.util.Optional;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TorneoValidation {
 
-    public static void validaGuardarTorneo(@NonNull List<Torneos> lstTorneos, TorneoDTO torneoDTO, boolean esAlta)
+    public static void validaGuardarTorneo(@NonNull List<Torneos> lstTorneos, TorneoDTO torneoDTO)
             throws ValidacionException {
 
         DateUtils.isValidDate(torneoDTO.getFechaInicio(),

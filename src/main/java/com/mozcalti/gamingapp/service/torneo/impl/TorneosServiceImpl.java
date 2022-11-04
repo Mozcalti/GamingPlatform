@@ -236,7 +236,7 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class, RuntimeException.class})
     public void guardaTorneo(TorneoDTO torneoDTO) throws ValidacionException {
 
-        TorneoValidation.validaGuardarTorneo(getTorneos(), torneoDTO, true);
+        TorneoValidation.validaGuardarTorneo(getTorneos(), torneoDTO);
         Torneos torneos = torneosRepository.save(new Torneos(torneoDTO));
 
         for(HoraHabilDTO horaHabilDTO : torneoDTO.getHorasHabiles()) {
@@ -257,7 +257,7 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
     @Transactional(propagation = Propagation.REQUIRED)
     public void modificaTorneo(TorneoDTO torneoDTO) throws ValidacionException {
 
-        TorneoValidation.validaGuardarTorneo(getTorneos(), torneoDTO, false);
+        TorneoValidation.validaGuardarTorneo(getTorneos(), torneoDTO);
 
         Optional<Torneos> torneos = torneosRepository.findById(torneoDTO.getIdTorneo());
 
