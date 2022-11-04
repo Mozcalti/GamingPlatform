@@ -23,7 +23,7 @@ public class TorneoControlller {
     }
 
     @GetMapping("/consultar")
-    public TorneoDTO obtieneTorneos() {
+    public List<TorneoDTO> obtieneTorneos() {
         return torneosService.obtieneTorneos();
     }
 
@@ -32,9 +32,9 @@ public class TorneoControlller {
         torneosService.modificaTorneo(torneoDTO);
     }
 
-    @DeleteMapping("/eliminar")
-    public void eliminaTorneo() {
-        torneosService.eliminaTorneo();
+    @DeleteMapping("/eliminar/{idTorneo}")
+    public void eliminaTorneo(@PathVariable Integer idTorneo) {
+        torneosService.eliminaTorneo(idTorneo);
     }
 
     @PostMapping("/etapas/guardar")

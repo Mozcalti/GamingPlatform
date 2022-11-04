@@ -23,13 +23,16 @@ public class TorneoDTO {
     private List<HoraHabilDTO> horasHabiles;
     private Integer numEtapas;
 
-    private List<EtapaDTO> etapas;
-
-    public TorneoDTO(Torneos torneos, Integer idTorneo) {
-        this.idTorneo = idTorneo;
+    public TorneoDTO(Torneos torneos) {
+        this.idTorneo = torneos.getIdTorneo();
         this.fechaInicio = torneos.getFechaInicio();
         this.fechaFin = torneos.getFechaFin();
         this.numEtapas = torneos.getNumEtapas();
+
+        this.horasHabiles = new ArrayList<>();
+        for(TorneoHorasHabiles torneoHoraHabil : torneos.getTorneoHorasHabilesByIdTorneo()) {
+            horasHabiles.add(new HoraHabilDTO(torneoHoraHabil));
+        }
     }
 
     public TorneoDTO(Integer idTorneo, String fechaInicio, String fechaFin, Integer numEtapas,

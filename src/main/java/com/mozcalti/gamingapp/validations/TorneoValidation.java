@@ -19,12 +19,8 @@ import java.util.Optional;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TorneoValidation {
 
-    public static void validaGuardarTorneo(@NonNull List<Torneos> lstTorneos, TorneoDTO torneoDTO, boolean esAlta)
+    public static void validaGuardarTorneo(@NonNull List<Torneos> lstTorneos, TorneoDTO torneoDTO)
             throws ValidacionException {
-
-        if(!lstTorneos.isEmpty() && esAlta) {
-            throw new ValidacionException("Por el momento no es posible agregar más de 1 torneo");
-        }
 
         DateUtils.isValidDate(torneoDTO.getFechaInicio(),
                 Constantes.FECHA_PATTERN,
@@ -38,6 +34,12 @@ public class TorneoValidation {
                 torneoDTO.getFechaFin(),
                 Constantes.FECHA_PATTERN,
                 "Fecha inicio del torneo no puede ser mayor a la fecha fin");
+
+        Torneos torneos = lstTorneos.get(lstTorneos.size()-Numeros.UNO.getNumero());
+        DateUtils.isDatesRangoValid(
+                DateUtils.addDias(torneos.getFechaFin(), Constantes.FECHA_PATTERN, Numeros.UNO.getNumero()),
+                torneoDTO.getFechaInicio(), Constantes.FECHA_PATTERN,
+                "Las fechas del nuevo torneo debe continuar después del último registrado");
 
         String diaSemanaFIT = DateUtils.getDateFormat(
                 DateUtils.getDateFormat(torneoDTO.getFechaInicio(), Constantes.FECHA_PATTERN).getTime(),
@@ -73,7 +75,7 @@ public class TorneoValidation {
 
     public static void validaConsultarTorneo(@NonNull List<Torneos> torneos) {
         if (torneos.isEmpty()) {
-            throw new ValidacionException("No existe torneo");
+            throw new ValidacionException("No existen torneos registrados");
         }
     }
     public static void validaEliminaTorneo(@NonNull Optional<Torneos> torneos) throws ValidacionException {
