@@ -47,6 +47,7 @@ robocode:
   battles: ${PATH_BATTLES:path}
 
 server:
+  baseUrl: ${BASE_URL:https://robocode.mozcalti.com}
   error:
     whitelabel:
       enabled: false
