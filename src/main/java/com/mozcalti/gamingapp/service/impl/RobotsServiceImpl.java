@@ -48,6 +48,7 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
     private String pathRobots;
     private static final String REPLAYTYPE = "xml";
     private static final String ROBOTEXTENSION = ".jar";
+    private static final String PREFIX = "r_";
     private static final String TESTFILEID = "PRUEBA";
     private static final boolean TESTISRECORDED = true;
     private static final int TESTSIZE = 800;
@@ -60,7 +61,7 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
             if(!file.isEmpty()){
                 if(safetyCheckForFileName(file)){
                     byte[] bytes = file.getBytes();
-                    return validateRobotJar(file.getOriginalFilename(), tipo, idEquipo, bytes);
+                    return validateRobotJar(PREFIX + file.getOriginalFilename(), tipo, idEquipo, bytes);
                 }
             } else {
                 throw new RobotValidationException("El archivo que intentas cargar esta vacío.");
@@ -123,8 +124,9 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
                     throw new DuplicateKeyException("Ya existe un robot con el nombre: " + "'" + originalFileName + "'");
                 } else {
                     if(Files.exists(Paths.get(pathRobots + File.separator + originalFileName))){
+                        Path jarFile = Paths.get(pathRobots + File.separator + originalFileName);
                         String finalPath = pathRobots + File.separator + UUID.randomUUID();
-                        Files.move(Paths.get(pathRobots + File.separator + originalFileName), Paths.get(pathRobots + File.separator + originalFileName).resolveSibling(finalPath));
+                        Files.move(jarFile, jarFile.resolveSibling(finalPath));
                         borrarRobot(String.valueOf(Paths.get(finalPath).getFileName()));
                     }
                     Path path = Paths.get(pathRobots);
