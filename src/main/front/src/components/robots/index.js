@@ -93,7 +93,7 @@ const Robots = () => {
                 if (value.length > 0) return true; else return false;
             })
             .test("fileType", "El formato del archivo no es valido", (value) => {
-                return value.length && ["application/x-java-archive"].includes(value[0].type)
+                return value.length && ["application/x-java-archive", "application/java-archive"].includes(value[0].type)
             }),
         tipo: Yup.string()
             .required('El tipo de robot es obligatorio')
