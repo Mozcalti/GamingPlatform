@@ -1,4 +1,5 @@
 <html>
+<meta charset="UTF-8">
 <style type="text/css">
     .style1 {
         font-family: Arial, Helvetica, sans-serif
@@ -8,17 +9,26 @@
 <body>
 <p><img src="cid:logo_plai" width="267" height="96"><br>
     <br>
-    <span class="style1">Hola se ${nombre}. Se ha creado una nueva cuenta para ti .</span>
+    <span class="style1">Hola, ${nombre} ${apellido}. El presente correo es para infórmate que se ha realizado tu registro para el torneo RoboCode, organizado por Plai y Mozcalti.</span>
 </p>
 <p>
-    <span class="style1">Tu cuenta está desactivada así que aún no puedes acceder. El siguiente paso es crear tu constraseña.</span>
+    <span class="style1">Lo primero que debes hacer es activar tu cuenta haciendo clic en el siguiente enlace, en donde deberás crear una nueva contraseña de acceso:</span>
 <p>
 <p>
-    <span class="style1">Accede a <a href="${baseUrl}/registro?token=${token}">este enlace</a> para crear tu contraseña y activar tu cuenta.</span>
+    <b><a href="${baseUrl}/registro?token=${token}">${baseUrl}/registro</a></b>
+</p>
+<p>
+    <span class="style1">Una vez que tu cuenta esté activada podrás subir el robot con el que participarás en el torneo. Más adelante te daremos las instrucciones de cómo hacerlo.</span>
+</p>
+<p>
+    <span class="style1">El torneo se llevará a cabo en dos etapas; la primera, del <b>9 al 11 de noviembre</b>, será en una batalla individual; la segunda, del <b>16 al 18 de noviembre</b>, será en una batalla en equipo. Solo los competidores con los puntajes más altos de la primera etapa pasarán a la segunda etapa.</span>
+</p>
+<p>
+    <span class="style1">La fecha y la hora de la batalla te será informada posteriormente en otro correo electrónico.</span>
+</p>
 <p>
     <br>
-    <span class="style1">Saludos</span>
-    <br>
+    <span class="style1">¡Mucha suerte, competidor!</span>
     <br>
 </p>
 </body>
