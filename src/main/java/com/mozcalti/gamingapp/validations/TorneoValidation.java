@@ -35,11 +35,13 @@ public class TorneoValidation {
                 Constantes.FECHA_PATTERN,
                 "Fecha inicio del torneo no puede ser mayor a la fecha fin");
 
-        Torneos torneos = lstTorneos.get(lstTorneos.size()-Numeros.UNO.getNumero());
-        DateUtils.isDatesRangoValid(
-                DateUtils.addDias(torneos.getFechaFin(), Constantes.FECHA_PATTERN, Numeros.UNO.getNumero()),
-                torneoDTO.getFechaInicio(), Constantes.FECHA_PATTERN,
-                "Las fechas del nuevo torneo debe continuar después del último registrado");
+        if(!lstTorneos.isEmpty()) {
+            Torneos torneos = lstTorneos.get(lstTorneos.size()-Numeros.UNO.getNumero());
+            DateUtils.isDatesRangoValid(
+                    DateUtils.addDias(torneos.getFechaFin(), Constantes.FECHA_PATTERN, Numeros.UNO.getNumero()),
+                    torneoDTO.getFechaInicio(), Constantes.FECHA_PATTERN,
+                    "Las fechas del nuevo torneo debe continuar después del último registrado");
+        }
 
         String diaSemanaFIT = DateUtils.getDateFormat(
                 DateUtils.getDateFormat(torneoDTO.getFechaInicio(), Constantes.FECHA_PATTERN).getTime(),
