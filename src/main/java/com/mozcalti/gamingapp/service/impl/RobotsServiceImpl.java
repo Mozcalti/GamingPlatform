@@ -123,9 +123,8 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
                     throw new DuplicateKeyException("Ya existe un robot con el nombre: " + "'" + originalFileName + "'");
                 } else {
                     if(Files.exists(Paths.get(pathRobots + File.separator + originalFileName))){
-                        Path jarFile = Paths.get(pathRobots + File.separator + originalFileName);
                         String finalPath = pathRobots + File.separator + UUID.randomUUID();
-                        Files.move(jarFile, jarFile.resolveSibling(finalPath));
+                        Files.move(Paths.get(pathRobots + File.separator + originalFileName), Paths.get(pathRobots + File.separator + originalFileName).resolveSibling(finalPath));
                         borrarRobot(String.valueOf(Paths.get(finalPath).getFileName()));
                     }
                     Path path = Paths.get(pathRobots);
