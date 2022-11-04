@@ -127,7 +127,7 @@ const Robots = () => {
                         <Grid item xs={4} md={4}>
                             <Card>
                                 <CardContent>
-                                    <Typography gutterBottom variant="h5" component="div">{r.nombre.slice(2)}</Typography>
+                                    <Typography gutterBottom variant="h5" component="div">{r.nombre}</Typography>
                                     <Typography variant="body2" color="text.secondary">Class Name: {r.className}</Typography>
                                     <Typography variant="body2" color="text.secondary">Tipo: {r.tipo}</Typography>
                                     <Typography variant="body2" color="text.secondary">Equipo: {r.idEquipo}</Typography>
