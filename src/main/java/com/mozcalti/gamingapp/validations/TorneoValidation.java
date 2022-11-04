@@ -75,11 +75,6 @@ public class TorneoValidation {
 
     }
 
-    public static void validaConsultarTorneo(@NonNull List<Torneos> torneos) {
-        if (torneos.isEmpty()) {
-            throw new ValidacionException("No existen torneos registrados");
-        }
-    }
     public static void validaEliminaTorneo(@NonNull Optional<Torneos> torneos) throws ValidacionException {
 
         if (!torneos.isPresent()) {

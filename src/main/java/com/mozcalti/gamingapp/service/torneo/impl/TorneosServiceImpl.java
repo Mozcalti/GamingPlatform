@@ -249,7 +249,6 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
     @Transactional(propagation = Propagation.REQUIRED)
     public List<TorneoDTO> obtieneTorneos() {
         List<Torneos> torneos = getTorneos();
-        TorneoValidation.validaConsultarTorneo(torneos);
         return torneos.stream().map(TorneoDTO::new).toList();
     }
 
