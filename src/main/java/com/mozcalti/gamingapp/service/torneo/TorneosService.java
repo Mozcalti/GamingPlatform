@@ -26,11 +26,11 @@ public interface TorneosService extends GenericServiceAPI<Torneos, Integer> {
 
     void guardaTorneo(TorneoDTO torneoDTO) throws ValidacionException;
 
-    TorneoDTO obtieneTorneos();
+    List<TorneoDTO> obtieneTorneos();
 
     void modificaTorneo(TorneoDTO torneoDTO) throws ValidacionException;
 
-    void eliminaTorneo();
+    void eliminaTorneo(Integer idTorneo);
 
     void persisteEtapas(List<EtapaDTO> etapasDTOS, boolean esAlta) throws ValidacionException;
 
