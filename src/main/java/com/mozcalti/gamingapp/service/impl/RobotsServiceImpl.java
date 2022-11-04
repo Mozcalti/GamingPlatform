@@ -54,9 +54,6 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
     private static final int TESTROUNDS = 1;
     private static final Character[] INVALID_WINDOWS_SPECIFIC_CHARS = {'"', '*', '<', '>', '?', '|'};
     private static final Character[] INVALID_UNIX_SPECIFIC_CHARS = {'\000'};
-    private static final int NO_ACTIVO = 0;
-    private static final int ACTIVO = 1;
-
     @Override
     public RobotsDTO cargarRobot(int idEquipo, String tipo, MultipartFile file) throws IOException {
         if (file != null) {
@@ -181,7 +178,7 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
             br.runRobotValidationBattle(serverFile, pathRobots, originalFileName, pathRobocode, REPLAYTYPE);
             Robots robot = new Robots();
             robot.setNombre(originalFileName);
-            robot.setActivo(NO_ACTIVO);
+            robot.setActivo(Numeros.CERO.getNumero());
             robot.setIdEquipo(idEquipo);
             robot.setClassName(className);
             robot.setTipo(tipo);
