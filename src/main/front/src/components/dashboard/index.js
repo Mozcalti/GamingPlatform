@@ -19,8 +19,6 @@ const Batallas = () => {
     const [etapas, setEtapas] = useState([]);
     const [etapa, setEtapa] = useState([]);
     const [batallas, setBatallas] = useState([]);
-    const [reglas, setReglas] = useState([]);
-    const [resultados, setResultados] = useState([]);
 
     const getEtapas = () => {
         DashboardService.obtenerEtapas()
