@@ -1,23 +1,25 @@
 import ResponsiveAppBar from "../appBar/AppBar";
 import React, {useEffect, useState} from "react";
-import {Avatar, Container, Divider, Grid, TextField, Typography} from "@mui/material";
+import {Alert, Avatar, Container, Divider, Grid, Snackbar, TextField, Typography} from "@mui/material";
 import Button from "@mui/material/Button";
 import {DataGrid} from "@mui/x-data-grid";
 import InstitucionesService from "./Instituciones.service";
 import DetalleInstitucion from "./DetalleInstitucion";
 import * as Yup from "yup";
 import moment from "moment/moment";
-
 import {AdapterMoment} from '@mui/x-date-pickers/AdapterMoment';
 import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
 import {DatePicker} from "@mui/x-date-pickers/DatePicker";
-
+import { CargaMasivaInstituciones } from "./CargaMasivaInstituciones";
 const InstitucionesList = () => {
     const [instituciones, setInstituciones] = useState([]);
     const [message, setMessage] = useState("");
     const [fecha, setFecha] = useState(null);
-
-
+    const [resultado, setResultado] = useState({
+        sucess: false,
+        error: false
+    })
+    const [errorResponse, setErrorResponse] = useState("");
     const getInstituciones = (texto, fechaCreacion, indice) => {
         if (fechaCreacion === '' || fechaCreacion === null)
             fechaCreacion = '';
@@ -36,10 +38,45 @@ const InstitucionesList = () => {
             );
     }
 
+    const getInstitucionMasiva = (texto, indice) => {
+        InstitucionesService.getInstitucion(texto,indice)
+            .then(
+                (response) => {
+                    console.log(response.data);
+                    setInstituciones(response.data);
+                },
+                error => {
+                    console.log(error)
+                }
+            );
+    }
+
 
     useEffect(() => {
         getInstituciones("", "", 0)
+        getInstitucionMasiva();
     }, []);
+    
+    const validaExcel =(data)=>{
+        InstitucionesService.validaExcelInstitucion(data)
+        .then((response)=>{
+            setResultado({...resultado,sucess:true})
+            setInstituciones(response.data);
+        },
+        error=>{
+            setErrorResponse(error.response.data.message);
+            setResultado({...resultado, error: true});
+        }
+        )
+    }
+
+    const ValidaFormCargaMasiva = Yup.object().shape({
+        file: Yup.mixed()
+            .test("file", "El archivo es obligatorio", (value) => {if (value.length > 0)return true;else return false;})
+            .test("fileType", "El formato del archivo no es valido", (value) =>{
+                return value.length && ["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel"].includes(value[0].type)
+            })
+    });
 
 
     const ValidaForm = Yup.object().shape({
@@ -84,21 +121,31 @@ const InstitucionesList = () => {
             }
         }];
 
+
     return (
         <>
             <ResponsiveAppBar/>
             <br/>
             <Container fluid>
-                <Typography variant="h4">Instituciones</Typography>
+                <Grid container spacing={2}>
+                    <Grid item xs={10} md={10}>
+                        <Typography variant="h4">Instituciones</Typography>
+                    </Grid>
+                    <Grid item xs={2} md={2}>
+                        <CargaMasivaInstituciones
+                            validaExcel={validaExcel}
+                            ValidaFormCargaMasiva={ValidaFormCargaMasiva}></CargaMasivaInstituciones>
+                    </Grid>
+                </Grid>
+                <br/>
                 <Divider/>
                 <br/>
+
                 <div style={{height: 400}}>
                     <Grid container spacing={2}>
                         <Grid item xs={6} md={6}>
-                            <TextField label="Busqueda" variant="outlined" fullWidth
-                                       onChange={(e) => setMessage(e.target.value)}/>
+                            <TextField label="Busqueda" variant="outlined" fullWidth  onChange={(e) => setMessage(e.target.value)}/>
                         </Grid>
-
                         <Grid item xs={4} md={4}>
                             <LocalizationProvider dateAdapter={AdapterMoment}>
                                 <DatePicker
@@ -113,9 +160,9 @@ const InstitucionesList = () => {
                             </LocalizationProvider>
                         </Grid>
                         <Grid item xs={2} md={2}>
-                            <Button onClick={() => getInstituciones(message, fecha, 0)} variant="contained"
-                                    size="large">Buscar</Button>
+                            <Button onClick={() => getInstituciones(message, fecha, 0)} variant="contained" size="large">Buscar</Button>
                         </Grid>
+
                     </Grid>
                     <br/>
                     <DataGrid
@@ -129,6 +176,16 @@ const InstitucionesList = () => {
                     />
                 </div>
             </Container>
+            <Snackbar open={resultado.success} autoHideDuration={6000} onClose={() => {
+                setResultado({...resultado, success: false})
+            }}>
+                <Alert severity="success" variant="filled">Se guardo correctamente las instituciones</Alert>
+            </Snackbar>
+            <Snackbar open={resultado.error} autoHideDuration={6000} onClose={() => {
+                setResultado({...resultado, error: false})
+            }}>
+                <Alert severity="error" variant="filled">{errorResponse}</Alert>
+            </Snackbar>
         </>
     );
 };

@@ -6,6 +6,7 @@ import com.mozcalti.gamingapp.model.dto.*;
 import com.mozcalti.gamingapp.repository.InstitucionRepository;
 import com.mozcalti.gamingapp.repository.ParticipantesRepository;
 import com.mozcalti.gamingapp.service.ParticipantesService;
+import com.mozcalti.gamingapp.service.usuarios.UsuarioService;
 import com.mozcalti.gamingapp.utils.*;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -35,6 +36,9 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
 
     @Autowired
     private InstitucionRepository institucionRepository;
+
+    @Autowired
+    private UsuarioService usuarioService;
 
     @Override
     public CrudRepository<Participantes, Integer> getDao() {
@@ -116,6 +120,9 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
             participante.setFoto(FileUtils.encodeImageToString(pathParticipantes + "/participanteFotoDefaul.png"));
             participante.setFechaCreacion(DateUtils.now());
             participante.setInstitucion(institucionRepository.findById(dto.getIdInstitucion()).orElse(null));
+
+            usuarioService.save(new UsuarioDTO(participante));
+
             listadoParticipantes.add(participante);
         }
         return (List<Participantes>) participantesRepository.saveAll(listadoParticipantes);
@@ -178,6 +185,9 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
         participante.setFoto(FileUtils.encodeImageToString(pathParticipantes + "/participanteFotoDefaul.png"));
         participante.setFechaCreacion(DateUtils.now());
         participante.setInstitucion(institucionRepository.findById(participanteDTO.getIdInstitucion()).orElse(null));
+
+        usuarioService.save(new UsuarioDTO(participante));
+
         return participantesRepository.save(participante);
     }
 

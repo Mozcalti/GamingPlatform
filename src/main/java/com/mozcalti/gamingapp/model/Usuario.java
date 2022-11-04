@@ -49,10 +49,10 @@ public class Usuario implements Serializable {
     private String rol;
 
     public Usuario(UsuarioDTO usuarioDTO) {
-        this.email = usuarioDTO.email();
-        this.nombre = usuarioDTO.nombre();
-        this.apellidos = usuarioDTO.apellidos();
-        this.rol = usuarioDTO.rol();
+        this.email = usuarioDTO.getEmail();
+        this.nombre = usuarioDTO.getNombre();
+        this.apellidos = usuarioDTO.getApellidos();
+        this.rol = usuarioDTO.getRol();
         this.password = "<EMPTY>";
     }
 }

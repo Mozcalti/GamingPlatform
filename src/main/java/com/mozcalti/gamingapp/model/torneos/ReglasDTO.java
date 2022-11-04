@@ -20,6 +20,7 @@ public class ReglasDTO {
     private Integer tiempoEspera;
     private Integer arenaAncho;
     private Integer arenaAlto;
+
     public ReglasDTO(Reglas reglas) {
         this.idRegla = reglas.getIdRegla();
         this.numCompetidores = reglas.getNumCompetidores();

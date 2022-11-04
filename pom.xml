@@ -149,7 +149,7 @@
             <artifactId>robocode.host</artifactId>
             <version>1.0.0</version>
             <scope>system</scope>
-            <systemPath>${basedir}/libs/robocode.host.jar</systemPath>
+            <systemPath>${basedir}/libs/robocode.host-1.9.4.7.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -157,7 +157,7 @@
             <artifactId>robocode.battle</artifactId>
             <scope>system</scope>
             <version>1.0.0</version>
-            <systemPath>${basedir}/libs/robocode.battle.jar</systemPath>
+            <systemPath>${basedir}/libs/robocode.battle-1.9.4.7.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -165,7 +165,7 @@
             <artifactId>robocode.repository</artifactId>
             <version>1.0.0</version>
             <scope>system</scope>
-            <systemPath>${basedir}/libs/robocode.repository.jar</systemPath>
+            <systemPath>${basedir}/libs/robocode.repository-1.9.4.7.jar</systemPath>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/net.sf.robocode/robocode.core -->

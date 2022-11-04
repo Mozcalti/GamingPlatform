@@ -11,6 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ResultadosParticipantesDTO {
 
+    private Integer idParticipante;
     private String nombreParticipantes;
     private Integer idInstitucion;
     private String nombreInstitucion;

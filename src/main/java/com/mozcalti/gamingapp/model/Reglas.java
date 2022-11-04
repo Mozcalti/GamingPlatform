@@ -46,6 +46,7 @@ public class Reglas {
     @Basic
     @Column(name = "id_etapa")
     private Integer idEtapa;
+
     @OneToOne
     @JoinColumn(name = "id_etapa", referencedColumnName = "id_etapa",insertable = false, updatable = false)
     @JsonIgnore
@@ -60,6 +61,8 @@ public class Reglas {
         this.tiempoBatallaAprox = reglasDTO.getTiempoBatallaAprox();
         this.trabajo = reglasDTO.getTrabajo();
         this.tiempoEspera = reglasDTO.getTiempoEspera();
+        this.arenaAncho = reglasDTO.getArenaAncho();
+        this.arenaAlto = reglasDTO.getArenaAlto();
         this.idEtapa = idEtapa;
     }
 }

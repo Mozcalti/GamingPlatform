@@ -11,6 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ResultadosParticipantesGpoDTO {
 
+    private Integer idParticipante;
     private String nombreParticipantes;
     private String nombreRobot;
     private Double score;

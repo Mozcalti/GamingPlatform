@@ -17,18 +17,18 @@ public final class Constantes {
     public static final String MAIL_MESSAGE_TYPE = "text/html";
     public static final String MAIL_IMAGE_HEADER = "Content-ID";
     public static final String MAIL_ENCODING = "UTF-8";
-    public static final String INDIVIDUAL = "INDIVIDUAL";
-    public static final String EQUIPO = "EQUIPO";
-    public static final String OCURRIO_ERROR_INESPERADO = "Ocurrio un error inesperado";
     public static final String RECORD_INFO_INICIO = "^.+recordInfo.+$";
     public static final String RECORD_INFO_FIN = "^.+\\/recordInfo.+$";
     public static final String IMAGES_PLAI_LOGO = "/img/logo_plai.png";
     public static final String TODOS = "todos";
-    public static final String SEPARA_NOM_PARTICIPANTES = ", ";
-    public static final String SEPARA_MAILS = ",";
+
+    public static final String COMA_ESPACIO = ", ";
+    public static final String COMA = ",";
     public static final String ESPACIO = " ";
     public static final String DIAGONAL = "/";
 
     public static final String XML = ".xml";
+
+    public static final String ROL_PUBLIC = "PUBLIC";
 
 }

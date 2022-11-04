@@ -6,7 +6,7 @@ import com.mozcalti.gamingapp.model.batallas.resultado.ResultadosParticipantesDT
 import com.mozcalti.gamingapp.model.dto.DetalleBatallaDTO;
 import com.mozcalti.gamingapp.model.dto.TablaDTO;
 import com.mozcalti.gamingapp.model.torneos.EtapaDTO;
-import com.mozcalti.gamingapp.service.resultados.DashboardService;
+import com.mozcalti.gamingapp.service.dashboard.DashboardService;
 import com.mozcalti.gamingapp.utils.Constantes;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
