@@ -11,6 +11,7 @@ class AuthService {
 
                 if (response.headers["authorization"]) {
                     sessionStorage.setItem("token", response.headers["authorization"]);
+                    sessionStorage.setItem("user", response.data);
                 }
 
                 return response.data;
@@ -19,6 +20,7 @@ class AuthService {
 
     logout() {
         sessionStorage.removeItem("token");
+        sessionStorage.removeItem("user");
     }
 
     register(username, email, password) {
