@@ -15,6 +15,6 @@ public interface RobotsService extends GenericServiceAPI<Robots, Integer> {
     Robots guardarRobot(Robots robot);
     void eliminarRobot(int idRobot) throws IOException;
     @PostMapping(value = "/seleccionarRobot")
-    int seleccionarRobot(String nombre, int idEquipo);
+    void seleccionarRobot(String nombre, int idEquipo);
     List<RobotsDTO> obtenerRobots(Integer idEquipo);
 }

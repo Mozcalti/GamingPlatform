@@ -9,6 +9,7 @@ import ActivationForm from "./components/activacion";
 import ParticipantesList from "./components/participantes";
 import InstitucionesList from "./components/instituciones";
 import Robots from "./components/robots";
+import Batallas from "./components/dashboard";
 
 function App() {
     return (
@@ -56,6 +57,14 @@ function App() {
                     element={
                         <Protected>
                             <Robots />
+                        </Protected>
+                    }/>
+
+                <Route
+                    path="/dashboard"
+                    element={
+                        <Protected>
+                            <Batallas />
                         </Protected>
                     }/>
             </Routes>
