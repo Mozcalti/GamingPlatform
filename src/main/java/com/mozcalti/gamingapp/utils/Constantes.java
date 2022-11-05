@@ -29,4 +29,6 @@ public final class Constantes {
 
     public static final String XML = ".xml";
 
+    public static final String ROL_PUBLIC = "PARTICIPANTE";
+
 }

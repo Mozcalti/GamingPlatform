@@ -22,8 +22,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public void save(UsuarioDTO usuarioDTO) {
-        if (usuarioRepository.findByEmail(usuarioDTO.email()).isPresent()){
-            throw new ValidacionException("El usuario %s ya existe en la base de datos".formatted(usuarioDTO.email()));
+        if (usuarioRepository.findByEmail(usuarioDTO.getEmail()).isPresent()){
+            throw new ValidacionException("El usuario %s ya existe en la base de datos".formatted(usuarioDTO.getEmail()));
         }
 
         eventPublisher.publishEvent(new OnUsuarioRegistradoEvent(usuarioRepository.save(new Usuario(usuarioDTO))));

@@ -5,6 +5,7 @@ import com.mozcalti.gamingapp.model.batallas.resultado.ResultadosInstitucionGpoD
 import com.mozcalti.gamingapp.model.batallas.resultado.ResultadosParticipantesDTO;
 import com.mozcalti.gamingapp.model.dto.DetalleBatallaDTO;
 import com.mozcalti.gamingapp.model.dto.TablaDTO;
+import com.mozcalti.gamingapp.model.torneos.EtapaDTO;
 import com.mozcalti.gamingapp.service.dashboard.DashboardService;
 import com.mozcalti.gamingapp.utils.Constantes;
 import lombok.AllArgsConstructor;
@@ -39,8 +40,14 @@ public class DashboadsController {
         return dashboardService.gruopResultadosParticipantesBatalla(idEtapas);
     }
 
-    @GetMapping("/batallasIndividuales")
-    public List<DetalleBatallaDTO> getDetalleBatallasIndividuales(@RequestParam Integer idEtapas){
-        return dashboardService.listaDetalleBatallasIndividuales(idEtapas);
+    @GetMapping("/verBatallasIndividuales")
+    public List<DetalleBatallaDTO> getDetalleBatallasIndividuales(@RequestParam Integer idEtapa){
+        return dashboardService.listaDetalleBatallasIndividuales(idEtapa);
     }
+
+    @GetMapping("/obtenerEtapas")
+    public List<EtapaDTO> getEtapas(){
+        return dashboardService.listaEtapas();
+    }
+
 }

@@ -10,6 +10,7 @@ import com.mozcalti.gamingapp.utils.ServerUtils;
 import com.mozcalti.gamingapp.utils.StackTraceUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
@@ -35,12 +36,13 @@ public class RegistrationListener implements ApplicationListener<OnUsuarioRegist
         this.confirmRegistration(event);
     }
 
+    @Value("${server.baseUrl}")
+    private String baseUrl;
+
     private void confirmRegistration(OnUsuarioRegistradoEvent event) {
         Usuario usuario = event.getUsuario();
         String token = UUID.randomUUID().toString();
         verificationTokenService.addVerificationToken(usuario, token);
-
-        final String baseUrl = ServerUtils.getBaseUrl();
 
         String mailTo = usuario.getEmail();
 
@@ -48,6 +50,7 @@ public class RegistrationListener implements ApplicationListener<OnUsuarioRegist
         parameters.put("token", token);
         parameters.put("baseUrl", baseUrl);
         parameters.put("nombre", usuario.getNombre());
+        parameters.put("apellido", usuario.getApellidos());
 
         try {
             sendMailService.sendMail(mailTo, MAIL_TEMPLATE_KEY, parameters);
