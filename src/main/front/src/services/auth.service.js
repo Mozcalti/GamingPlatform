@@ -11,7 +11,7 @@ class AuthService {
 
                 if (response.headers["authorization"]) {
                     sessionStorage.setItem("token", response.headers["authorization"]);
-                    sessionStorage.setItem("user", response.data);
+                    sessionStorage.setItem("user", JSON.stringify(response.data));
                 }
 
                 return response.data;
