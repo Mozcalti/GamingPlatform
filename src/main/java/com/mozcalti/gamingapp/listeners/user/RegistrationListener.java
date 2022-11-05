@@ -50,6 +50,7 @@ public class RegistrationListener implements ApplicationListener<OnUsuarioRegist
         parameters.put("token", token);
         parameters.put("baseUrl", baseUrl);
         parameters.put("nombre", usuario.getNombre());
+        parameters.put("apellido", usuario.getApellidos());
 
         try {
             sendMailService.sendMail(mailTo, MAIL_TEMPLATE_KEY, parameters);

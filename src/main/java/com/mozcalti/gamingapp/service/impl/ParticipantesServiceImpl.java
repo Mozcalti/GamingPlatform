@@ -7,7 +7,6 @@ import com.mozcalti.gamingapp.repository.InstitucionRepository;
 import com.mozcalti.gamingapp.repository.ParticipantesRepository;
 import com.mozcalti.gamingapp.service.ParticipantesService;
 import com.mozcalti.gamingapp.service.correos.SendMailInvitacionSevice;
-import com.mozcalti.gamingapp.service.correos.impl.SendMailInvitacionServiceImpl;
 import com.mozcalti.gamingapp.service.usuarios.UsuarioService;
 import com.mozcalti.gamingapp.utils.*;
 import org.apache.poi.ss.usermodel.Cell;
