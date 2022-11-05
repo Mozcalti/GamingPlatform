@@ -75,6 +75,18 @@ public class TorneoValidation {
 
     }
 
+    public static void validaModificaTorneo(@NonNull Optional<Torneos> torneos) throws ValidacionException {
+
+        if (!torneos.isPresent()) {
+            throw new ValidacionException("No existe torneo a modificar");
+        }
+
+        if (!torneos.orElseThrow().getEtapasByIdTorneo().isEmpty()) {
+            throw new ValidacionException("No es posible modificar el Torneo ya que existen etapas configuradas");
+        }
+
+    }
+
     public static void validaEliminaTorneo(@NonNull Optional<Torneos> torneos) throws ValidacionException {
 
         if (!torneos.isPresent()) {
@@ -87,15 +99,10 @@ public class TorneoValidation {
 
     }
 
-    public static void validaGuardarEtapas(@NonNull List<Torneos> torneos, List<EtapaDTO> etapasDTOS,
-                                           List<Etapas> lstEtapas, boolean esAlta) {
+    public static void validaGuardarEtapas(@NonNull Optional<Torneos> torneos, List<EtapaDTO> etapasDTOS) {
 
-        if (torneos.isEmpty()) {
+        if (!torneos.isPresent()) {
             throw new ValidacionException("No existe torneo al cual agregar las etapas");
-        }
-
-        if(!lstEtapas.isEmpty() && esAlta) {
-            throw new ValidacionException("Ya existen etapas guardadas");
         }
 
         if (etapasDTOS.isEmpty()) {
@@ -143,6 +150,14 @@ public class TorneoValidation {
             }
         }
 
+    }
+
+    public static void validaEliminaEtapas(List<Etapas> etapas) {
+        for(Etapas etapa : etapas) {
+            if(!etapa.getEtapaBatallasByIdEtapa().isEmpty()) {
+                throw new ValidacionException("No es posible eliminar las etapas debido a que tiene batallas programadas");
+            }
+        }
     }
 
 }
