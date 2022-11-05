@@ -127,7 +127,7 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
             participante.setInstitucion(institucionRepository.findById(dto.getIdInstitucion()).orElse(null));
 
             usuarioService.save(new UsuarioDTO(participante));
-            sendMailInvitacionSevice.mailsInvitacion(new Participantes());
+            sendMailInvitacionSevice.mailsInvitacion(participante);
             listadoParticipantes.add(participante);
         }
         return (List<Participantes>) participantesRepository.saveAll(listadoParticipantes);
