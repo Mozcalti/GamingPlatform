@@ -14,12 +14,12 @@ import AuthService from "../../services/auth.service";
 import {useLocation, useNavigate} from "react-router-dom";
 
 const pages = [
-    {title: 'Inicio', path: '/'},
-    {title: 'Usuarios', path: '/usuarios'},
-    {title: 'Instituciones', path: '/instituciones'},
-    {title: 'Participantes', path: '/participantes'},
-    {title: 'Robots', path: '/robots'},
-    {title: 'Dashboard', path: '/dashboard'},
+    {title: 'Inicio', path: '/', role: 'STAFF'},
+    {title: 'Usuarios', path: '/usuarios', role: 'STAFF'},
+    {title: 'Instituciones', path: '/instituciones', role: 'STAFF'},
+    {title: 'Participantes', path: '/participantes', role: 'STAFF'},
+    {title: 'Robots', path: '/robots', role: 'PARTICIPANTE'},
+    {title: 'Dashboard', path: '/dashboard', role: 'STAFF'},
 ];
 
 function ResponsiveAppBar() {
@@ -27,8 +27,11 @@ function ResponsiveAppBar() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const pathname = location.pathname;
+    const user = AuthService.getCurrentUser();
+    console.log('user', user);
+    console.log('role', user.rol);
 
+    const pathname = location.pathname;
 
     const [anchorElNav, setAnchorElNav] = React.useState(null);
 
@@ -90,8 +93,8 @@ function ResponsiveAppBar() {
                             }}
                         >
                             {pages.map((page) => {
-                                    const {title, path} = page;
-                                    return (
+                                    const {title, path, role} = page;
+                                    return user.rol === role ? (
                                         <MenuItem key={path} onClick={handleCloseNavMenu}>
                                             <Button
                                                 key={path}
@@ -100,7 +103,7 @@ function ResponsiveAppBar() {
                                                 sx={{my: 1, color: 'black', display: 'block'}}>
                                                 {title}
                                             </Button>
-                                        </MenuItem>);
+                                        </MenuItem>) : null;
                                 }
                             )}
                         </Menu>
@@ -108,8 +111,8 @@ function ResponsiveAppBar() {
 
                     <Box sx={{flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
                         {pages.map((page) => {
-                                const {title, path} = page;
-                                return (
+                                const {title, path, role} = page;
+                                return user.rol === role ? (
                                     <Divider key={path}>
                                         <MenuItem key={path} selected={path === pathname}>
                                             <Button
@@ -121,7 +124,7 @@ function ResponsiveAppBar() {
                                             </Button>
                                         </MenuItem>
                                     </Divider>
-                                )
+                                ) : null;
                             }
                         )}
                         <Divider>

@@ -55,13 +55,19 @@ const Login = () => {
 
         AuthService.login(data.email, data.password)
             .then(
-                () => {
+                (response) => {
                     setValues({
                         ...values,
                         error: false,
                         loading: false,
                     });
-                    navigate("/usuarios")
+
+                    if(response.role === 'STAFF') {
+                        navigate("/usuarios")
+                    } else {
+                        navigate('/robots')
+                    }
+
                 },
                 error => {
                     setValues({
