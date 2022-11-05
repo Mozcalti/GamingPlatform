@@ -1,7 +1,6 @@
 package com.mozcalti.gamingapp.validations;
 
 import com.mozcalti.gamingapp.exceptions.ValidacionException;
-import com.mozcalti.gamingapp.model.Batallas;
 import com.mozcalti.gamingapp.model.Etapas;
 import com.mozcalti.gamingapp.model.batallas.BatallaDTO;
 import com.mozcalti.gamingapp.model.batallas.BatallasDTO;
@@ -10,8 +9,6 @@ import com.mozcalti.gamingapp.utils.DateUtils;
 import com.mozcalti.gamingapp.utils.Numeros;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class BatallasValidation {
