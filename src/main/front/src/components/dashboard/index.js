@@ -144,6 +144,64 @@ const Batallas = () => {
                         </Grid>
                     </Grid>
                 }
+                <Grid container spacing={2}>
+                    {batallas.map((b) => (
+
+                        <Grid item xs={12} md={12}>
+                            <Grid item xs={12} md={12} sx={{
+                                backgroundColor: "#009294",
+                                padding: "20px",
+                                borderTopRightRadius: "10px",
+                                color: "white"
+                            }}>
+                                <Typography variant="h5" component="div">Batalla {b.idBatalla} | Estado: {b.estatus} | Fecha: {b.fecha} | Horario: {b.horaInicio} - {b.horaFin}</Typography>
+                            </Grid>
+                            <Grid item xs={12} md={12} sx={{
+                                backgroundColor: "#8aac04",
+                                padding: "20px",
+                                color: "white",
+                            }}>
+                               <Typography variant="h6" component="div">Competidores: {b.reglasDTO.numCompetidores} | Rondas: {b.reglasDTO.numRondas} | Modalidad: {b.reglasDTO.trabajo} | Ancho de Arena: {b.reglasDTO.arenaAncho} | Alto de Arena: {b.reglasDTO.arenaAlto}</Typography>
+                            </Grid>
+                            <br/>
+
+                            { !b.estatus.localeCompare("TERMINADA") ?
+                                <Grid item xs={12} md={12}>
+                                    <DataGrid
+                                        rows={b.listaResultadosDTO}
+                                        columns={columns}
+                                        getRowId={row => row.teamLeaderName}
+                                        initialState={{sorting: {sortModel: [{field: 'rank', sort: 'asc',},],},}}
+                                        autoHeight={true}
+                                        hideFooter={true}
+                                        style={gridStyle}
+                                        sx={{
+                                            '& .MuiDataGrid-columnHeaderTitle': {
+                                                textOverflow: "clip",
+                                                whiteSpace: "break-spaces",
+                                                lineHeight: 1,
+                                                textAlign: "center"
+                                            }
+                                        }}
+                                    />
+                                </Grid>
+                                :
+                                <Grid item xs={12} md={12} sx={{
+                                    padding: "20px",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    border: "1px solid lightGray",
+                                    borderRadius: "5px"
+                                }}>
+                                    <Typography variant="h6" component="div">LA BATALLA SE ENCUENTRA {b.estatus}</Typography>
+                                </Grid>
+                            }
+                            <br/>
+                            <br/>
+                            <Divider/>
+                        </Grid>
+                        ))}
+                </Grid>
             </Container>
         </>
     );

@@ -18,6 +18,8 @@ class UserDetailsImpl implements UserDetails {
 
     private static final String ROLE_PREFIX = "ROLE_";
 
+    private final String nombre;
+    private final String apellidos;
     private final String username;
     private final String password;
     private final boolean accountNonExpired;
@@ -31,6 +33,8 @@ class UserDetailsImpl implements UserDetails {
         List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("%s%s".formatted(ROLE_PREFIX, usuario.getRol())));
 
         return new UserDetailsImpl(
+                usuario.getNombre(),
+                usuario.getApellidos(),
                 usuario.getEmail(),
                 usuario.getPassword(),
                 true,

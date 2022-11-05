@@ -22,10 +22,6 @@ public class TorneoValidation {
     public static void validaGuardarTorneo(@NonNull List<Torneos> lstTorneos, TorneoDTO torneoDTO, boolean esAlta)
             throws ValidacionException {
 
-        if(!lstTorneos.isEmpty() && esAlta) {
-            throw new ValidacionException("Por el momento no es posible agregar más de 1 torneo");
-        }
-
         DateUtils.isValidDate(torneoDTO.getFechaInicio(),
                 Constantes.FECHA_PATTERN,
                 "Fecha de inicio del torneo no válido");
@@ -38,6 +34,14 @@ public class TorneoValidation {
                 torneoDTO.getFechaFin(),
                 Constantes.FECHA_PATTERN,
                 "Fecha inicio del torneo no puede ser mayor a la fecha fin");
+
+        if(!lstTorneos.isEmpty() && esAlta) {
+            Torneos torneos = lstTorneos.get(lstTorneos.size()-Numeros.UNO.getNumero());
+            DateUtils.isDatesRangoValid(
+                    DateUtils.addDias(torneos.getFechaFin(), Constantes.FECHA_PATTERN, Numeros.UNO.getNumero()),
+                    torneoDTO.getFechaInicio(), Constantes.FECHA_PATTERN,
+                    "Las fechas del nuevo torneo debe continuar después del último registrado");
+        }
 
         String diaSemanaFIT = DateUtils.getDateFormat(
                 DateUtils.getDateFormat(torneoDTO.getFechaInicio(), Constantes.FECHA_PATTERN).getTime(),
@@ -71,11 +75,18 @@ public class TorneoValidation {
 
     }
 
-    public static void validaConsultarTorneo(@NonNull List<Torneos> torneos) {
-        if (torneos.isEmpty()) {
-            throw new ValidacionException("No existe torneo");
+    public static void validaModificaTorneo(@NonNull Optional<Torneos> torneos) throws ValidacionException {
+
+        if (!torneos.isPresent()) {
+            throw new ValidacionException("No existe torneo a modificar");
         }
+
+        if (!torneos.orElseThrow().getEtapasByIdTorneo().isEmpty()) {
+            throw new ValidacionException("No es posible modificar el Torneo ya que existen etapas configuradas");
+        }
+
     }
+
     public static void validaEliminaTorneo(@NonNull Optional<Torneos> torneos) throws ValidacionException {
 
         if (!torneos.isPresent()) {
@@ -88,15 +99,10 @@ public class TorneoValidation {
 
     }
 
-    public static void validaGuardarEtapas(@NonNull List<Torneos> torneos, List<EtapaDTO> etapasDTOS,
-                                           List<Etapas> lstEtapas, boolean esAlta) {
+    public static void validaGuardarEtapas(@NonNull Optional<Torneos> torneos, List<EtapaDTO> etapasDTOS) {
 
-        if (torneos.isEmpty()) {
+        if (!torneos.isPresent()) {
             throw new ValidacionException("No existe torneo al cual agregar las etapas");
-        }
-
-        if(!lstEtapas.isEmpty() && esAlta) {
-            throw new ValidacionException("Ya existen etapas guardadas");
         }
 
         if (etapasDTOS.isEmpty()) {
@@ -144,6 +150,14 @@ public class TorneoValidation {
             }
         }
 
+    }
+
+    public static void validaEliminaEtapas(List<Etapas> etapas) {
+        for(Etapas etapa : etapas) {
+            if(!etapa.getEtapaBatallasByIdEtapa().isEmpty()) {
+                throw new ValidacionException("No es posible eliminar las etapas debido a que tiene batallas programadas");
+            }
+        }
     }
 
 }
