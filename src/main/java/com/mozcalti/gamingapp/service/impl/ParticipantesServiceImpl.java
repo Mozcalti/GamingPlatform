@@ -6,6 +6,8 @@ import com.mozcalti.gamingapp.model.dto.*;
 import com.mozcalti.gamingapp.repository.InstitucionRepository;
 import com.mozcalti.gamingapp.repository.ParticipantesRepository;
 import com.mozcalti.gamingapp.service.ParticipantesService;
+import com.mozcalti.gamingapp.service.correos.SendMailInvitacionSevice;
+import com.mozcalti.gamingapp.service.correos.impl.SendMailInvitacionServiceImpl;
 import com.mozcalti.gamingapp.service.usuarios.UsuarioService;
 import com.mozcalti.gamingapp.utils.*;
 import org.apache.poi.ss.usermodel.Cell;
@@ -39,6 +41,9 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
 
     @Autowired
     private UsuarioService usuarioService;
+
+    @Autowired
+    private SendMailInvitacionSevice sendMailInvitacionService;
 
     @Override
     public CrudRepository<Participantes, Integer> getDao() {
@@ -122,7 +127,7 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
             participante.setInstitucion(institucionRepository.findById(dto.getIdInstitucion()).orElse(null));
 
             usuarioService.save(new UsuarioDTO(participante));
-
+            sendMailInvitacionService.mailsInvitacion(new Participantes());
             listadoParticipantes.add(participante);
         }
         return (List<Participantes>) participantesRepository.saveAll(listadoParticipantes);
