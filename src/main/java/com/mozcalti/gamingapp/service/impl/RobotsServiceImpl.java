@@ -13,6 +13,7 @@ import com.mozcalti.gamingapp.service.RobotsService;
 import com.mozcalti.gamingapp.utils.Numeros;
 import com.mozcalti.gamingapp.utils.RobocodeUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DuplicateKeyException;
@@ -122,6 +123,13 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
                 if (robotsRepository.findByNombre(originalFileName) != null) {
                     throw new DuplicateKeyException("Ya existe un robot con el nombre: " + "'" + originalFileName + "'");
                 } else {
+                    if(Files.exists(Paths.get(pathRobots + File.separator + originalFileName))){
+                        List<Path> files = RobocodeUtils.findByFileName(Paths.get(pathRobots), originalFileName);
+                        Path jarFile = files.get(Numeros.CERO.getNumero());
+                        String finalPath = pathRobots + File.separator + UUID.randomUUID();
+                        Files.move(jarFile, jarFile.resolveSibling(finalPath));
+                        borrarRobot(String.valueOf(Paths.get(finalPath).getFileName()));
+                    }
                     Path path = Paths.get(pathRobots);
                     Path serverFile = Files.createTempFile(path, "robot", ".jar");
                     String serverFileName = serverFile.toFile().getName();
@@ -231,4 +239,6 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
             throw new NoSuchFileException("El robot a borrar no existe");
         }
     }
+
+
 }
