@@ -254,11 +254,20 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
+    public TorneoDTO obtieneTorneos(Integer idTorneo) {
+        Optional<Torneos> torneos = torneosRepository.findById(idTorneo);
+        return torneos.stream().map(TorneoDTO::new).findFirst().orElseThrow();
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public void modificaTorneo(TorneoDTO torneoDTO) throws ValidacionException {
 
         TorneoValidation.validaGuardarTorneo(getTorneos(), torneoDTO, false);
 
         Optional<Torneos> torneos = torneosRepository.findById(torneoDTO.getIdTorneo());
+
+        TorneoValidation.validaModificaTorneo(torneos);
 
         if(torneos.isPresent()) {
             torneos.orElseThrow().setFechaInicio(torneoDTO.getFechaInicio());
@@ -292,20 +301,13 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class, RuntimeException.class})
-    public void persisteEtapas(List<EtapaDTO> etapasDTOS, boolean esAlta) throws ValidacionException {
+    public void guardaEtapas(Integer idTorneo, List<EtapaDTO> etapaDTOS) throws ValidacionException {
+        Optional<Torneos> torneos = torneosRepository.findById(idTorneo);
+        TorneoValidation.validaGuardarEtapas(torneos, etapaDTOS);
 
-        List<Torneos> lstTorneos = getTorneos();
-
-        List<Etapas> lstEtapas = new ArrayList<>();
-        etapasRepository.findAll().forEach(lstEtapas::add);
-
-        TorneoValidation.validaGuardarEtapas(lstTorneos, etapasDTOS, lstEtapas, esAlta);
-
-        Torneos torneos = lstTorneos.stream().findFirst().orElseThrow();
-
-        for(EtapaDTO etapaDTO : etapasDTOS) {
+        for(EtapaDTO etapaDTO : etapaDTOS) {
             // Etapa
-            Etapas etapas = new Etapas(etapaDTO, torneos.getIdTorneo());
+            Etapas etapas = new Etapas(etapaDTO, torneos.orElseThrow().getIdTorneo());
             etapas = etapasRepository.save(etapas);
 
             // Reglas
@@ -325,22 +327,13 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
                 }
             }
         }
-    }
 
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class, RuntimeException.class})
-    public void guardaEtapas(List<EtapaDTO> etapasDTOS) throws ValidacionException {
-        persisteEtapas(etapasDTOS, true);
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public List<EtapaDTO> obtieneEtapas() throws ValidacionException {
-
-        obtieneTorneos();
-
-        List<Etapas> etapas = new ArrayList<>();
-        etapasRepository.findAll().forEach(etapas::add);
+    public List<EtapaDTO> obtieneEtapas(Integer idTorneo) throws ValidacionException {
+        List<Etapas> etapas = etapasRepository.findAllByIdTorneo(idTorneo);
 
         List<EtapaDTO> etapaDTOS = new ArrayList<>();
         for(Etapas etapa : etapas) {
@@ -352,19 +345,52 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class, RuntimeException.class})
-    public void eliminarEtapas() {
-        obtieneTorneos();
-        reglasRepository.deleteAll();
-        etapaEquipoRepository.deleteAll();
-        participanteEquipoRepository.deleteAll();
-        equiposRepository.deleteAll();
-        etapasRepository.deleteAll();
+    public void eliminarEtapas(Integer idTorneo) {
+
+        List<Etapas> etapas = etapasRepository.findAllByIdTorneo(idTorneo);
+
+        TorneoValidation.validaEliminaEtapas(etapas);
+
+        for(Etapas etapa : etapas) {
+            reglasRepository.deleteById(etapa.getReglas().getIdRegla());
+
+            for(EtapaEquipo etapaEquipo : etapa.getEtapaEquiposByIdEtapa()) {
+                etapaEquipoRepository.deleteById(etapaEquipo.getIdEtapaEquipo());
+                participanteEquipoRepository.deleteByIdEquipo(etapaEquipo.getIdEquipo());
+                equiposRepository.deleteById(etapaEquipo.getIdEquipo());
+            }
+
+            etapasRepository.deleteById(etapa.getIdEtapa());
+        }
+
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class, RuntimeException.class})
-    public void modificaEtapas(List<EtapaDTO> etapasDTOS) throws ValidacionException {
-        persisteEtapas(etapasDTOS, false);
+    public void modificaEtapas(Integer idTorneo, List<EtapaDTO> etapasDTOS) throws ValidacionException {
+
+        Optional<Torneos> torneos = torneosRepository.findById(idTorneo);
+        TorneoValidation.validaGuardarEtapas(torneos, etapasDTOS);
+
+        for(EtapaDTO etapaDTO : etapasDTOS) {
+            // Etapa
+            Etapas etapa = etapasRepository.findById(etapaDTO.getIdEtapa()).orElseThrow();
+            etapa.setNumeroEtapa(etapaDTO.getNumeroEtapa());
+            etapa.setFechaInicio(etapaDTO.getFechaInicio());
+            etapa.setFechaFin(etapaDTO.getFechaFin());
+            etapasRepository.save(etapa);
+
+            // Reglas
+            etapa.getReglas().setNumCompetidores(etapaDTO.getReglas().getNumCompetidores());
+            etapa.getReglas().setNumRondas(etapaDTO.getReglas().getNumRondas());
+            etapa.getReglas().setTiempoBatallaAprox(etapaDTO.getReglas().getTiempoBatallaAprox());
+            etapa.getReglas().setTrabajo(etapaDTO.getReglas().getTrabajo());
+            etapa.getReglas().setTiempoEspera(etapaDTO.getReglas().getTiempoEspera());
+            etapa.getReglas().setArenaAncho(etapaDTO.getReglas().getArenaAncho());
+            etapa.getReglas().setArenaAlto(etapaDTO.getReglas().getArenaAlto());
+
+            etapasRepository.save(etapa);
+        }
     }
 
     @Override

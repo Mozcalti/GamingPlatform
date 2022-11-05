@@ -27,6 +27,11 @@ public class TorneoControlller {
         return torneosService.obtieneTorneos();
     }
 
+    @GetMapping("/consultar/{idTorneo}")
+    public TorneoDTO obtieneTorneos(@PathVariable Integer idTorneo) {
+        return torneosService.obtieneTorneos(idTorneo);
+    }
+
     @PutMapping("/cambiar")
     public void modificaTorneo(@RequestBody TorneoDTO torneoDTO) {
         torneosService.modificaTorneo(torneoDTO);
@@ -37,24 +42,25 @@ public class TorneoControlller {
         torneosService.eliminaTorneo(idTorneo);
     }
 
-    @PostMapping("/etapas/guardar")
-    public void guardaEtapas(@RequestBody List<EtapaDTO> etapasDTOS) {
-        torneosService.guardaEtapas(etapasDTOS);
+    @PostMapping("/etapas/guardar/{idTorneo}")
+    public void guardaEtapas(@PathVariable Integer idTorneo,
+                             @RequestBody List<EtapaDTO> etapaDTOS) {
+        torneosService.guardaEtapas(idTorneo, etapaDTOS);
     }
 
-    @GetMapping("/etapas/consultar")
-    public List<EtapaDTO> obtieneEtapas() {
-        return torneosService.obtieneEtapas();
+    @GetMapping("/etapas/consultar/{idTorneo}")
+    public List<EtapaDTO> obtieneEtapas(@PathVariable Integer idTorneo) {
+        return torneosService.obtieneEtapas(idTorneo);
     }
 
-    @DeleteMapping("/etapas/eliminar")
-    public void eliminaEtapas() {
-        torneosService.eliminarEtapas();
+    @DeleteMapping("/etapas/eliminar/{idTorneo}")
+    public void eliminaEtapas(@PathVariable Integer idTorneo) {
+        torneosService.eliminarEtapas(idTorneo);
     }
 
-    @PutMapping("/etapas/cambiar")
-    public void modificaTorneo(@RequestBody List<EtapaDTO> etapasDTOS) {
-        torneosService.modificaEtapas(etapasDTOS);
+    @PutMapping("/etapas/cambiar/{idTorneo}")
+    public void modificaTorneo(@PathVariable Integer idTorneo, @RequestBody List<EtapaDTO> etapasDTOS) {
+        torneosService.modificaEtapas(idTorneo, etapasDTOS);
     }
 
 }

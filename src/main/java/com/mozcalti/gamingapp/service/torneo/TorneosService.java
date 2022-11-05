@@ -28,19 +28,19 @@ public interface TorneosService extends GenericServiceAPI<Torneos, Integer> {
 
     List<TorneoDTO> obtieneTorneos();
 
+    TorneoDTO obtieneTorneos(Integer idTorneo);
+
     void modificaTorneo(TorneoDTO torneoDTO) throws ValidacionException;
 
     void eliminaTorneo(Integer idTorneo);
 
-    void persisteEtapas(List<EtapaDTO> etapasDTOS, boolean esAlta) throws ValidacionException;
+    void guardaEtapas(Integer idTorneo, List<EtapaDTO> etapaDTOS) throws ValidacionException;
 
-    void guardaEtapas(List<EtapaDTO> etapasDTOS) throws ValidacionException;
+    List<EtapaDTO> obtieneEtapas(Integer idTorneo) throws ValidacionException;
 
-    List<EtapaDTO> obtieneEtapas() throws ValidacionException;
+    void eliminarEtapas(Integer idTorneo);
 
-    void eliminarEtapas();
-
-    void modificaEtapas(List<EtapaDTO> etapasDTOS) throws ValidacionException;
+    void modificaEtapas(Integer idTorneo, List<EtapaDTO> etapasDTOS) throws ValidacionException;
 
     List<DatosCorreoBatallaDTO> getDatosCorreoBatalla() throws ValidacionException;
 
