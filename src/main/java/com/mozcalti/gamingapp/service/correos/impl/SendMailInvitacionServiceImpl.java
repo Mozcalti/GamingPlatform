@@ -23,8 +23,8 @@ public class SendMailInvitacionServiceImpl implements SendMailInvitacionSevice {
 
         String mailTo = participantes.getCorreo();
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("nombre", participantes.getNombre());
-        parameters.put("apellido", participantes.getApellidos());
+        parameters.put("nombre" , participantes.getNombre());
+        parameters.put("apellido" , participantes.getApellidos());
         sendMailService.sendMail(mailTo, MAIL_TEMPLATE, parameters);
         log.info("Se envio el email de bienvenida a los participantes");
     }

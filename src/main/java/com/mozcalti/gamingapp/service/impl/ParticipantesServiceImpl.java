@@ -43,7 +43,7 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
     private UsuarioService usuarioService;
 
     @Autowired
-    private SendMailInvitacionSevice sendMailInvitacionService;
+    private SendMailInvitacionSevice sendMailInvitacionSevice;
 
     @Override
     public CrudRepository<Participantes, Integer> getDao() {
@@ -127,7 +127,7 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
             participante.setInstitucion(institucionRepository.findById(dto.getIdInstitucion()).orElse(null));
 
             usuarioService.save(new UsuarioDTO(participante));
-            sendMailInvitacionService.mailsInvitacion(new Participantes());
+            sendMailInvitacionSevice.mailsInvitacion(new Participantes());
             listadoParticipantes.add(participante);
         }
         return (List<Participantes>) participantesRepository.saveAll(listadoParticipantes);
