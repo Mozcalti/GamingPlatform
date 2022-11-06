@@ -3,23 +3,14 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import {Divider, FormControl, Grid, InputLabel, MenuItem, Select, Stack, TextField} from "@mui/material";
 import DialogContent from "@mui/material/DialogContent";
-import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
-import {AdapterMoment} from "@mui/x-date-pickers/AdapterMoment";
-import {DatePicker} from "@mui/x-date-pickers/DatePicker";
-import moment from "moment";
 import DialogActions from "@mui/material/DialogActions";
 import React, {useState} from "react";
 import {TorneoModel} from "./Torneo.model";
-import ParticipantesService from "../participantes/Participantes.service";
 import TorneoService from "./Torneo.service";
-import ControlPointIcon from "@mui/icons-material/ControlPoint";
-import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 
 
 function DetalleTorneo(t) {
     let numeroEtapas = [2];
-    const [fechaInicio, setFechaInicio] = useState(null);
-    const [fechaTermino, setFechaTermino] = useState(null);
     const [open, setOpen] = useState(false);
     const [torneo, setTorneo] = useState(new TorneoModel("","",""))
     const [listaFechaHabil, setListaFechaHabil] = useState([
@@ -52,15 +43,7 @@ function DetalleTorneo(t) {
     const abrirModal = () => {
         setOpen(true);
     };
-    const handleListaFechaHabilAdd = () => {
-        setListaFechaHabil([...listaFechaHabil, {horaIniHabil: "", horaFinHabil: ""}])
-    }
 
-    const handleListaFechaHabilRemove = (index) => {
-        const list = [...listaFechaHabil]
-        list.splice(index, 1)
-        setListaFechaHabil(list)
-    }
     const guardarTorneo = data => {
         console.log({...data,...{"horasHabiles": listaFechaHabil}})
         cerrarModal();
