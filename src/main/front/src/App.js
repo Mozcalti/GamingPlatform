@@ -68,6 +68,14 @@ function App() {
                             <Batallas />
                         </Protected>
                     }/>
+<Route
+                    path="/torneos"
+                    element={
+                        <Protected>
+                            <Torneos />
+                        </Protected>
+                    }/>
+
             </Routes>
         </HashRouter>
     );
