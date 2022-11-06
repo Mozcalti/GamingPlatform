@@ -4,17 +4,22 @@ import com.mozcalti.gamingapp.commons.GenericServiceImpl;
 import com.mozcalti.gamingapp.exceptions.UtilsException;
 import com.mozcalti.gamingapp.exceptions.ValidacionException;
 import com.mozcalti.gamingapp.model.*;
+import com.mozcalti.gamingapp.model.batallas.BatallaDTO;
+import com.mozcalti.gamingapp.model.batallas.BatallaFechaHoraInicioDTO;
+import com.mozcalti.gamingapp.model.batallas.BatallaParticipanteDTO;
+import com.mozcalti.gamingapp.model.batallas.BatallasDTO;
 import com.mozcalti.gamingapp.model.catalogos.EtapasDTO;
 import com.mozcalti.gamingapp.model.catalogos.InstitucionDTO;
 import com.mozcalti.gamingapp.model.catalogos.ParticipanteDTO;
+import com.mozcalti.gamingapp.model.participantes.EquiposDTO;
+import com.mozcalti.gamingapp.model.participantes.InstitucionEquiposDTO;
 import com.mozcalti.gamingapp.repository.*;
 import com.mozcalti.gamingapp.robocode.BattleRunner;
 import com.mozcalti.gamingapp.robocode.Robocode;
 import com.mozcalti.gamingapp.service.batallas.BatallasService;
-import com.mozcalti.gamingapp.utils.Constantes;
-import com.mozcalti.gamingapp.utils.DateUtils;
-import com.mozcalti.gamingapp.utils.EstadosBatalla;
-import com.mozcalti.gamingapp.utils.Numeros;
+import com.mozcalti.gamingapp.service.torneo.TorneosService;
+import com.mozcalti.gamingapp.utils.*;
+import com.mozcalti.gamingapp.validations.BatallasValidation;
 import com.mozcalti.gamingapp.validations.DashboardsGlobalResultadosValidation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,7 +59,13 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
     private ParticipantesRepository participantesRepository;
 
     @Autowired
-    private ParticipanteEquipoRepository participanteEquipoRepository;
+    private TorneosService torneosService;
+
+    @Autowired
+    private EtapaBatallaRepository etapaBatallaRepository;
+
+    @Autowired
+    private BatallaParticipantesRepository batallaParticipantesRepository;
 
     @Override
     public CrudRepository<Batallas, Integer> getDao() {
@@ -203,6 +214,172 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
         }
 
         return participanteDTOS;
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public BatallasDTO generaBatallas(Integer idEtapa) {
+
+        Etapas etapas = etapasRepository.findById(idEtapa).orElseThrow();
+        BatallasDTO batallasDTO = new BatallasDTO();
+
+        BatallasValidation.validaGeneraBatallas(etapas, idEtapa);
+
+        Integer numCompetidores = etapas.getReglas().getNumCompetidores();
+        Integer numRondas = etapas.getReglas().getNumRondas();
+
+        EquiposDTO equiposDTO = torneosService.obtieneInstitucionEquipos();
+
+        List<BatallaFechaHoraInicioDTO> batallaFechaHoraInicioDTOS =
+                torneosService.obtieneFechasBatalla(idEtapa, TorneoUtils
+                        .calculaTotalBatallas(equiposDTO.getIdEquipos().size(), numCompetidores));
+
+        if(etapas.getReglas().getTrabajo().equals(TipoBatalla.INDIVIDUAL.getTrabajo())) {
+            for(InstitucionEquiposDTO institucionEquiposDTO : equiposDTO.getEquiposByInstitucion()) {
+                if(!institucionEquiposDTO.getIdEquipos().isEmpty()) {
+                    List<Integer> randomNumbers = TorneoUtils.armaEquipos(institucionEquiposDTO.getIdEquipos());
+                    List<List<BatallaParticipanteDTO>> lists = torneosService.obtieneParticipantes(
+                            randomNumbers, numCompetidores);
+
+                    for(int x=Numeros.CERO.getNumero(); x<lists.size(); x++) {
+                        BatallaDTO batallaDTO = new BatallaDTO(batallaFechaHoraInicioDTOS.get(x));
+                        batallaDTO.setIdEtapa(idEtapa);
+                        batallaDTO.setIdInstitucion(institucionEquiposDTO.getIdInstitucion());
+                        batallaDTO.setBatallaParticipantes(lists.get(x));
+                        batallaDTO.setRondas(numRondas);
+                        batallasDTO.getBatallas().add(batallaDTO);
+                    }
+                }
+            }
+        } else if(etapas.getReglas().getTrabajo().equals(TipoBatalla.EQUIPO.getTrabajo())) {
+            List<Integer> randomNumbers = TorneoUtils.armaEquipos(equiposDTO.getIdEquipos());
+            List<List<BatallaParticipanteDTO>> lists = torneosService.obtieneParticipantes(
+                    randomNumbers, numCompetidores);
+
+            for(int x=Numeros.CERO.getNumero(); x<lists.size(); x++) {
+                BatallaDTO batallaDTO = new BatallaDTO(batallaFechaHoraInicioDTOS.get(x));
+                batallaDTO.setIdEtapa(idEtapa);
+                batallaDTO.setBatallaParticipantes(lists.get(x));
+                batallaDTO.setRondas(numRondas);
+                batallasDTO.getBatallas().add(batallaDTO);
+            }
+        }
+
+        return batallasDTO;
+
+    }
+
+    @Override
+    @Transactional(rollbackFor = {Exception.class, RuntimeException.class})
+    public void saveBatallas(BatallasDTO batallasDTO) throws ValidacionException {
+
+        BatallasValidation.validaGuardaBatallas(batallasDTO);
+
+        Batallas batallas;
+        EtapaBatalla etapaBatalla;
+        BatallaParticipantes batallaParticipantes;
+        for(BatallaDTO batallaDTO : batallasDTO.getBatallas()) {
+            batallas = new Batallas(batallaDTO);
+            batallas = batallasRepository.save(batallas);
+
+            batallaDTO.setIdBatalla(batallas.getIdBatalla());
+
+            etapaBatalla = new EtapaBatalla(batallaDTO.getIdEtapa(), batallas.getIdBatalla());
+            etapaBatallaRepository.save(etapaBatalla);
+
+            for(BatallaParticipanteDTO batallaParticipanteDTO : batallaDTO.getBatallaParticipantes()) {
+                batallaParticipantes = new BatallaParticipantes(batallaParticipanteDTO, batallas.getIdBatalla());
+                batallaParticipantesRepository.save(batallaParticipantes);
+            }
+        }
+
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public BatallasDTO getBatallas(Integer idEtapa) {
+
+        Etapas etapas = etapasRepository.findById(idEtapa).orElseThrow();
+
+        BatallasDTO batallasDTO = new BatallasDTO();
+        BatallaDTO batallaDTO;
+        Batallas batallas;
+        List<BatallaParticipanteDTO> batallaParticipantesDTO;
+        for(EtapaBatalla etapaBatalla : etapas.getEtapaBatallasByIdEtapa()) {
+            batallas = batallasRepository.findById(etapaBatalla.getIdBatalla()).orElseThrow();
+
+            batallaDTO = new BatallaDTO();
+            batallaDTO.setIdEtapa(idEtapa);
+            batallaDTO.setIdBatalla(batallas.getIdBatalla());
+            batallaDTO.setFecha(batallas.getFecha());
+            batallaDTO.setHoraInicio(batallas.getHoraInicio());
+            batallaDTO.setHoraFin(batallas.getHoraFin());
+
+            batallaParticipantesDTO = new ArrayList<>();
+            for(BatallaParticipantes batallaParticipantes : batallas.getBatallaParticipantesByIdBatalla()) {
+                batallaParticipantesDTO.add(new BatallaParticipanteDTO(batallaParticipantes));
+            }
+
+            batallaDTO.setRondas(batallas.getRondas());
+            batallaDTO.setBatallaParticipantes(batallaParticipantesDTO);
+            batallasDTO.getBatallas().add(batallaDTO);
+        }
+
+        return batallasDTO;
+
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class, RuntimeException.class})
+    public void updateBatallas(BatallasDTO batallasDTO) throws ValidacionException {
+
+        BatallasValidation.validaGuardaBatallas(batallasDTO);
+
+        for(BatallaDTO batallaDTO : batallasDTO.getBatallas()) {
+
+            Batallas batallas = batallasRepository.findById(batallaDTO.getIdBatalla()).orElseThrow();
+            batallas.setFecha(batallaDTO.getFecha());
+            batallas.setHoraInicio(batallaDTO.getHoraInicio());
+            batallas.setHoraFin(batallaDTO.getHoraFin());
+            batallas.setRondas(batallaDTO.getRondas());
+
+            batallasRepository.save(batallas);
+
+            if(batallaDTO.getBatallaParticipantes().size() != batallas.getBatallaParticipantesByIdBatalla().size()) {
+                for(BatallaParticipantes batallaParticipantes : batallas.getBatallaParticipantesByIdBatalla()) {
+                    batallaParticipantesRepository.deleteById(batallaParticipantes.getIdBatallaParticipante());
+                }
+
+                for(BatallaParticipanteDTO batallaParticipanteDTO : batallaDTO.getBatallaParticipantes()) {
+                    BatallaParticipantes batallaParticipantes = new BatallaParticipantes(batallaParticipanteDTO, batallas.getIdBatalla());
+                    batallaParticipantesRepository.save(batallaParticipantes);
+                }
+            }
+
+        }
+
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class, RuntimeException.class})
+    public void deleteBatallas(Integer idEtapa) throws ValidacionException {
+
+        Etapas etapas = etapasRepository.findById(idEtapa).orElseThrow();
+
+        BatallasValidation.validaExistenBatallas(etapas);
+
+        Batallas batallas;
+        for(EtapaBatalla etapaBatalla : etapas.getEtapaBatallasByIdEtapa()) {
+            batallas = batallasRepository.findById(etapaBatalla.getIdBatalla()).orElseThrow();
+
+            for(BatallaParticipantes batallaParticipantes : batallas.getBatallaParticipantesByIdBatalla()) {
+                batallaParticipantesRepository.deleteById(batallaParticipantes.getIdBatallaParticipante());
+            }
+
+            etapaBatallaRepository.deleteById(etapaBatalla.getIdEtapaBatalla());
+            batallasRepository.deleteById(batallas.getIdBatalla());
+        }
+
     }
 
 }

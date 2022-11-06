@@ -14,16 +14,15 @@ import {LoadingButton} from "@mui/lab";
 import {Send} from "@mui/icons-material";
 import PasswordStrengthBar from "react-password-strength-bar";
 import RegistroService from "./registro.service";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import Dialog from "@mui/material/Dialog";
 import Box from "@mui/material/Box";
 
-
 const ActivationForm = () => {
-    const queryParams = new URLSearchParams(window.location.search)
+    const [queryParams] = useSearchParams()
     const token = queryParams.get("token")
 
     const [status, setStatus] = useState({

@@ -1,6 +1,6 @@
 import './App.css';
 import Login from './components/login';
-import {BrowserRouter, Route, Routes} from "react-router-dom";
+import {HashRouter, Route, Routes} from "react-router-dom";
 import Protected from "./components/protected";
 import MiPerfil from "./components/perfil";
 import UsersList from "./components/users";
@@ -10,10 +10,11 @@ import ParticipantesList from "./components/participantes";
 import InstitucionesList from "./components/instituciones";
 import Robots from "./components/robots";
 import Batallas from "./components/dashboard";
+import Torneos from "./components/torneos";
 
 function App() {
     return (
-        <BrowserRouter>
+        <HashRouter>
             <Routes>
                 <Route path="/" element={<Login/>}/>
                 <Route path="/registro" element={<ActivationLanding/>}/>
@@ -67,8 +68,16 @@ function App() {
                             <Batallas />
                         </Protected>
                     }/>
+<Route
+                    path="/torneos"
+                    element={
+                        <Protected>
+                            <Torneos />
+                        </Protected>
+                    }/>
+
             </Routes>
-        </BrowserRouter>
+        </HashRouter>
     );
 }
 
