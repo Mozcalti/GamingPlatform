@@ -22,8 +22,8 @@ const Robots = () => {
     const [errorResponse, setErrorResponse] = useState("");
     const [successResponse, setSuccessResponse] = useState("");
 
-    const getRobots = (idParticipante) =>{
-        RobotsService.lista(idParticipante)
+    const getRobots = (idEquipo) =>{
+        RobotsService.lista(idEquipo)
             .then(
                 (response) => {
                     setRobots(response.data)
@@ -68,14 +68,11 @@ const Robots = () => {
             )
     }
 
-
-
-
     const agregarRobot = (robot) => {
         RobotsService
             .cargarRobot(robot)
             .then(
-                () => {
+                (response) => {
                     setResultado({...resultado, success: true})
                     setSuccessResponse("Se guardo correctamente el Robot");
                     getRobots(24)

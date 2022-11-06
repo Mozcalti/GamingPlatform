@@ -14,12 +14,13 @@ import AuthService from "../../services/auth.service";
 import {useLocation, useNavigate} from "react-router-dom";
 
 const pages = [
-    {title: 'Inicio', path: '/'},
-    {title: 'Usuarios', path: '/usuarios'},
-    {title: 'Instituciones', path: '/instituciones'},
-    {title: 'Participantes', path: '/participantes'},
-    {title: 'Robots', path: '/robots'},
-    {title: 'Dashboard', path: '/dashboard'},
+    {title: 'Inicio', path: '#/'},
+    {title: 'Usuarios', path: '#/usuarios'},
+    {title: 'Instituciones', path: '#/instituciones'},
+    {title: 'Participantes', path: '#/participantes'},
+    {title: 'Robots', path: '#/robots'},
+    {title: 'Dashboard', path: '#/dashboard'},
+    {title: 'Torneos', path: '#/torneos'},
 ];
 
 function ResponsiveAppBar() {

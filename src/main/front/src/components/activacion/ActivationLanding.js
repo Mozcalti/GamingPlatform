@@ -4,17 +4,19 @@ import React, {useEffect, useState} from "react";
 import {Button, Container, Grid, Paper, Typography} from "@mui/material";
 import Box from "@mui/material/Box";
 import {Undo} from "@mui/icons-material";
+import {useSearchParams} from 'react-router-dom';
 
 
 const ActivationLanding = () => {
     const [message, setMessage] = useState("");
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
 
     useEffect(() => {
         const validaToken = token => {
             RegistroService
                 .verify(token)
-                .then( () => {
+                .then(() => {
                         navigate(`/activacion?token=${token}`);
                     },
                     error => {
@@ -22,8 +24,7 @@ const ActivationLanding = () => {
                     })
         };
 
-        const queryParams = new URLSearchParams(window.location.search);
-        validaToken(queryParams.get("token"))
+        validaToken(searchParams.get("token"))
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -43,14 +44,14 @@ const ActivationLanding = () => {
                         justifyContent="center"
                         alignItems="center" spacing={5}
                     >
-                        <Grid item >
+                        <Grid item>
                             <Box
                                 component="img"
                                 sx={{
                                     height: 233,
                                     width: 350,
-                                    maxHeight: { xs: 233, md: 167 },
-                                    maxWidth: { xs: 350, md: 250 },
+                                    maxHeight: {xs: 233, md: 167},
+                                    maxWidth: {xs: 350, md: 250},
                                 }}
                                 alt={message}
                                 src="/img/token_error.svg"
@@ -58,16 +59,18 @@ const ActivationLanding = () => {
 
                         </Grid>
                         <Grid item xs={8}>
-                            <Typography  >
+                            <Typography>
                                 {message}
                             </Typography>
                         </Grid>
-                        <Grid item >
+                        <Grid item>
                             <Button
-                                onClick={() => { navigate("/")}}
+                                onClick={() => {
+                                    navigate("/")
+                                }}
                                 variant="contained"
-                                startIcon={<Undo />}
-                                color="primary"  >
+                                startIcon={<Undo/>}
+                                color="primary">
                                 Ir al Inicio
                             </Button>
                         </Grid>
