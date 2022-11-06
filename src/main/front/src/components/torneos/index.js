@@ -65,6 +65,7 @@ const Torneos = () => {
 
     useEffect(() => {
         consultarTorneos();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
 
