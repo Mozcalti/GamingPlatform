@@ -36,7 +36,7 @@ public class RegistrationListener implements ApplicationListener<OnUsuarioRegist
         this.confirmRegistration(event);
     }
 
-    @Value("${server.baseUrl}")
+    @Value("${server.baseUrl}/#")
     private String baseUrl;
 
     private void confirmRegistration(OnUsuarioRegistradoEvent event) {
