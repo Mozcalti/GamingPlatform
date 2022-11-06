@@ -32,7 +32,7 @@ class AuthService {
     }
 
     getCurrentUser() {
-        return sessionStorage.getItem('token');
+        return JSON.parse(sessionStorage.getItem('user'));
     }
 }
 
