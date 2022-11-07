@@ -64,8 +64,6 @@ public class DashboardServiceImpl implements DashboardService {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class, RuntimeException.class})
     public void buscaSalidaBatallas(Batallas batalla) {
 
-        StringBuilder horaInicioBatalla = new StringBuilder();
-        StringBuilder horaFinBatalla = new StringBuilder();
         StringBuilder fileResultadoBatallas = new StringBuilder();
 
         try {
