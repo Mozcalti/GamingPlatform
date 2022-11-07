@@ -21,6 +21,54 @@ const explodedSound = new Audio();
 explodedSound.src = "sounds/explode.wav";
 explodedSound.autoplay = true;
 
+let battleXml;
+let battleParticipantes;
+
+function obtieneJson() {
+    fetch("./../jsonViewBattle/" + getURLParameters("token") + ".json")
+        .then(function (resp) {
+            return resp.json();
+        })
+        .then(function (data) {
+            battleXml = data.battleXml;
+            battleParticipantes = data.battleParticipantes;
+            init(data.battleFecha);
+        });
+}
+
+function getURLParameters(paramName)
+{
+    var sURL = window.document.URL.toString();
+
+    if (sURL.indexOf("?") > 0)
+    {
+        var arrParams = sURL.split("?");
+        var arrURLParams = arrParams[1].split("&");
+        var arrParamNames = new Array(arrURLParams.length);
+        var arrParamValues = new Array(arrURLParams.length);
+
+        var i = 0;
+        for (i = 0; i<arrURLParams.length; i++)
+        {
+            var sParam =  arrURLParams[i].split("=");
+            arrParamNames[i] = sParam[0];
+            if (sParam[1] != "")
+                arrParamValues[i] = unescape(sParam[1]);
+            else
+                arrParamValues[i] = "No Value";
+        }
+
+        for (i=0; i<arrURLParams.length; i++)
+        {
+            if (arrParamNames[i] == paramName)
+            {
+                return arrParamValues[i];
+            }
+        }
+        return "No Parameters Found";
+    }
+}
+
 /*
     Prevents user accidentally leaving or refreshing tab
     Will show pop up asking for confirmation
@@ -133,12 +181,11 @@ function createCustomElement(tag, value, id, className){
  * a loading screen, or initiate the battle animation
  */
 
-function init(){
-
-    let battleDate = new Date(2022, 9, 14, 14, 19);
+function init(battleFecha){
+    let battleDate = new Date(battleFecha);
+    let battleDateDisplay = new Date(battleFecha);
     let interval = 400;
-    let minutesOffset = 1;
-    let participants = ["Oscar Gutierrez", "Miranda Crisostomo", "Luis Ramirez","Martin Esteban","Ana Lopez", "Felipe González", "Carolina Pérez", "Augusto Hernández", "Jorge Escobar", "Lorena Camarena"];
+    let minutesOffset = 3;
     let timer = window.setInterval(function () {
         let now = new Date().getTime();
         let distance = battleDate - now;
@@ -154,8 +201,8 @@ function init(){
                 document.getElementById("streamMsg").innerHTML = "REPETICIÓN";
                 document.getElementById("resultsButton").style.display = "flex";
                 document.getElementById("repeatInfoMsg").innerHTML = "Esta batalla tuvo lugar el día  " +
-                    battleDate.toLocaleDateString() + " a las " + battleDate.toLocaleTimeString() + " horas."
-                document.getElementById("participantsInfo").innerHTML = "Los participantes fueron: " + participants.toString().replaceAll(",", ", ") + ".";
+                    battleDate.toLocaleDateString() + " a las " + battleDateDisplay.toLocaleTimeString() + " horas."
+                document.getElementById("participantsInfo").innerHTML = "Los participantes fueron: " + battleParticipantes.toString().replaceAll(",", ", ") + ".";
             }else{
                 document.getElementById("streamMsg").innerHTML = "EN VIVO";
             }
@@ -170,7 +217,7 @@ function init(){
             else {
                 //battle date info
                 document.getElementById("stateMsg").innerHTML = "La batalla entre los participantes:<br/>"+
-                    participants.toString().replaceAll(",", "<br/>") +
+                    battleParticipantes.toString().replaceAll(",", "<br/>") +
                     "<br/><br/>Esta programada para el día:<br/>"+
                     battleDate.getDate() + " / " + (battleDate.getMonth()+1) + " / " + battleDate.getUTCFullYear() + " a las "+battleDate.getHours()
                     +":"+battleDate.getMinutes()+" horas<br /><br />" +
@@ -199,7 +246,7 @@ function initBattle() {
  */
 function getResponse(callback) {
 
-    const battleFiles = ['../../../test/resources/battles/melee.xml'];
+    const battleFiles = [battleXml];
 
     let battleNumber = 0;
     let xhr = new XMLHttpRequest();
@@ -742,4 +789,4 @@ function selectPartImage(color, part) {
     return image;
 }
 
-window.addEventListener('load', () => init());
+window.addEventListener('load', () => obtieneJson());

@@ -6,11 +6,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.NONE)
 public final class Constantes {
     public static final String FECHA_HORA_PATTERN = "dd/MM/yyyy hh:mm a";
-
     public static final String TIMESTAMP_PATTERN = "yyyy-MM-dd HH:mm:ss.SSSSSS";
-
     public static final String FECHA_PATTERN = "dd/MM/yyyy";
     public static final String HORA_PATTERN = "hh:mm a";
+    public static final String FECHA_HORA_PATTERN_VIEW = "yyyy-MM-dd HH:mm";
     public static final String SABADO = "Sat";
     public static final String DOMINGO = "Sun";
     public static final String DIA_PATTERN = "E";
@@ -21,7 +20,6 @@ public final class Constantes {
     public static final String RECORD_INFO_FIN = "^.+\\/recordInfo.+$";
     public static final String IMAGES_PLAI_LOGO = "/img/logo_plai.png";
     public static final String TODOS = "todos";
-
     public static final String COMA_ESPACIO = ", ";
     public static final String COMA = ",";
     public static final String ESPACIO = " ";
@@ -29,6 +27,10 @@ public final class Constantes {
 
     public static final String XML = ".xml";
 
+    public static final String JSON = ".json";
     public static final String ROL_PUBLIC = "PARTICIPANTE";
+    public static final String PATH_VIEW_XML = "../../resources/battles/";
+
+    public static final String PARAM_TOKEN = "?token=";
 
 }

@@ -45,6 +45,14 @@ public class Batallas {
     @Column(name = "estatus")
     private String estatus;
 
+    @Basic
+    @Column(name = "view_url")
+    private String viewUrl;
+
+    @Basic
+    @Column(name = "view_token")
+    private String viewToken;
+
     @OneToMany(mappedBy = "batallasByIdBatalla", fetch = FetchType.EAGER)
     private Collection<BatallaParticipantes> batallaParticipantesByIdBatalla;
 

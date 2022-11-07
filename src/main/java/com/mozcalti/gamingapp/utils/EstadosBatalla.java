@@ -9,7 +9,7 @@ public enum EstadosBatalla {
     PENDIENTE("PENDIENTE"),
     EN_PROCESO("EN PROCESO"),
     TERMINADA("TERMINADA"),
-    CANCELADA("CANCELADA"),
-    RESULTADOS("RESULTADOS");
+    CANCELADA("CANCELADA");
+
     private final String estado;
 }

@@ -1,5 +1,8 @@
 package com.mozcalti.gamingapp.service.batallas.impl;
 
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.mozcalti.gamingapp.commons.GenericServiceImpl;
 import com.mozcalti.gamingapp.exceptions.UtilsException;
 import com.mozcalti.gamingapp.exceptions.ValidacionException;
@@ -8,6 +11,7 @@ import com.mozcalti.gamingapp.model.batallas.BatallaDTO;
 import com.mozcalti.gamingapp.model.batallas.BatallaFechaHoraInicioDTO;
 import com.mozcalti.gamingapp.model.batallas.BatallaParticipanteDTO;
 import com.mozcalti.gamingapp.model.batallas.BatallasDTO;
+import com.mozcalti.gamingapp.model.batallas.view.BatallaViewDTO;
 import com.mozcalti.gamingapp.model.catalogos.EtapasDTO;
 import com.mozcalti.gamingapp.model.catalogos.InstitucionDTO;
 import com.mozcalti.gamingapp.model.catalogos.ParticipanteDTO;
@@ -17,6 +21,7 @@ import com.mozcalti.gamingapp.repository.*;
 import com.mozcalti.gamingapp.robocode.BattleRunner;
 import com.mozcalti.gamingapp.robocode.Robocode;
 import com.mozcalti.gamingapp.service.batallas.BatallasService;
+import com.mozcalti.gamingapp.service.dashboard.DashboardService;
 import com.mozcalti.gamingapp.service.torneo.TorneosService;
 import com.mozcalti.gamingapp.utils.*;
 import com.mozcalti.gamingapp.validations.BatallasValidation;
@@ -30,10 +35,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Optional;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -67,6 +72,9 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
     @Autowired
     private BatallaParticipantesRepository batallaParticipantesRepository;
 
+    @Autowired
+    private DashboardService dashboardsGlobalResultadosService;
+
     @Override
     public CrudRepository<Batallas, Integer> getDao() {
         return batallasRepository;
@@ -74,6 +82,20 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
 
     @Value("${robocode.executable}")
     private String pathRobocode;
+
+    @Value("${view.host-battle}")
+    private String hostViewBattle;
+
+    @Value("${view.html-battle}")
+    private String htmlViewBattle;
+
+    @Value("${resources.static.resultados-batalla}")
+    private String pathResultadosBatalla;
+
+    @Value("${resources.static.xml-view-battle}")
+    private String pathXmlView;
+    @Value("${resources.static.json-view-battle}")
+    private String pathJsonView;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class, RuntimeException.class})
@@ -85,42 +107,47 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
         List<Batallas> lstBatallas = new ArrayList<>();
         batallasRepository.findAll().forEach(lstBatallas::add);
 
-        for(Batallas batallas : lstBatallas) {
-            horaInicioBatalla = batallas.getFecha() + Constantes.ESPACIO + batallas.getHoraInicio();
-            horaFinBatalla = batallas.getFecha() + Constantes.ESPACIO + batallas.getHoraFin();
+        for(Batallas batalla : lstBatallas) {
+            horaInicioBatalla = batalla.getFecha() + Constantes.ESPACIO + batalla.getHoraInicio();
+            horaFinBatalla = batalla.getFecha() + Constantes.ESPACIO + batalla.getHoraFin();
 
             try {
-                DashboardsGlobalResultadosValidation.validaBatalla(batallas);
+                DashboardsGlobalResultadosValidation.validaBatalla(batalla);
 
                 String fechaSistema = DateUtils.getDateFormat(Calendar.getInstance().getTime(), Constantes.FECHA_HORA_PATTERN);
 
                 if(DateUtils.isHoursRangoValid(horaInicioBatalla, horaFinBatalla,
                     fechaSistema, Constantes.FECHA_HORA_PATTERN)
-                        && batallas.getEstatus().equals(EstadosBatalla.PENDIENTE.getEstado())) {
+                        && batalla.getEstatus().equals(EstadosBatalla.PENDIENTE.getEstado())) {
 
-                    log.info("Ejecutando la batalla: " + batallas.getIdBatalla());
+                    log.info("Ejecutando la batalla: " + batalla.getIdBatalla());
 
                     Etapas etapa = etapasRepository.findById(
-                            batallas.getEtapaBatallasByIdBatalla().stream().findFirst().orElseThrow()
+                            batalla.getEtapaBatallasByIdBatalla().stream().findFirst().orElseThrow()
                                     .getIdEtapa()).orElseThrow();
 
-                    batallas.setEstatus(EstadosBatalla.EN_PROCESO.getEstado());
-                    batallasRepository.save(batallas);
+                    batalla.setEstatus(EstadosBatalla.EN_PROCESO.getEstado());
+                    batallasRepository.save(batalla);
 
-                     if(obtieneRobots(batallas.getBatallaParticipantesByIdBatalla().stream().toList()) != null) {
-                         BattleRunner br = new BattleRunner(new Robocode(), String.valueOf(batallas.getIdBatalla()), RECORDER,
+                    String token = UUID.randomUUID().toString();
+
+                     if(obtieneRobots(batalla.getBatallaParticipantesByIdBatalla().stream().toList()) != null) {
+                         BattleRunner br = new BattleRunner(new Robocode(), token, RECORDER,
                                  etapa.getReglas().getArenaAncho(), etapa.getReglas().getArenaAlto(),
-                                 obtieneRobots(batallas.getBatallaParticipantesByIdBatalla().stream().toList()),
+                                 obtieneRobots(batalla.getBatallaParticipantesByIdBatalla().stream().toList()),
                                  etapa.getReglas().getNumRondas());
 
                          br.runBattle(pathRobocode, REPLAY_TYPE);
 
-                         batallas.setEstatus(EstadosBatalla.TERMINADA.getEstado());
-                         batallasRepository.save(batallas);
+                         generaVizualizacionBatalla(batalla, token);
+                         dashboardsGlobalResultadosService.buscaSalidaBatallas(batalla);
+
+                         batalla.setEstatus(EstadosBatalla.TERMINADA.getEstado());
+                         batallasRepository.save(batalla);
                      } else {
-                         log.info("No existen robots para la batalla: " + batallas.getIdBatalla());
-                         batallas.setEstatus(EstadosBatalla.CANCELADA.getEstado());
-                         batallasRepository.save(batallas);
+                         log.info("No existen robots para la batalla: " + batalla.getIdBatalla());
+                         batalla.setEstatus(EstadosBatalla.CANCELADA.getEstado());
+                         batallasRepository.save(batalla);
                      }
 
                 }
@@ -128,6 +155,68 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
             } catch (ValidacionException | UtilsException e) {
                 log.info(e.getMessage());
             }
+        }
+
+    }
+
+    @Override
+    public void generaVizualizacionBatalla(Batallas batallas, String token) {
+
+        try {
+            StringBuilder urlView = new StringBuilder(hostViewBattle)
+                    .append(htmlViewBattle).append(Constantes.PARAM_TOKEN).append(token);
+
+            batallas.setViewUrl(urlView.toString());
+            batallas.setViewToken(token);
+
+            List<BatallaParticipantes> batallasParticipantes =
+                    batallaParticipantesRepository.findAllByIdBatalla(batallas.getIdBatalla());
+
+            List<String> battleParticipantes = new ArrayList<>();
+            for(BatallaParticipantes batallaParticipante : batallasParticipantes) {
+                battleParticipantes.add(batallaParticipante.getNombre());
+            }
+
+            StringBuilder battleFechaHora = new StringBuilder(batallas.getFecha()).append(Constantes.ESPACIO)
+                    .append(batallas.getHoraInicio());
+
+            String battleFecha = DateUtils.getDateFormat(
+                    DateUtils.getDateFormat(battleFechaHora.toString(), Constantes.FECHA_HORA_PATTERN).getTime(),
+                    Constantes.FECHA_HORA_PATTERN_VIEW
+            );
+
+            StringBuilder battleXml = new StringBuilder(Constantes.PATH_VIEW_XML).append(token)
+                    .append(Constantes.XML);
+
+            StringBuilder battleXmlOrigin = new StringBuilder(pathResultadosBatalla)
+                    .append(Constantes.DIAGONAL).append(token).append(Constantes.XML);
+
+            StringBuilder battleXmlDestino = new StringBuilder(pathXmlView).append(Constantes.DIAGONAL)
+                    .append(token).append(Constantes.XML);
+
+            org.apache.commons.io.FileUtils.copyFile(
+                    new File(battleXmlOrigin.toString()),
+                    new File(battleXmlDestino.toString()));
+
+            BatallaViewDTO batallaViewDTO = new BatallaViewDTO(
+                    battleParticipantes,
+                    battleFecha,
+                    battleXml.toString()
+            );
+
+            Gson gson = new GsonBuilder()
+                    .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
+                    .setPrettyPrinting().create();
+
+            StringBuilder jsonViewBattle = new StringBuilder(pathJsonView).append(Constantes.DIAGONAL)
+                    .append(token).append(Constantes.JSON);
+
+            org.apache.commons.io.FileUtils.writeStringToFile(
+                    new File(jsonViewBattle.toString()),
+                    gson.toJson(batallaViewDTO),
+                    StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            log.info(e.getMessage());
         }
 
     }
