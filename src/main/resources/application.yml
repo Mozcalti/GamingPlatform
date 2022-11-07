@@ -40,8 +40,8 @@ resources:
     instituciones: ${PATH_INSTITUCIONES:path}
     participantes: ${PATH_PARTICIPANTES:path}
     resultados-batalla: ${PATH_RESULTADOS_BATALLA:path}
-    xml-view-battle: ${PATH_XML_VIEW}
-    json-view-battle: ${PATH_JSON_VIEW}
+    xml-view-battle: ${PATH_XML_VIEW:path}
+    json-view-battle: ${PATH_JSON_VIEW:path}
 
 robocode:
   executable: ${PATH_ROBOCODE:path}
