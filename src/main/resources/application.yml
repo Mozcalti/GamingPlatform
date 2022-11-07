@@ -40,6 +40,8 @@ resources:
     instituciones: ${PATH_INSTITUCIONES:path}
     participantes: ${PATH_PARTICIPANTES:path}
     resultados-batalla: ${PATH_RESULTADOS_BATALLA:path}
+    xml-view-battle: ${PATH_XML_VIEW}
+    json-view-battle: ${PATH_JSON_VIEW}
 
 robocode:
   executable: ${PATH_ROBOCODE:path}
@@ -63,5 +65,7 @@ mail:
   user: ${MAIL_USER:user}
   password: ${MAIL_PASSWORD:password}
   from: ${MAIL_FROM:from}
-  
 
+view:
+  host-battle: ${HOST_VIEW_BATTLE:host}
+  html-battle: ${HTML_VIEW_BATTLE:html}

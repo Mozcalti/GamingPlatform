@@ -1,5 +1,6 @@
 package com.mozcalti.gamingapp.service.dashboard;
 
+import com.mozcalti.gamingapp.model.Batallas;
 import com.mozcalti.gamingapp.model.batallas.resultado.ResultadosDTO;
 import com.mozcalti.gamingapp.model.batallas.resultado.ResultadosInstitucionGpoDTO;
 import com.mozcalti.gamingapp.model.batallas.resultado.ResultadosParticipantesDTO;
@@ -11,7 +12,7 @@ import java.util.List;
 
 public interface DashboardService {
 
-    void buscaSalidaBatallas();
+    void buscaSalidaBatallas(Batallas batalla);
 
     TablaDTO<ResultadosDTO> listaResultadosBatalla(Integer indice);
 

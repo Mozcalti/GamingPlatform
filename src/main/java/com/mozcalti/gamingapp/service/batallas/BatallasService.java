@@ -14,6 +14,8 @@ import java.util.List;
 public interface BatallasService extends GenericServiceAPI<Batallas, Integer> {
     void ejecutaBatalla();
 
+    void generaVizualizacionBatalla(Batallas batallas, String token);
+
     String obtieneRobots(List<BatallaParticipantes> batallaParticipantes);
 
     List<EtapasDTO> getEtapas() throws ValidacionException;
