@@ -310,22 +310,7 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
 
     @Override
     public Integer getIdEquipoByIdParticipante(Integer idParticipante) throws ValidacionException {
-
-        //List<ParticipanteEquipo> lstParticipanteEquipo = new ArrayList<>();
-        ParticipanteEquipo participanteEquipo = participanteEquipoRepository.findByIdParticipante(idParticipante);
-
-        Integer idEquipo = participanteEquipo.getIdEquipo();
-
-        /*for(ParticipanteEquipo participanteEquipo : lstParticipanteEquipo) {
-            Optional<Equipos> equipos = equiposRepository.findById(participanteEquipo.getIdEquipo())
-                    .filter(Equipos::isActivo);
-
-            if(equipos.isPresent()) {
-                idEquipo = participanteEquipo.getIdEquipo();
-            }
-        }*/
-
-        return idEquipo;
+        return participanteEquipoRepository.findByIdParticipante(idParticipante).getIdEquipo();
     }
 
     @Override
