@@ -747,12 +747,12 @@ function selectPartImage(color, part) {
             image.src = "../public/img/tanks/" + part + "Red.png";
             break;
 
-        case "FF00C800":
+        case "FF00FF00":
             image.src = "../public/img/tanks/" + part + "Green.png";
             break;
 
 
-        case "FFC0C0C0":
+        case "FF808080":
             image.src = "../public/img/tanks/" + part + "Gray.png";
             break;
 
@@ -761,8 +761,7 @@ function selectPartImage(color, part) {
             image.src = "../public/img/tanks/" + part + "Black.png";
             break;
 
-        //debería ser pink
-        case "FFFFAFAF":
+        case "FFFFC800":
             image.src = "../public/img/tanks/" + part + "Orange.png";
             break;
 
@@ -779,6 +778,14 @@ function selectPartImage(color, part) {
 
         case "FF0000FF":
             image.src = "../public/img/tanks/" + part + "Blue.png";
+            break;
+
+        case "FFFF00FF":
+            image.src = "../public/img/tanks/" + part + "Purple.png";
+            break;
+
+        case "FFFFFFFF":
+            image.src = "../public/img/tanks/" + part + "White.png";
             break;
 
         default:
