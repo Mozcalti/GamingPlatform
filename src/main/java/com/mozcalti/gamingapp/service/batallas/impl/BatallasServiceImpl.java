@@ -322,6 +322,9 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
                         .calculaTotalBatallas(equiposDTO.getIdEquipos().size(), numCompetidores));
 
         if(etapas.getReglas().getTrabajo().equals(TipoBatalla.INDIVIDUAL.getTrabajo())) {
+            batallaFechaHoraInicioDTOS =
+                    torneosService.obtieneFechasBatalla(idEtapa, TorneoUtils
+                            .calculaTotalBatallas(equiposDTO.getIdEquipos().size(), numCompetidores));
             for(InstitucionEquiposDTO institucionEquiposDTO : equiposDTO.getEquiposByInstitucion()) {
                 if(!institucionEquiposDTO.getIdEquipos().isEmpty()) {
                     List<Integer> randomNumbers = TorneoUtils.armaEquipos(institucionEquiposDTO.getIdEquipos());
@@ -339,7 +342,8 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
                 }
             }
         } else if(etapas.getReglas().getTrabajo().equals(TipoBatalla.EQUIPO.getTrabajo())
-                && etapas.getReglas().getTrabajo().equals(TipoBatalla.MIXTO.getTrabajo())) {
+                || etapas.getReglas().getTrabajo().equals(TipoBatalla.MIXTO.getTrabajo())) {
+
             List<Integer> randomNumbers = TorneoUtils.armaEquipos(equiposDTO.getIdEquipos());
             List<List<BatallaParticipanteDTO>> lists = torneosService.obtieneParticipantes(
                     randomNumbers, numCompetidores);
@@ -351,6 +355,7 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
                 batallaDTO.setRondas(numRondas);
                 batallasDTO.getBatallas().add(batallaDTO);
             }
+
         }
 
         return batallasDTO;

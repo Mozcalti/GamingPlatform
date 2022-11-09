@@ -102,9 +102,10 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
         Map<Integer, List<BatallaFechaHoraInicioDTO>> mapHorarios = TorneoUtils.obtieneMapHorarios(torneos, fecha);
         batallaFechaHoraInicioDTOS.add(new BatallaFechaHoraInicioDTO(Numeros.CERO.getNumero(), fecha, horaInicioBatalla, horaFinBatalla));
         int contadorFechas = Numeros.UNO.getNumero();
-        for(Map.Entry<Integer, List<BatallaFechaHoraInicioDTO>> entry : mapHorarios.entrySet()) {
-            for(BatallaFechaHoraInicioDTO batallaFechaHoraInicioDTO1 : entry.getValue()) {
-                if(contadorFechas < numeroFechas) {
+
+        do {
+            for(Map.Entry<Integer, List<BatallaFechaHoraInicioDTO>> entry : mapHorarios.entrySet()) {
+                for(BatallaFechaHoraInicioDTO batallaFechaHoraInicioDTO1 : entry.getValue()) {
                     horaInicioBatalla = DateUtils.addMinutos(horaFinBatalla, Constantes.HORA_PATTERN, tiempoEspera);
                     horaFinBatalla = DateUtils.addMinutos(horaInicioBatalla, Constantes.HORA_PATTERN, tiempoBatalla);
 
@@ -116,12 +117,12 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
                     } else if(!DateUtils.isDatesRangoValid(horaInicioBatalla,
                             torneoHoraFinTope.orElseThrow().getHoraFinHabil(), Constantes.HORA_PATTERN)) {
                         fecha = DateUtils.addDias(fecha, Constantes.FECHA_PATTERN, Numeros.UNO.getNumero());
-                        horaFinBatalla = DateUtils.addMinutos(
-                                torneoHoraInicioTope.orElseThrow().getHoraIniHabil(), Constantes.HORA_PATTERN, Numeros.DOS_NEGATIVO.getNumero());
+                        horaFinBatalla = torneoHoraInicioTope.orElseThrow().getHoraIniHabil();
                     }
                 }
             }
-        }
+        }while(contadorFechas < numeroFechas);
+
 
         return batallaFechaHoraInicioDTOS;
 
