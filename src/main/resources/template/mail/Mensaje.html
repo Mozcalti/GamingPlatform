@@ -4,15 +4,14 @@
     </style>
 	
 <body>
-<p><img src="cid:logo_plai" width="267" height="96"><br>
-  <br>
-  <span class="style1">Por medio del presente se hace la notificaci&oacute;n del inicio de la batalla</span><br>
-    <br>
-<span class="style1"><strong>Fecha:</strong> ${mailBatalla.fecha}</span></p>
-<p><span class="style1"><strong>Horarios: </strong>${mailBatalla.horaInicio} - ${mailBatalla.horaFin}</span></p>
-			<p><span class="style1"><strong>Rondas: </strong>${mailBatalla.rondas}</span>
+<p><img src="cid:logo_plai" width="267" height="96"><br><br>
+  	<span class="style1">Por medio del presente se hace la notificaci&oacute;n para el inicio de la siguiente batalla</span><br><br>
+	<span class="style1"><strong>Fecha:</strong> ${mailBatalla.fecha}</span></p>
+	<p><span class="style1"><strong>Horarios: </strong>${mailBatalla.horaInicio} - ${mailBatalla.horaFin}</span></p>
+	<p><span class="style1"><strong>Rondas: </strong>${mailBatalla.rondas}</span></p>
+	<p><span class="style1"><strong>Enlace de batalla: </strong><a href="${mailBatalla.urlViewBattle}">${mailBatalla.baseUrl}/battle</a></span></p>
 </p>
-</p>
+
 <table width="200" border="0">
 			  <tr>
 				<td><div align="center" class="style1"><strong>Participantes</strong></div></td>
@@ -23,10 +22,10 @@
 				  </tr>
 				</#list>
 </table>
-		<p><br>
+		<p>
+			<br>
 		    <span class="style1">Saludos</span>
 		   <br>
-	      <br>
 		</p>
 </body>
 </html>

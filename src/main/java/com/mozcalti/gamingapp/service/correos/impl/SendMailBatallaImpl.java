@@ -1,33 +1,33 @@
-package com.mozcalti.gamingapp.jobs;
+package com.mozcalti.gamingapp.service.correos.impl;
 
 import com.mozcalti.gamingapp.exceptions.UtilsException;
 import com.mozcalti.gamingapp.model.correos.DatosCorreoBatallaDTO;
+import com.mozcalti.gamingapp.service.correos.SendMailBatalla;
 import com.mozcalti.gamingapp.service.correos.SendMailService;
 import com.mozcalti.gamingapp.service.torneo.TorneosService;
 import com.mozcalti.gamingapp.utils.StackTraceUtils;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Component
-@AllArgsConstructor
+@Service
 @Slf4j
-public class SendMailTorneo {
+public class SendMailBatallaImpl implements SendMailBatalla {
 
     private static final String MAIL_TEMPLATE_KEY = "torneo";
 
     public static final String ID_PARAMS_TEMPLATE_MAILS = "mailBatalla";
 
+    @Autowired
     private SendMailService sendMailService;
-
+    @Autowired
     private TorneosService torneosService;
 
-    @Scheduled(cron = "${cron.mail-batallas}")
+    @Override
     public void mailInicioBatallas() throws UtilsException {
 
         log.info("Se buscan correos para el envio a los participantes");
@@ -52,5 +52,4 @@ public class SendMailTorneo {
         }
 
     }
-
 }

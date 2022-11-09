@@ -1,13 +1,13 @@
-import { Turn } from './Classes/Turn.js';
-import { Bullet } from './Classes/Bullet.js';
-import { Record } from './Classes/Record.js';
-import { RecordInfo } from './Classes/RecordInfo.js';
-import { Rule } from './Classes/Rule.js';
-import { Result } from './Classes/Result.js';
-import { RobotData } from './Classes/RobotData.js';
-import { RobotImages } from './Classes/RobotImages.js';
-import { RobotAttributes } from './Classes/RobotAttributes.js';
-import { AnimationControl } from './Classes/AnimationControl.js';
+import { Turn } from './classes/Turn.js';
+import { Bullet } from './classes/Bullet.js';
+import { Record } from './classes/Record.js';
+import { RecordInfo } from './classes/RecordInfo.js';
+import { Rule } from './classes/Rule.js';
+import { Result } from './classes/Result.js';
+import { RobotData } from './classes/RobotData.js';
+import { RobotImages } from './classes/RobotImages.js';
+import { RobotAttributes } from './classes/RobotAttributes.js';
+import { AnimationControl } from './classes/AnimationControl.js';
 
 const hitVictimSound = new Audio();
 hitVictimSound.src = "sounds/bullet.wav";
@@ -25,7 +25,7 @@ let battleXml;
 let battleParticipantes;
 
 function obtieneJson() {
-    fetch("./../jsonViewBattle/" + getURLParameters("token") + ".json")
+    fetch("./json/" + getURLParameters("token") + ".json")
         .then(function (resp) {
             return resp.json();
         })
@@ -195,6 +195,11 @@ function init(battleFecha){
         let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         let seconds = Math.floor((distance % (1000 * 60)) / 1000);
         //we reached battle date
+
+        if(now == battleDate) {
+            window.location.reload();
+        }
+
         if(now >= battleDate){
             //x minutes after battle date = replay, else it's a live battle
             if(now >= battleDate.setMinutes(battleDate.getMinutes() + minutesOffset)){
@@ -344,7 +349,7 @@ function getRecordArray(xmlDoc) {
 
     let robotDataArray = [];
     let debrisImage = new Image();
-    debrisImage.src = "../public/img/ground/explode_debris.png";
+    debrisImage.src = "ground/explode_debris.png";
 
     //iterate through all the turns
     for (i = 0; i < turnsDom.children.length; i++) {
@@ -440,7 +445,7 @@ function prepareAnimation(xmlDoc, callback) {
     });
 
     let totalTurns = record.getRecordInfo().getNumTurns().reduce((a, b) => a + b, 0)
-    let fps = 60, fpsInterval = 1000 / fps, then = Date.now(), now = 0, elapsed = 0;
+    let fps = 24, fpsInterval = 1000 / fps, then = Date.now(), now = 0, elapsed = 0;
     let sumTurnsArr = record.getRecordInfo().getNumTurns().map((sum => value => sum += value)(0));
     let control = new AnimationControl(sumTurnsArr, totalTurns, fpsInterval, then, now, elapsed);
     //Canvas related
@@ -455,11 +460,11 @@ function prepareAnimation(xmlDoc, callback) {
 
     //images related
     let bulletImage = new Image();
-    bulletImage.src = "../public/img/bullets/bullet.png";
+    bulletImage.src = "bullets/bullet.png";
     let goneImage = new Image();
     goneImage.src = "";
-    let explosionFramesArr = createFramesArr("../public/img/explosion/explosion2_", 68);
-    let hitTargetFramesArr = createFramesArr("../public/img/explosion/explosion1_", 16);
+    let explosionFramesArr = createFramesArr("explosion/explosion2_", 68);
+    let hitTargetFramesArr = createFramesArr("explosion/explosion1_", 16);
     let attackImagesArray = [];
     attackImagesArray.push(bulletImage);
     attackImagesArray.push(goneImage);
@@ -701,6 +706,13 @@ function drawParts(bodyHeading, otherHeading, ctx, part, width, height) {
             ctx.rotate(otherHeading - bodyHeading);
         }
     }
+
+    //var imageObj1 = new Image();
+    //part.src = part.src.includes("body")
+    /*part.onload = function() {
+        ctx.drawImage(part, (width * -1) / 2, (height * -1) / 2, width, height);
+    }*/
+
     ctx.drawImage(part, (width * -1) / 2, (height * -1) / 2, width, height);
 }
 
@@ -744,45 +756,45 @@ function selectPartImage(color, part) {
 
     switch (color) {
         case "FFFF0000":
-            image.src = "../public/img/tanks/" + part + "Red.png";
+            image.src = "tanks/" + part + "Red.png";
             break;
 
         case "FF00C800":
-            image.src = "../public/img/tanks/" + part + "Green.png";
+            image.src = "tanks/" + part + "Green.png";
             break;
 
 
         case "FFC0C0C0":
-            image.src = "../public/img/tanks/" + part + "Gray.png";
+            image.src = "tanks/" + part + "Gray.png";
             break;
 
 
         case "FF000000":
-            image.src = "../public/img/tanks/" + part + "Black.png";
+            image.src = "tanks/" + part + "Black.png";
             break;
 
         //debería ser pink
         case "FFFFAFAF":
-            image.src = "../public/img/tanks/" + part + "Orange.png";
+            image.src = "tanks/" + part + "Orange.png";
             break;
 
 
         case "FF808032":
-            image.src = "../public/img/tanks/" + part + "Brown.png";
+            image.src = "tanks/" + part + "Brown.png";
             break;
 
 
         case "FFFFFF00":
-            image.src = "../public/img/tanks/" + part + "Yellow.png";
+            image.src = "tanks/" + part + "Yellow.png";
             break;
 
 
         case "FF0000FF":
-            image.src = "../public/img/tanks/" + part + "Blue.png";
+            image.src = "tanks/" + part + "Blue.png";
             break;
 
         default:
-            image.src = "../public/img/tanks/" + part + "Blue.png";
+            image.src = "tanks/" + part + "Blue.png";
             break;
     }
 

@@ -16,6 +16,8 @@ public enum Numeros {
     SIETE(7),
     OCHO(8),
 
+    DIEZ(10),
+
     UNO_NEGATIVO(-1),
     DOS_NEGATIVO(-2);
 
