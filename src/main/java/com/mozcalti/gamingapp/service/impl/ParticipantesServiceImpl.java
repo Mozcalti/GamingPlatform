@@ -9,6 +9,7 @@ import com.mozcalti.gamingapp.service.ParticipantesService;
 import com.mozcalti.gamingapp.service.correos.SendMailInvitacionSevice;
 import com.mozcalti.gamingapp.service.usuarios.UsuarioService;
 import com.mozcalti.gamingapp.utils.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -28,8 +29,10 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
+@Slf4j
 public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, Integer> implements ParticipantesService {
 
     @Autowired
@@ -112,6 +115,7 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
     @Override
     public List<Participantes> guardarParticipantes(List<ParticipanteDTO> participanteDTO) {
         List<Participantes> listadoParticipantes = new ArrayList<>();
+        int countMails = 0;
         for (ParticipanteDTO dto : participanteDTO) {
             Participantes participante = new Participantes();
             participante.setNombre(dto.getNombre());
@@ -125,8 +129,20 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
             participante.setFechaCreacion(DateUtils.now());
             participante.setInstitucion(institucionRepository.findById(dto.getIdInstitucion()).orElse(null));
 
+            if(countMails == 50) {
+                log.info("... Haciendo un delay");
+                try {
+                    TimeUnit.MINUTES.sleep(1);
+                } catch (InterruptedException e) {
+                    log.error("Ocurrio un error: {}", e.getMessage());
+                }
+                countMails = 0;
+            }
+
             usuarioService.save(new UsuarioDTO(participante));
             sendMailInvitacionSevice.mailsInvitacion(participante);
+            countMails+=2;
+
             listadoParticipantes.add(participante);
         }
         return (List<Participantes>) participantesRepository.saveAll(listadoParticipantes);

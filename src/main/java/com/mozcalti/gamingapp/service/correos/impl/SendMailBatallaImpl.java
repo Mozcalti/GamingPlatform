@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -36,11 +37,21 @@ public class SendMailBatallaImpl implements SendMailBatalla {
             List<DatosCorreoBatallaDTO> mailsbatallas = torneosService.getDatosCorreoBatalla();
 
             if(!mailsbatallas.isEmpty()) {
+                int countMails = 0;
                 for(DatosCorreoBatallaDTO datosCorreoBatallaDTO : mailsbatallas) {
                     String mailTo = datosCorreoBatallaDTO.getMailToParticipantes();
                     Map<String, Object> parameters = new HashMap<>();
                     parameters.put(ID_PARAMS_TEMPLATE_MAILS, datosCorreoBatallaDTO);
+
+                    if(countMails == 50) {
+                        log.info("... Haciendo un delay");
+                        TimeUnit.MINUTES.sleep(30);
+                        countMails = 0;
+                    }
+
                     sendMailService.sendMail(mailTo, MAIL_TEMPLATE_KEY, parameters);
+                    countMails+=datosCorreoBatallaDTO.getParticipantes().size();
+
                     log.info("Se hace el envio de email a los participantes indicados");
                 }
             } else {
