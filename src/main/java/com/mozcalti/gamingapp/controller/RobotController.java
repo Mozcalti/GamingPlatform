@@ -22,8 +22,11 @@ public class RobotController {
     private final RobotsService robotsService;
 
     @PostMapping(value = "/cargarRobot", produces = MediaType.APPLICATION_JSON_VALUE)
-    public RobotsDTO cargarArchivo(@RequestParam(value="idEquipo") int idEquipo, @RequestParam(value="tipo") String tipo, @RequestParam(value = "file") MultipartFile file) throws IOException {
-        return robotsService.cargarRobot(idEquipo, tipo, file);
+    public RobotsDTO cargarArchivo(
+            @RequestParam(value="idParticipante") int idParticipante,
+            @RequestParam(value="tipo") String tipo,
+            @RequestParam(value = "file") MultipartFile file) throws IOException {
+        return robotsService.cargarRobot(idParticipante, tipo, file);
     }
 
     @PostMapping(value = "/guardarRobot")
@@ -44,8 +47,8 @@ public class RobotController {
     }
 
     @GetMapping(value ="/verRobots")
-    public List<RobotsDTO> verRobots(@RequestParam Integer idEquipo){
-        return robotsService.obtenerRobots(idEquipo);
+    public List<RobotsDTO> verRobots(@RequestParam Integer idParticipante){
+        return robotsService.obtenerRobots(idParticipante);
     }
 
     @Transactional

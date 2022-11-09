@@ -49,4 +49,10 @@ public class ParticipanteController {
     public void actualizarParticipante(@RequestBody TablaParticipantesDTO participanteDTO) {
         participantesService.actualizarParticipante(participanteDTO);
     }
+
+    @GetMapping(value ="/correo")
+    public Integer verRobots(@RequestParam String correo){
+        return participantesService.obtieneIdParticipante(correo);
+    }
+
 }

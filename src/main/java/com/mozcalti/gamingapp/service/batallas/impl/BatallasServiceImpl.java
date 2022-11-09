@@ -75,6 +75,9 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
     @Autowired
     private DashboardService dashboardsGlobalResultadosService;
 
+    @Autowired
+    private ParticipanteEquipoRepository participanteEquipoRepository;
+
     @Override
     public CrudRepository<Batallas, Integer> getDao() {
         return batallasRepository;
@@ -303,6 +306,11 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
         }
 
         return participanteDTOS;
+    }
+
+    @Override
+    public Integer getIdEquipoByIdParticipante(Integer idParticipante) throws ValidacionException {
+        return participanteEquipoRepository.findByIdParticipante(idParticipante).getIdEquipo();
     }
 
     @Override

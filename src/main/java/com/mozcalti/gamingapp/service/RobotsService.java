@@ -11,10 +11,10 @@ import java.util.List;
 
 public interface RobotsService extends GenericServiceAPI<Robots, Integer> {
 
-    RobotsDTO cargarRobot(int idEquipo ,String tipo, MultipartFile file) throws IOException;
+    RobotsDTO cargarRobot(int idParticipante ,String tipo, MultipartFile file) throws IOException;
     Robots guardarRobot(Robots robot);
     void eliminarRobot(int idRobot) throws IOException;
     @PostMapping(value = "/seleccionarRobot")
     void seleccionarRobot(String nombre, int idEquipo);
-    List<RobotsDTO> obtenerRobots(Integer idEquipo);
+    List<RobotsDTO> obtenerRobots(Integer idParticipante);
 }
