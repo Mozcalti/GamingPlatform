@@ -75,6 +75,9 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
     @Autowired
     private DashboardService dashboardsGlobalResultadosService;
 
+    @Autowired
+    private ParticipanteEquipoRepository participanteEquipoRepository;
+
     @Override
     public CrudRepository<Batallas, Integer> getDao() {
         return batallasRepository;
@@ -303,6 +306,26 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
         }
 
         return participanteDTOS;
+    }
+
+    @Override
+    public Integer getIdEquipoByIdParticipante(Integer idParticipante) throws ValidacionException {
+
+        //List<ParticipanteEquipo> lstParticipanteEquipo = new ArrayList<>();
+        ParticipanteEquipo participanteEquipo = participanteEquipoRepository.findByIdParticipante(idParticipante);
+
+        Integer idEquipo = participanteEquipo.getIdEquipo();
+
+        /*for(ParticipanteEquipo participanteEquipo : lstParticipanteEquipo) {
+            Optional<Equipos> equipos = equiposRepository.findById(participanteEquipo.getIdEquipo())
+                    .filter(Equipos::isActivo);
+
+            if(equipos.isPresent()) {
+                idEquipo = participanteEquipo.getIdEquipo();
+            }
+        }*/
+
+        return idEquipo;
     }
 
     @Override

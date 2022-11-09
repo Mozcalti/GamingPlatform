@@ -216,6 +216,11 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
 
     }
 
+    @Override
+    public Integer obtieneIdParticipante(String correo) {
+        return participantesRepository.findByCorreo(correo).getIdParticipante();
+    }
+
     private Specification<Participantes> containsTextInAttributes(String text, String fechaCreacion,List<String> attributes) {
 
         try{
