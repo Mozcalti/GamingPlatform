@@ -253,7 +253,6 @@ public class DashboardServiceImpl implements DashboardService {
         //iteramos una etapa batalla,
         for(EtapaBatalla etapaBatalla : etapas.orElseThrow().getEtapaBatallasByIdEtapa()) {
             //obtenemos todas las batallas de una etapa batalla
-            log.error(String.valueOf(etapaBatalla.getIdBatalla()));
             Optional<Batallas> batallas = batallasRepository.findById(etapaBatalla.getIdBatalla());
             ReglasDTO reglasDTO = new ReglasDTO(etapas.orElseThrow().getReglas());
             List<ResultadosDTO> listaResultadosDTO = new ArrayList<>();
@@ -297,6 +296,12 @@ public class DashboardServiceImpl implements DashboardService {
                                                 .equals(idInstitucion)).toList()
                         )
                 );
+
+                if(listaDetalleBatallaDTO.get(listaDetalleBatallaDTO.size()-1).getListaResultadosDTO().isEmpty()
+                        && !idInstitucion.equals(Constantes.TODOS)
+                ){
+                    listaDetalleBatallaDTO.remove(listaDetalleBatallaDTO.size()-1);
+                }
             }
         }
         return listaDetalleBatallaDTO;

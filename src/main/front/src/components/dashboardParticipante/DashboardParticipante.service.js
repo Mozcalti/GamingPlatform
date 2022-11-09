@@ -10,9 +10,9 @@ class DashboardParticipanteService {
             });
     }
 
-    listaBatallasIndividuales(idEtapa) {
+    listaBatallasIndividuales(idEtapa, idInstitucion) {
         return axios
-            .get("/dashboads/verBatallasIndividuales", {params: {"idEtapa": idEtapa}})
+            .get("/dashboads/verBatallasIndividuales", {params: {"idEtapa": idEtapa, "idInstitucion": idInstitucion}})
             .then(respuesta => {
                 return respuesta
             });

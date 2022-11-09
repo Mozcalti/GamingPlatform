@@ -49,8 +49,8 @@ const DashboardParticipante = () => {
             )
     }
 
-    const getBatallasIndividuales = (idEtapa) =>{
-        DashboardParticipanteService.listaBatallasIndividuales(idEtapa)
+    const getBatallasIndividuales = (idEtapa, institucion) =>{
+        DashboardParticipanteService.listaBatallasIndividuales(idEtapa, institucion)
             .then(
                 (response) => {
                     setShowEtapaInfo(true);
@@ -64,6 +64,7 @@ const DashboardParticipante = () => {
     }
 
     const getDashboardGlobal = (idEtapa, institucion) =>{
+        console.log(batallas, typeof batallas);
         DashboardParticipanteService.listaResultadosGlobal(idEtapa, institucion)
             .then(
                 (response) => {
@@ -138,7 +139,7 @@ const DashboardParticipante = () => {
                         </FormControl>
                     </Grid>
                     <Grid item xs={2} md={2}>
-                        <Button onClick={() => getBatallasIndividuales(etapa)} variant="contained"
+                        <Button onClick={() => getBatallasIndividuales(etapa, institucion)} variant="contained"
                                 size="large">BUSCAR POR BATALLAS</Button>
                     </Grid>
 
@@ -152,7 +153,7 @@ const DashboardParticipante = () => {
                     <Grid container spacing={2}>
                         {etapaSearchMethod.localeCompare("BATALLA") === 0 ?
                             <Grid container spacing={2}>
-                                {batallas.length !== 0 ?
+                                {batallas.length !== 0 && batallas[0].listaResultadosDTO.length != 0 ?
                                     <Grid item xs={12} md={12}>
                                         {batallas.map((b) => (
                                             <Grid item xs={12} md={12}>
