@@ -41,8 +41,9 @@ public class DashboadsController {
     }
 
     @GetMapping("/verBatallasIndividuales")
-    public List<DetalleBatallaDTO> getDetalleBatallasIndividuales(@RequestParam Integer idEtapa){
-        return dashboardService.listaDetalleBatallasIndividuales(idEtapa);
+    public List<DetalleBatallaDTO> getDetalleBatallasIndividuales(@RequestParam Integer idEtapa,
+                                                                  @RequestParam(defaultValue = Constantes.TODOS) String idInstitucion){
+        return dashboardService.listaDetalleBatallasIndividuales(idEtapa, idInstitucion);
     }
 
     @GetMapping("/obtenerEtapas")
