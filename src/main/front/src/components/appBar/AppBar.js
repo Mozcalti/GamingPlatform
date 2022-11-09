@@ -30,8 +30,6 @@ function ResponsiveAppBar() {
     const location = useLocation();
 
     const user = AuthService.getCurrentUser();
-    console.log('user', user);
-    console.log('role', user.rol);
 
     const pathname = location.pathname;
 
@@ -64,7 +62,6 @@ function ResponsiveAppBar() {
                     >
                         <img src="/img/ui/logo_plai1.png" alt="Logo Plai" height={80}></img>
                     </Typography>
-
                     <Box sx={{flexGrow: 1, display: {xs: 'flex', md: 'none', color: '#000'}}}>
                         <IconButton
                             size="large"
@@ -109,6 +106,9 @@ function ResponsiveAppBar() {
                                 }
                             )}
                         </Menu>
+                        <Divider>
+                            <Typography>{user.nombre}</Typography>
+                        </Divider>
                     </Box>
 
                     <Box sx={{flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
@@ -139,6 +139,10 @@ function ResponsiveAppBar() {
                             </MenuItem>
                         </Divider>
                     </Box>
+                    <Typography
+                        sx={{color: 'black'}}
+                    >{user.nombre} {user.apellidos}</Typography>
+
                     <Typography
                         component="a"
                         href="https://mozcalti.com/"

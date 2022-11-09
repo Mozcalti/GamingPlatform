@@ -15,9 +15,9 @@ import com.mozcalti.gamingapp.model.*;
 import com.mozcalti.gamingapp.repository.*;
 import com.mozcalti.gamingapp.utils.*;
 import com.mozcalti.gamingapp.validations.TorneoValidation;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -25,22 +25,32 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
-@AllArgsConstructor(onConstructor = @__(@Autowired))
 @Service
 @Slf4j
 public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> implements TorneosService {
 
+    @Autowired
     private TorneosRepository torneosRepository;
+    @Autowired
     private EtapasRepository etapasRepository;
+    @Autowired
     private BatallasRepository batallasRepository;
+    @Autowired
     private InstitucionRepository institucionRepository;
+    @Autowired
     private EquiposRepository equiposRepository;
+    @Autowired
     private ParticipantesRepository participantesRepository;
+    @Autowired
     private TorneoHorasHabilesRepository torneoHorasHabilesRepository;
+    @Autowired
     private EtapaEquipoRepository etapaEquipoRepository;
+    @Autowired
     private ReglasRepository reglasRepository;
-
+    @Autowired
     private ParticipanteEquipoRepository participanteEquipoRepository;
+    @Value("${server.baseUrl}")
+    private String baseUrl;
 
     @Override
     public CrudRepository<Torneos, Integer> getDao() {
@@ -314,7 +324,7 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
             reglasRepository.save(new Reglas(etapaDTO.getReglas(), etapas.getIdEtapa()));
 
             // Participantes
-            if(etapaDTO.getReglas().getTrabajo().equals(TipoBatalla.INDIVIDUAL.getTrabajo())) {
+            if(etapaDTO.getReglas().getTrabajo().equals(TipoBatalla.MIXTO.getTrabajo())) {
                 List<Participantes> lstParticipantes = new ArrayList<>();
                 participantesRepository.findAll().forEach(lstParticipantes::add);
 
@@ -398,19 +408,12 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
     public List<DatosCorreoBatallaDTO> getDatosCorreoBatalla() throws ValidacionException {
 
         List<DatosCorreoBatallaDTO> mailsbatallas = new ArrayList<>();
-
-        String fechaSistema = DateUtils.getDateFormat(Calendar.getInstance().getTime(), Constantes.FECHA_PATTERN);
-
         List<Batallas> lstBatallas = new ArrayList<>();
         batallasRepository.findAll().forEach(lstBatallas::add);
         StringBuilder mailToParticipantes = new StringBuilder();
 
         for(Batallas batalla : lstBatallas) {
-
-            if(fechaSistema.equals(DateUtils.addDias(
-                    batalla.getFecha(), Constantes.FECHA_PATTERN, Numeros.UNO_NEGATIVO.getNumero()))
-                    && batalla.getBndEnvioCorreo().equals(Numeros.CERO.getNumero())) {
-
+            if(batalla.getBndEnvioCorreo().equals(Numeros.CERO.getNumero())) {
                 DatosCorreoBatallaDTO mailBatallasDTO = new DatosCorreoBatallaDTO(batalla.getFecha(),
                         batalla.getHoraInicio(), batalla.getHoraFin(),
                         batalla.getRondas());
@@ -433,12 +436,13 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
                                     mailToParticipantes.length()-Numeros.UNO.getNumero()));
                 }
                 mailBatallasDTO.setParticipantes(participante);
+                mailBatallasDTO.setUrlViewBattle(batalla.getViewUrl());
+                mailBatallasDTO.setBaseUrl(baseUrl);
                 mailsbatallas.add(mailBatallasDTO);
 
                 batalla.setBndEnvioCorreo(Numeros.UNO.getNumero());
                 batallasRepository.save(batalla);
             }
-
         }
 
         return mailsbatallas;

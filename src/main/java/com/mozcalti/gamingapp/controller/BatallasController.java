@@ -2,6 +2,7 @@ package com.mozcalti.gamingapp.controller;
 
 import com.mozcalti.gamingapp.model.batallas.BatallasDTO;
 import com.mozcalti.gamingapp.service.batallas.BatallasService;
+import com.mozcalti.gamingapp.service.correos.SendMailBatalla;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,8 @@ public class BatallasController {
 
     private BatallasService batallasService;
 
+    private SendMailBatalla sendMailBatalla;
+
     @GetMapping("/genera/{idEtapa}")
     public BatallasDTO getBatallasByIdEtapa(@PathVariable Integer idEtapa) {
         return batallasService.generaBatallas(idEtapa);
@@ -21,6 +24,7 @@ public class BatallasController {
     @PostMapping("/save")
     public void saveBatallas(@RequestBody BatallasDTO batallasDTO) {
         batallasService.saveBatallas(batallasDTO);
+        sendMailBatalla.mailInicioBatallas();
     }
 
     @GetMapping("/consulta/{idEtapa}")

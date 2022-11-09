@@ -29,8 +29,9 @@ public final class Constantes {
 
     public static final String JSON = ".json";
     public static final String ROL_PUBLIC = "PARTICIPANTE";
-    public static final String PATH_VIEW_XML = "../../resources/battles/";
-
+    public static final String PATH_VIEW_XML = "xml/";
     public static final String PARAM_TOKEN = "?token=";
+
+    public static final String BATTLES = "battles";
 
 }

@@ -1,6 +1,6 @@
 @font-face {
     font-family: nutmeg;
-    src: url('../public/fonts/Nutmeg/Nutmeg-Regular.ttf');
+    src: url('fonts/Nutmeg/Nutmeg-Regular.ttf');
 }
 
 :root{
@@ -34,6 +34,7 @@ body{
 /*LOADING SCREENS*/
 
 #stateScreen{
+    display: flex;
     background-image: linear-gradient(to right,var(--main-blue-color), var(--secondary-blue-color));
     margin: 0 auto;
     width: 100%;
@@ -105,7 +106,7 @@ body{
 }
 
 #canvas1{
-    background-image: url('../public/img/ground/suelo.png');
+    background-image: url('ground/suelo.png');
 }
 
 .playerBox{
@@ -202,42 +203,3 @@ body{
     align-self: flex-end;
 }
 
-
-/*
-.flex {
-min-height: 60pt;
-}
-
-@keyframes loading {
-0% {
-    width: 50pt;
-    height: 50pt;
-    margin-top: 0;
-}
-25% {
-    height: 4pt;
-    margin-top: 23pt;
-}
-50% {
-    width: 4pt;
-}
-75% {
-    width: 50pt;
-}
-100% {
-    width: 50pt;
-    height: 50pt;
-    margin-top: 0;
-}
-}
-
-.loader {
-width: 50pt;
-height: 50pt;
-border-radius: 100%;
-border: #cf0a61 4pt solid;
-margin-left: auto;
-margin-right: auto;
-background-color: transparent;
-animation: loading 1s infinite;
-}*/

@@ -146,8 +146,6 @@ public final class DateUtils {
         return resultado;
 
     }
-
-
     public static Date addMinutos(Date date, int minutos) throws ValidacionException {
         if (date != null) {
             Calendar calendar = Calendar.getInstance();
@@ -172,6 +170,15 @@ public final class DateUtils {
         if (fecha != null) {
             DateTimeFormatter fmt = DateTimeFormat.forPattern(pattern).withLocale(Locale.ENGLISH);
             return getDateFormat(fmt.parseDateTime(fecha).plusDays(dias).toDate(), pattern);
+        } else {
+            throw new ValidacionException(PARAMETRO_NOTNULL);
+        }
+    }
+
+    public static String addSegundos(String fecha, String pattern, int segundos) throws ValidacionException {
+        if (fecha != null) {
+            DateTimeFormatter fmt = DateTimeFormat.forPattern(pattern).withLocale(Locale.ENGLISH);
+            return getDateFormat(fmt.parseDateTime(fecha).plusSeconds(segundos).toDate(), pattern);
         } else {
             throw new ValidacionException(PARAMETRO_NOTNULL);
         }
