@@ -52,7 +52,13 @@ class ParticipantesService {
             });
     }
 
-
+    obtenerInstitucion(correo) {
+        return axios
+            .get("/participante/institucion", {params: {"correo": correo}})
+            .then(response => {
+                return response;
+            });
+    }
 }
 
 export default new ParticipantesService();

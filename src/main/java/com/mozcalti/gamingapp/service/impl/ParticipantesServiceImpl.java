@@ -245,4 +245,9 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
         return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.join("institucion").get("nombre"), nombreInstitucion));
     }
 
+    @Override
+    public Integer obtieneIdInstitucion(String correo) {
+
+        return participantesRepository.findByCorreo(correo).getInstitucion().getId();
+    }
 }

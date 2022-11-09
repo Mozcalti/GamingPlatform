@@ -136,53 +136,57 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public List<ResultadosParticipantesDTO> listaResultadosParticipantesBatalla(Integer idEtapa, String nombreInstitucion) {
+    public List<ResultadosParticipantesDTO> listaResultadosParticipantesBatalla(Integer idEtapa, String idInstitucion) {
 
         Optional<Etapas> etapas = etapasRepository.findById(idEtapa);
 
         List<ResultadosParticipantesDTO> resultadosParticipantesDTOS = new ArrayList<>();
+        List<Resultados> lstResultados = new ArrayList<>();
 
         for(EtapaBatalla etapaBatalla : etapas.orElseThrow().getEtapaBatallasByIdEtapa()) {
             Optional<Batallas> batallas = batallasRepository.findById(etapaBatalla.getIdBatalla());
 
-            for(Resultados resultados : batallas.orElseThrow().getResultadosByIdBatalla().stream()
-                        .sorted(Comparator.comparing(Resultados::getScore).reversed()).toList()) {
-
-                Optional<Robots> robot = robotsRepository.findAllByClassName(resultados.getTeamleadername())
-                        .stream()
-                        .findFirst();
-
-                if(robot.isPresent()) {
-                    Optional<Equipos> equipos = equiposRepository.findById(robot.orElseThrow().getIdEquipo());
-
-                    StringBuilder participantes = new StringBuilder();
-                    Optional<Institucion> institucion = Optional.empty();
-                    Integer idParticipante = Numeros.CERO.getNumero();
-                    for(ParticipanteEquipo participanteEquipo : equipos.orElseThrow().getParticipanteEquiposByIdEquipo()) {
-                        idParticipante = participanteEquipo.getIdParticipante();
-                        Optional<Participantes> participante = participantesRepository.findById(participanteEquipo.getIdParticipante());
-
-                        participantes.append(participante.orElseThrow().getNombre()).append(" ").append(participante.orElseThrow().getApellidos()).append(",");
-
-                        if(!institucion.isPresent()) {
-                            institucion = institucionRepository.findById(participante.orElseThrow().getInstitucion().getId());
-                        }
-                    }
-
-                    resultadosParticipantesDTOS.add(new ResultadosParticipantesDTO(
-                            idParticipante,
-                            participantes.substring(Numeros.CERO.getNumero() , participantes.length()-Numeros.DOS.getNumero()),
-                            institucion.orElseThrow().getId(),
-                            institucion.orElseThrow().getNombre(),
-                            robot.orElseThrow().getNombre(),
-                            resultados.getScore()
-                    ));
-
-                }
+            for(Resultados resultados : batallas.orElseThrow().getResultadosByIdBatalla()) {
+                lstResultados.add(resultados);
             }
         }
 
-        resultadosParticipantesDTOS = filtraInstituciones(resultadosParticipantesDTOS, nombreInstitucion);
+        for(Resultados resultados : lstResultados.stream()
+                .sorted(Comparator.comparing(Resultados::getScore).reversed()).toList()) {
+            Optional<Robots> robot = robotsRepository.findAllByClassName(resultados.getTeamleadername())
+                    .stream()
+                    .findFirst();
+
+            if(robot.isPresent()) {
+                Optional<Equipos> equipos = equiposRepository.findById(robot.orElseThrow().getIdEquipo());
+
+                StringBuilder participantes = new StringBuilder();
+                Optional<Institucion> institucion = Optional.empty();
+                Integer idParticipante = Numeros.CERO.getNumero();
+                for(ParticipanteEquipo participanteEquipo : equipos.orElseThrow().getParticipanteEquiposByIdEquipo()) {
+                    idParticipante = participanteEquipo.getIdParticipante();
+                    Optional<Participantes> participante = participantesRepository.findById(participanteEquipo.getIdParticipante());
+
+                    participantes.append(participante.orElseThrow().getNombre()).append(" ").append(participante.orElseThrow().getApellidos()).append(",");
+
+                    if(!institucion.isPresent()) {
+                        institucion = institucionRepository.findById(participante.orElseThrow().getInstitucion().getId());
+                    }
+                }
+
+                resultadosParticipantesDTOS.add(new ResultadosParticipantesDTO(
+                        idParticipante,
+                        participantes.substring(Numeros.CERO.getNumero() , participantes.length()-Numeros.UNO.getNumero()),
+                        institucion.orElseThrow().getId(),
+                        institucion.orElseThrow().getNombre(),
+                        robot.orElseThrow().getNombre(),
+                        resultados.getScore()
+                ));
+
+            }
+        }
+
+        resultadosParticipantesDTOS = filtraInstituciones(resultadosParticipantesDTOS, idInstitucion);
 
         return resultadosParticipantesDTOS;
     }

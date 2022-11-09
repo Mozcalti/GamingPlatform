@@ -1,6 +1,6 @@
-import axios from "axios";
+    import axios from "axios";
 
-class DashboardService {
+class DashboardStaffService {
 
     obtenerEtapas(){
         return axios
@@ -17,6 +17,14 @@ class DashboardService {
                 return respuesta
             });
     }
+
+    listaResultadosGlobal(idEtapa) {
+        return axios
+            .get("/dashboads/consulta", {params: {"idEtapas": idEtapa}})
+            .then(respuesta => {
+                return respuesta
+            });
+    }
 }
 
-export default new DashboardService();
+export default new DashboardStaffService();

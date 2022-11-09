@@ -16,5 +16,5 @@ public interface ParticipantesService extends GenericServiceAPI<Participantes, I
     Participantes guardarParticipante(ParticipanteDTO participanteDTO);
     Participantes actualizarParticipante(TablaParticipantesDTO participanteDTO);
     Integer obtieneIdParticipante(String correo);
-
+    Integer obtieneIdInstitucion(String correo);
 }

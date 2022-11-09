@@ -9,7 +9,8 @@ import ActivationForm from "./components/activacion";
 import ParticipantesList from "./components/participantes";
 import InstitucionesList from "./components/instituciones";
 import Robots from "./components/robots";
-import Batallas from "./components/dashboard";
+import DashboardStaff from "./components/dashboardStaff";
+import DashboardParticipante from "./components/dashboardParticipante";
 import Torneos from "./components/torneos";
 
 function App() {
@@ -62,13 +63,22 @@ function App() {
                     }/>
 
                 <Route
-                    path="/dashboard"
+                    path="/dashboardStaff"
                     element={
                         <Protected>
-                            <Batallas />
+                            <DashboardStaff />
                         </Protected>
                     }/>
-<Route
+
+                <Route
+                    path="/dashboardParticipante"
+                    element={
+                        <Protected>
+                            <DashboardParticipante />
+                        </Protected>
+                    }/>
+
+                <Route
                     path="/torneos"
                     element={
                         <Protected>

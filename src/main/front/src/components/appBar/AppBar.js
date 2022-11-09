@@ -19,7 +19,8 @@ const pages = [
     {title: 'Instituciones', path: '#/instituciones', role: 'STAFF'},
     {title: 'Participantes', path: '#/participantes', role: 'STAFF'},
     {title: 'Robots', path: '#/robots', role: 'PARTICIPANTE'},
-    {title: 'Dashboard', path: '#/dashboard', role: 'STAFF'},
+    {title: 'Dashboard', path: '#/dashboardStaff', role: 'STAFF'},
+    {title: 'Dashboard', path: '#/dashboardParticipante', role: "PARTICIPANTE"},
     {title: 'Torneos', path: '#/torneos', role: 'STAFF'},
 ];
 
