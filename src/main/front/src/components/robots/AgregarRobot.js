@@ -7,11 +7,12 @@ import DialogActions from "@mui/material/DialogActions";
 import Dialog from "@mui/material/Dialog";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup/dist/yup";
+import AuthService from "../../services/auth.service";
 
 function AgregarRobot(props) {
     const [open, setOpen] = useState(false);
     let tipos = ["team", "robot"];
-
+    const user = AuthService.getCurrentUser();
 
     const {
         register,
@@ -34,7 +35,7 @@ function AgregarRobot(props) {
 
     const guardarRobot = data => {
         const formData = new FormData();
-        formData.append("idEquipo", 24);
+        formData.append("idParticipante", props.idParticipante);
         formData.append("tipo", data.tipo);
         formData.append("file", data.file[0]);
         props.addRobot(formData);

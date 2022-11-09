@@ -20,6 +20,7 @@ const InstitucionesList = () => {
         error: false
     })
     const [errorResponse, setErrorResponse] = useState("");
+
     const getInstituciones = (texto, fechaCreacion, indice) => {
         if (fechaCreacion === '' || fechaCreacion === null)
             fechaCreacion = '';
@@ -38,23 +39,10 @@ const InstitucionesList = () => {
             );
     }
 
-    const getInstitucionMasiva = (texto, indice) => {
-        InstitucionesService.getInstitucion(texto,indice)
-            .then(
-                (response) => {
-                    console.log(response.data);
-                    setInstituciones(response.data);
-                },
-                error => {
-                    console.log(error)
-                }
-            );
-    }
 
 
     useEffect(() => {
         getInstituciones("", "", 0)
-        getInstitucionMasiva();
     }, []);
     
     const validaExcel =(data)=>{
@@ -168,7 +156,7 @@ const InstitucionesList = () => {
                     <DataGrid
                         rows={instituciones}
                         columns={columns}
-                        getRowId={row => row.correo}
+                        getRowId={row => row.nombre}
                         initialState={{sorting: {sortModel: [{field: 'nombre', sort: 'asc',},],},}}
                         pageSize={50}
                         rowsPerPageOptions={[50]}
