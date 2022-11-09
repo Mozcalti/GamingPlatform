@@ -7,6 +7,7 @@ import lombok.Getter;
 @Getter
 public class ResultadosDTO {
 
+    private Integer idInstitucion;
     private String teamLeaderName;
     private Integer rank;
     private Double score;

@@ -115,6 +115,7 @@ public class DashboardServiceImpl implements DashboardService {
 
         List<ResultadosDTO> resultadosDTO = resultadosParte.stream()
                 .map(i -> new ResultadosDTO(
+                        null,
                         i.getTeamleadername(),
                         i.getRank(),
                         i.getScore(),
@@ -241,7 +242,7 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public List<DetalleBatallaDTO> listaDetalleBatallasIndividuales(Integer idEtapa) {
+    public List<DetalleBatallaDTO> listaDetalleBatallasIndividuales(Integer idEtapa, String idInstitucion) {
         //obtenemos todas las etapas de una etapa
         Optional<Etapas> etapas = etapasRepository.findById(idEtapa);
         List<DetalleBatallaDTO> listaDetalleBatallaDTO = new ArrayList<>();
@@ -255,8 +256,10 @@ public class DashboardServiceImpl implements DashboardService {
 
             for(Resultados resultados : batallas.orElseThrow().getResultadosByIdBatalla().stream()
                     .sorted(Comparator.comparing(Resultados::getScore).reversed()).toList()) {
+
                 listaResultadosDTO.add(
                         new ResultadosDTO(
+                                idInstitucion(resultados),
                                 resultados.getTeamleadername(),
                                 resultados.getRank(),
                                 resultados.getScore(),
@@ -274,6 +277,7 @@ public class DashboardServiceImpl implements DashboardService {
 
                 );
             }
+
             if(batallas.isPresent()){
                 listaDetalleBatallaDTO.add(
                         new DetalleBatallaDTO(
@@ -283,9 +287,11 @@ public class DashboardServiceImpl implements DashboardService {
                                 batallas.get().getHoraFin(),
                                 batallas.get().getEstatus(),
                                 reglasDTO,
-                                listaResultadosDTO
+                                idInstitucion.equals(Constantes.TODOS) ?
+                                        listaResultadosDTO :
+                                        listaResultadosDTO.stream().filter(r -> r.getIdInstitucion().toString()
+                                                .equals(idInstitucion)).toList()
                         )
-
                 );
             }
         }
@@ -301,5 +307,31 @@ public class DashboardServiceImpl implements DashboardService {
             listaEtapas.add(new EtapaDTO(etapa));
         }
         return listaEtapas;
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public Integer idInstitucion(Resultados resultados) {
+
+        Optional<Robots> robot = robotsRepository.findAllByClassName(resultados.getTeamleadername())
+                .stream()
+                .findFirst();
+
+        Optional<Institucion> institucion = Optional.empty();
+        if(robot.isPresent()) {
+            Optional<Equipos> equipos = equiposRepository.findById(robot.orElseThrow().getIdEquipo());
+
+            for(ParticipanteEquipo participanteEquipo : equipos.orElseThrow().getParticipanteEquiposByIdEquipo()) {
+                Optional<Participantes> participante = participantesRepository
+                        .findById(participanteEquipo.getIdParticipante());
+
+                if(!institucion.isPresent()) {
+                    institucion = institucionRepository.findById(participante.orElseThrow().getInstitucion().getId());
+                }
+            }
+
+        }
+
+        return institucion.orElseThrow().getId();
     }
 }
