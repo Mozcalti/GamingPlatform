@@ -39,9 +39,6 @@ resources:
   static:
     instituciones: ${PATH_INSTITUCIONES:path}
     participantes: ${PATH_PARTICIPANTES:path}
-    resultados-batalla: ${PATH_RESULTADOS_BATALLA:path}
-    xml-view-battle: ${PATH_XML_VIEW:path}
-    json-view-battle: ${PATH_JSON_VIEW:path}
 
 robocode:
   executable: ${PATH_ROBOCODE:path}
@@ -56,7 +53,6 @@ server:
 
 cron:
   mail-batallas: ${CRON_MAIL_BATTALLAS:0 0 1 * * *}
-  resultados-batallas: ${CRON_RESULTADOS_BATTALLAS:0 */1 * * * *}
   ejecuta-batallas: ${CRON_EJECUTA_BATTALLAS:0 */1 * * * *}
 
 mail:
@@ -67,5 +63,6 @@ mail:
   from: ${MAIL_FROM:from}
 
 view:
-  host-battle: ${HOST_VIEW_BATTLE:host}
-  html-battle: ${HTML_VIEW_BATTLE:html}
+  htmlViewBattle: ${HTML_VIEW_BATTLE:html}
+  xmlViewBattle: ${PATH_XML_VIEW:path}
+  jsonViewBattle: ${PATH_JSON_VIEW:path}

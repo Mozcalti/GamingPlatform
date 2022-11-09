@@ -57,8 +57,8 @@ public class DashboardServiceImpl implements DashboardService {
     @Autowired
     private BatallasRepository batallasRepository;
 
-    @Value("${resources.static.resultados-batalla}")
-    private String pathResultadosBatalla;
+    @Value("${robocode.executable}")
+    private String pathRobocodeExecutable;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class, RuntimeException.class})
@@ -70,7 +70,8 @@ public class DashboardServiceImpl implements DashboardService {
             DashboardsGlobalResultadosValidation.validaBatalla(batalla);
 
             fileResultadoBatallas.delete(Numeros.CERO.getNumero(), fileResultadoBatallas.length());
-            fileResultadoBatallas.append(pathResultadosBatalla).append(Constantes.DIAGONAL)
+            fileResultadoBatallas.append(pathRobocodeExecutable).append(Constantes.DIAGONAL)
+                    .append(Constantes.BATTLES).append(Constantes.DIAGONAL)
                     .append(batalla.getViewToken()).append(Constantes.XML);
 
             DashboardsGlobalResultadosValidation.validaExisteArchivoXML(fileResultadoBatallas.toString());
@@ -94,6 +95,8 @@ public class DashboardServiceImpl implements DashboardService {
             for(Result result : recordInfo.getResults().stream()
                     .sorted(Comparator.comparing(Result::getScore).reversed()).toList()) {
                 result.setRank(rank++);
+                result.setTeamLeaderName(
+                        StringUtils.getTokenByPosition(result.getTeamLeaderName()));
                 resultadosRepository.save(new Resultados(result, batalla.getIdBatalla()));
             }
 

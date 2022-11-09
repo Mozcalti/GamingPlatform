@@ -8,7 +8,9 @@ import lombok.RequiredArgsConstructor;
 public enum TipoBatalla {
 
     INDIVIDUAL("INDIVIDUAL"),
-    EQUIPO("EQUIPO");
+    EQUIPO("EQUIPO"),
+    MIXTO("MIXTO");
+
     private final String trabajo;
 
 }

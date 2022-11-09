@@ -12,25 +12,19 @@ import { AnimationControl } from './classes/AnimationControl.js';
 const hitVictimSound = new Audio();
 hitVictimSound.src = "sounds/bullet.wav";
 hitVictimSound.autoplay = true;
-//hitVictimSound.muted = true
-
 
 const hitWallSound = new Audio();
-/*hitWallSound.src = "sounds/wall.wav";
-hitWallSound.muted = true
-hitWallSound.autoplay = true;*/
+hitWallSound.src = "sounds/wall.wav";
+hitWallSound.autoplay = true;
 
 const explodedSound = new Audio();
-/*explodedSound.src = "sounds/explode.wav";
-explodedSound.muted = true
-explodedSound.autoplay = true;*/
+explodedSound.src = "sounds/explode.wav";
+explodedSound.autoplay = true;
 
 let battleXml;
 let battleParticipantes;
 
 function obtieneJson() {
-
-
     fetch("./json/" + getURLParameters("token") + ".json")
         .then(function (resp) {
             return resp.json();
@@ -201,6 +195,11 @@ function init(battleFecha){
         let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         let seconds = Math.floor((distance % (1000 * 60)) / 1000);
         //we reached battle date
+
+        if(now == battleDate) {
+            window.location.reload();
+        }
+
         if(now >= battleDate){
             //x minutes after battle date = replay, else it's a live battle
             if(now >= battleDate.setMinutes(battleDate.getMinutes() + minutesOffset)){

@@ -82,20 +82,16 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
 
     @Value("${robocode.executable}")
     private String pathRobocode;
-
-    @Value("${view.host-battle}")
-    private String hostViewBattle;
-
-    @Value("${view.html-battle}")
+    @Value("${server.baseUrl}")
+    private String baseUrl;
+    @Value("${view.htmlViewBattle}")
     private String htmlViewBattle;
-
-    @Value("${resources.static.resultados-batalla}")
-    private String pathResultadosBatalla;
-
-    @Value("${resources.static.xml-view-battle}")
+    @Value("${view.xmlViewBattle}")
     private String pathXmlView;
-    @Value("${resources.static.json-view-battle}")
+    @Value("${view.jsonViewBattle}")
     private String pathJsonView;
+    @Value("${robocode.executable}")
+    private String pathRobocodeExecutable;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class, RuntimeException.class})
@@ -114,7 +110,9 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
             try {
                 DashboardsGlobalResultadosValidation.validaBatalla(batalla);
 
-                String fechaSistema = DateUtils.getDateFormat(Calendar.getInstance().getTime(), Constantes.FECHA_HORA_PATTERN);
+                String fechaSistema = DateUtils
+                        .getDateFormat(DateUtils.addMinutos(Calendar.getInstance().getTime(), Numeros.UNO.getNumero()),
+                                Constantes.FECHA_HORA_PATTERN);
 
                 if(DateUtils.isHoursRangoValid(horaInicioBatalla, horaFinBatalla,
                     fechaSistema, Constantes.FECHA_HORA_PATTERN)
@@ -129,18 +127,26 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
                     batalla.setEstatus(EstadosBatalla.EN_PROCESO.getEstado());
                     batallasRepository.save(batalla);
 
-                    String token = UUID.randomUUID().toString();
-
                      if(obtieneRobots(batalla.getBatallaParticipantesByIdBatalla().stream().toList()) != null) {
-                         BattleRunner br = new BattleRunner(new Robocode(), token, RECORDER,
+                         BattleRunner br = new BattleRunner(new Robocode(), batalla.getViewToken(), RECORDER,
                                  etapa.getReglas().getArenaAncho(), etapa.getReglas().getArenaAlto(),
                                  obtieneRobots(batalla.getBatallaParticipantesByIdBatalla().stream().toList()),
                                  etapa.getReglas().getNumRondas());
 
                          br.runBattle(pathRobocode, REPLAY_TYPE);
 
-                         generaVizualizacionBatalla(batalla, token);
                          dashboardsGlobalResultadosService.buscaSalidaBatallas(batalla);
+
+                         StringBuilder battleXmlOrigin = new StringBuilder(pathRobocodeExecutable)
+                                 .append(Constantes.DIAGONAL).append(Constantes.BATTLES).append(Constantes.DIAGONAL)
+                                 .append(batalla.getViewToken()).append(Constantes.XML);
+
+                         StringBuilder battleXmlDestino = new StringBuilder(pathXmlView).append(Constantes.DIAGONAL)
+                                 .append(batalla.getViewToken()).append(Constantes.XML);
+
+                        org.apache.commons.io.FileUtils.copyFile(
+                                new File(battleXmlOrigin.toString()),
+                                new File(battleXmlDestino.toString()));
 
                          batalla.setEstatus(EstadosBatalla.TERMINADA.getEstado());
                          batallasRepository.save(batalla);
@@ -152,7 +158,7 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
 
                 }
 
-            } catch (ValidacionException | UtilsException e) {
+            } catch (ValidacionException | UtilsException | IOException e) {
                 log.info(e.getMessage());
             }
         }
@@ -160,15 +166,9 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
     }
 
     @Override
-    public void generaVizualizacionBatalla(Batallas batallas, String token) {
+    public void generaJsonViewBattle(Batallas batallas, String token) {
 
         try {
-            StringBuilder urlView = new StringBuilder(hostViewBattle)
-                    .append(htmlViewBattle).append(Constantes.PARAM_TOKEN).append(token);
-
-            batallas.setViewUrl(urlView.toString());
-            batallas.setViewToken(token);
-
             List<BatallaParticipantes> batallasParticipantes =
                     batallaParticipantesRepository.findAllByIdBatalla(batallas.getIdBatalla());
 
@@ -187,16 +187,6 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
 
             StringBuilder battleXml = new StringBuilder(Constantes.PATH_VIEW_XML).append(token)
                     .append(Constantes.XML);
-
-            StringBuilder battleXmlOrigin = new StringBuilder(pathResultadosBatalla)
-                    .append(Constantes.DIAGONAL).append(token).append(Constantes.XML);
-
-            StringBuilder battleXmlDestino = new StringBuilder(pathXmlView).append(Constantes.DIAGONAL)
-                    .append(token).append(Constantes.XML);
-
-            org.apache.commons.io.FileUtils.copyFile(
-                    new File(battleXmlOrigin.toString()),
-                    new File(battleXmlDestino.toString()));
 
             BatallaViewDTO batallaViewDTO = new BatallaViewDTO(
                     battleParticipantes,
@@ -340,7 +330,8 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
                     }
                 }
             }
-        } else if(etapas.getReglas().getTrabajo().equals(TipoBatalla.EQUIPO.getTrabajo())) {
+        } else if(etapas.getReglas().getTrabajo().equals(TipoBatalla.EQUIPO.getTrabajo())
+                && etapas.getReglas().getTrabajo().equals(TipoBatalla.MIXTO.getTrabajo())) {
             List<Integer> randomNumbers = TorneoUtils.armaEquipos(equiposDTO.getIdEquipos());
             List<List<BatallaParticipanteDTO>> lists = torneosService.obtieneParticipantes(
                     randomNumbers, numCompetidores);
@@ -369,6 +360,14 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
         BatallaParticipantes batallaParticipantes;
         for(BatallaDTO batallaDTO : batallasDTO.getBatallas()) {
             batallas = new Batallas(batallaDTO);
+
+            String token = UUID.randomUUID().toString();
+            batallas.setViewToken(token);
+
+            StringBuilder urlView = new StringBuilder(baseUrl).append(Constantes.DIAGONAL)
+                    .append(htmlViewBattle).append(Constantes.PARAM_TOKEN).append(token);
+
+            batallas.setViewUrl(urlView.toString());
             batallas = batallasRepository.save(batallas);
 
             batallaDTO.setIdBatalla(batallas.getIdBatalla());
@@ -380,6 +379,9 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
                 batallaParticipantes = new BatallaParticipantes(batallaParticipanteDTO, batallas.getIdBatalla());
                 batallaParticipantesRepository.save(batallaParticipantes);
             }
+
+            generaJsonViewBattle(batallas, token);
+
         }
 
     }

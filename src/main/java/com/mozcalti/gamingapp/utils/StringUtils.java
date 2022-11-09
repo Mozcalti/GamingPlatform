@@ -21,4 +21,18 @@ public class StringUtils {
         }
     }
 
+    public static String getTokenByPosition(String value) throws UtilsException {
+
+        if(value.contains(Constantes.ESPACIO)) {
+            String[] tokens = value.split(Constantes.ESPACIO, -1);
+
+            if (Numeros.UNO.getNumero() <= tokens.length) {
+                return tokens[Numeros.UNO.getNumero() - 1];
+            }
+        }
+
+        return value;
+
+    }
+
 }

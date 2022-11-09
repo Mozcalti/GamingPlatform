@@ -20,6 +20,10 @@ public class DatosCorreoBatallaDTO {
 
     private List<String> participantes;
 
+    private String urlViewBattle;
+
+    private String baseUrl;
+
     public DatosCorreoBatallaDTO(String fecha, String horaInicio, String horaFin, Integer rondas) {
         this.fecha = fecha;
         this.horaInicio = horaInicio;
