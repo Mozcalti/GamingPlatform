@@ -153,7 +153,7 @@ const DashboardParticipante = () => {
                     <Grid container spacing={2}>
                         {etapaSearchMethod.localeCompare("BATALLA") === 0 ?
                             <Grid container spacing={2}>
-                                {batallas.length !== 0 && batallas[0].listaResultadosDTO.length != 0 ?
+                                {batallas.length !== 0 ?
                                     <Grid item xs={12} md={12}>
                                         {batallas.map((b) => (
                                             <Grid item xs={12} md={12}>
@@ -227,7 +227,7 @@ const DashboardParticipante = () => {
                                         borderRadius: "5px",
                                         marginTop: "50px"
                                     }}>
-                                        <Typography variant="h6" component="div">AUN NO HAY BATALLAS</Typography>
+                                        <Typography variant="h6" component="div">AÚN NO HAY RESULTADOS DE BATALLAS</Typography>
                                     </Grid>
                                 }
                             </Grid>
@@ -276,7 +276,7 @@ const DashboardParticipante = () => {
                                         borderRadius: "5px",
                                         marginTop: "50px"
                                     }}>
-                                        <Typography variant="h6" component="div">AUN NO HAY RESULTADOS GLOBALES</Typography>
+                                        <Typography variant="h6" component="div">AÚN NO HAY RESULTADOS GLOBALES</Typography>
                                     </Grid>
                                 }
                             </Grid>

@@ -210,7 +210,7 @@ const DashboardStaff = () => {
                                         borderRadius: "5px",
                                         marginTop: "50px"
                                     }}>
-                                        <Typography variant="h6" component="div">AUN NO HAY BATALLAS</Typography>
+                                        <Typography variant="h6" component="div">AÚN NO HAY BATALLAS</Typography>
                                     </Grid>
                                 }
                             </Grid>
@@ -259,7 +259,7 @@ const DashboardStaff = () => {
                                         borderRadius: "5px",
                                         marginTop: "50px"
                                     }}>
-                                        <Typography variant="h6" component="div">AUN NO HAY RESULTADOS GLOBALES</Typography>
+                                        <Typography variant="h6" component="div">AÚN NO HAY RESULTADOS GLOBALES</Typography>
                                     </Grid>
                                 }
                             </Grid>
