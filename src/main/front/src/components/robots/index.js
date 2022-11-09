@@ -118,6 +118,7 @@ const Robots = () => {
     useEffect(() => {
         getParticipantePorCorreo(user.email)
         getRobots(idParticipante)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (

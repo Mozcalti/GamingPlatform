@@ -12,7 +12,6 @@ import AuthService from "../../services/auth.service";
 function AgregarRobot(props) {
     const [open, setOpen] = useState(false);
     let tipos = ["team", "robot"];
-    const user = AuthService.getCurrentUser();
 
     const {
         register,
