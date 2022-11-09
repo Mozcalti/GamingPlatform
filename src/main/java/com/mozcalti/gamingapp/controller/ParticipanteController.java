@@ -55,4 +55,8 @@ public class ParticipanteController {
         return participantesService.obtieneIdParticipante(correo);
     }
 
+    @GetMapping(value ="/institucion")
+    public Integer obtenIdInstitucion(@RequestParam String correo){
+        return participantesService.obtieneIdInstitucion(correo);
+    }
 }
