@@ -52,7 +52,6 @@ server:
       enabled: false
 
 cron:
-  mail-batallas: ${CRON_MAIL_BATTALLAS:0 0 1 * * *}
   ejecuta-batallas: ${CRON_EJECUTA_BATTALLAS:0 */1 * * * *}
 
 mail:
