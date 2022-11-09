@@ -29,7 +29,6 @@ class InstitucionesService {
     guardarInstitucion(guardar){
         return axios.post("/institucion/guardar",guardar)
         .then(response => {
-            console.log('guardar',response);
             return response;
         });
     }

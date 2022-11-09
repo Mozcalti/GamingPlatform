@@ -46,12 +46,21 @@ robocode:
   battles: ${PATH_BATTLES:path}
 
 server:
+  port: ${SERVER_PORT:443}
   baseUrl: ${BASE_URL:https://robocode.mozcalti.com}
+  ssl:
+    key-store-password: ${KEY_STORE_PASSWORD:pass}
+    keyStoreType: ${KEY_STORE_TYPE:type}
+    keyAlias: ${KEY_ALIAS:tomcat}
+    key-store: ${KEY_STORE:path}
+    enabled: true
   error:
     whitelabel:
       enabled: false
 
 cron:
+  mail-batallas: ${CRON_MAIL_BATTALLAS:0 0 1 * * *}
+  resultados-batallas: ${CRON_RESULTADOS_BATTALLAS:0 */1 * * * *}
   ejecuta-batallas: ${CRON_EJECUTA_BATTALLAS:0 */1 * * * *}
 
 mail:

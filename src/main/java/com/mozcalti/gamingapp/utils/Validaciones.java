@@ -20,14 +20,27 @@ public class Validaciones {
         else
             throw new IllegalArgumentException(String.format("El valor ubicado en la columna %s fila %s no es una cadena de texto", CellReference.convertNumToColString(cell.getColumnIndex()), cell.getRowIndex() + 1));
     }
+
+    public static String validaVacio(Cell cell) {
+        if (cell.getCellType() == CellType.STRING || cell.getCellType() == CellType.BLANK)
+            return cell.getStringCellValue();
+        else
+            throw new IllegalArgumentException(String.format("El valor ubicado en la columna %s fila %s no es una cadena de texto/VACIA", CellReference.convertNumToColString(cell.getColumnIndex()), cell.getRowIndex() + 1));
+    }
     public static String validaEmailCellValue(Cell cell) {
-        if (cell.getCellType() == CellType.STRING && patternMatches(cell.getStringCellValue()) || cell.getStringCellValue().isBlank())
+        if (cell.getCellType() == CellType.STRING && (patternMatches(cell.getStringCellValue()) || patternMatchesLarge(cell.getStringCellValue()) || patternMatchesExtraLarge(cell.getStringCellValue())) || cell.getStringCellValue().isBlank())
             return cell.getStringCellValue();
         else
             throw new IllegalArgumentException(String.format("El valor ubicado en la columna %s fila %s no es un correo valido", CellReference.convertNumToColString(cell.getColumnIndex()), cell.getRowIndex() + 1));
     }
     public static boolean patternMatches(String emailAddress) {
         return Pattern.matches("([a-z0-9].{1,64})@([a-z0-9]{4,255}.[a-z0-9]{2,4}){0,256}$",emailAddress);
+    }
+    public static boolean patternMatchesLarge(String emailAddress) {
+        return Pattern.matches("([a-z0-9].{1,64})@([a-z0-9]{3,255}.[a-z0-9]{2,5}.[a-z0-9]{2,5}){0,256}$",emailAddress);
+    }
+    public static boolean patternMatchesExtraLarge(String emailAddress) {
+        return Pattern.matches("([a-z0-9].{1,64})@([a-z0-9]{3,255}.[a-z0-9]{2,5}.[a-z0-9]{2,5}.[a-z0-9]{2,5}){0,256}$",emailAddress);
     }
     public static XSSFWorkbook getWorkbook(String nombre, InputStream inputStream) throws IOException {
         if (inputStream == null || nombre == null)

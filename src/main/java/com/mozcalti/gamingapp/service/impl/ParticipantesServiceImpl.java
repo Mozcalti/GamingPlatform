@@ -80,7 +80,7 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
                     if (nextCell.getColumnIndex() == Numeros.CINCO.getNumero())
                         participantes.setIes(Validaciones.validaStringCellValue(nextCell));
                     if (nextCell.getColumnIndex() == Numeros.SEIS.getNumero())
-                        participantes.setCarrera(Validaciones.validaStringCellValue(nextCell));
+                        participantes.setCarrera(Validaciones.validaVacio(nextCell));
                     if (nextCell.getColumnIndex() == Numeros.SIETE.getNumero())
                         participantes.setSemestre((int) nextCell.getNumericCellValue());
                     if (nextCell.getColumnIndex() == Numeros.OCHO.getNumero())

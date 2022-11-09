@@ -2,9 +2,9 @@ import axios from "axios";
 
 class RobotsService {
 
-    lista(idEquipo) {
+    lista(idParticipante) {
         return axios
-            .get("/robot/verRobots", {params: {"idEquipo": idEquipo}})
+            .get("/robot/verRobots", {params: {"idParticipante": idParticipante}})
             .then(respuesta => {
                 return respuesta
             });
@@ -42,6 +42,15 @@ class RobotsService {
                 return response;
             });
     }
+
+    getPartiticpanteByCorreo(correo) {
+        return axios
+            .get("/participante/correo", {params: {"correo": correo}})
+            .then(respuesta => {
+                return respuesta
+            });
+    }
+
 }
 
 export default new RobotsService();

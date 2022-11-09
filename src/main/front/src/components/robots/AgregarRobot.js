@@ -12,7 +12,6 @@ function AgregarRobot(props) {
     const [open, setOpen] = useState(false);
     let tipos = ["team", "robot"];
 
-
     const {
         register,
         reset,
@@ -34,7 +33,7 @@ function AgregarRobot(props) {
 
     const guardarRobot = data => {
         const formData = new FormData();
-        formData.append("idEquipo", 24);
+        formData.append("idParticipante", props.idParticipante);
         formData.append("tipo", data.tipo);
         formData.append("file", data.file[0]);
         props.addRobot(formData);

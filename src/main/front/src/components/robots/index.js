@@ -10,10 +10,12 @@ import AgregarRobot from "./AgregarRobot";
 import * as Yup from "yup";
 import RobotsService from "./Robots.service";
 import Button from "@mui/material/Button";
+import AuthService from "../../services/auth.service";
 
 
 const Robots = () => {
     const [robots, setRobots] = useState([]);
+    const [idParticipante, setIdParticipante] = useState([]);
     const [resultado, setResultado] = useState({
             success: false,
             error: false
@@ -21,9 +23,10 @@ const Robots = () => {
     );
     const [errorResponse, setErrorResponse] = useState("");
     const [successResponse, setSuccessResponse] = useState("");
+    const user = AuthService.getCurrentUser();
 
-    const getRobots = (idEquipo) =>{
-        RobotsService.lista(idEquipo)
+    const getRobots = (idParticipante) => {
+        RobotsService.lista(idParticipante)
             .then(
                 (response) => {
                     setRobots(response.data)
@@ -33,21 +36,20 @@ const Robots = () => {
                 }
             )
     }
-    
+
     const elimiarRobot = (idRobot) => {
         RobotsService.eliminarRobot(idRobot)
             .then(
                 () => {
                     setResultado({...resultado, success: true})
                     setSuccessResponse("Se elimino correctamente el Robot");
-                    getRobots(24)
+                    getRobots(idParticipante)
                 },
                 error => {
                     setErrorResponse(error.response.data.message)
                     setResultado({...resultado, error: true})
                 }
             )
-      
     }
 
     const activarRobot = (nombre, idEquipo) => {
@@ -59,7 +61,7 @@ const Robots = () => {
                 () => {
                     setResultado({...resultado, success: true})
                     setSuccessResponse("Se selecciono correctamente el Robot");
-                    getRobots(24)
+                    getRobots(idParticipante)
                 },
                 error => {
                     setErrorResponse(error.response.data.message)
@@ -75,7 +77,8 @@ const Robots = () => {
                 (response) => {
                     setResultado({...resultado, success: true})
                     setSuccessResponse("Se guardo correctamente el Robot");
-                    getRobots(24)
+                    getParticipantePorCorreo(user.email)
+                    getRobots(idParticipante)
                 },
                 error => {
                     setErrorResponse(error.response.data.message)
@@ -97,8 +100,25 @@ const Robots = () => {
     });
 
 
+    const getParticipantePorCorreo = (correo) => {
+        RobotsService
+            .getPartiticpanteByCorreo(correo)
+            .then(
+                (response) => {
+                    console.log(response.data)
+                    setIdParticipante(response.data)
+                },
+                error => {
+                    console.log(error)
+                }
+            )
+    }
+
+
     useEffect(() => {
-        getRobots(24)
+        getParticipantePorCorreo(user.email)
+        getRobots(idParticipante)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
@@ -113,7 +133,7 @@ const Robots = () => {
                     <Grid item xs={2} md={2}>
                     </Grid>
                     <Grid item xs={2} md={2}>
-                        <AgregarRobot ValidaForm={ValidaForm} addRobot={agregarRobot} />
+                        <AgregarRobot ValidaForm={ValidaForm} addRobot={agregarRobot} idParticipante={idParticipante}/>
                     </Grid>
                 </Grid>
                 <br/>
@@ -125,16 +145,19 @@ const Robots = () => {
                             <Card>
                                 <CardContent>
                                     <Typography gutterBottom variant="h5" component="div">{r.nombre}</Typography>
-                                    <Typography variant="body2" color="text.secondary">Class Name: {r.className}</Typography>
+                                    <Typography variant="body2" color="text.secondary">Class
+                                        Name: {r.className}</Typography>
                                     <Typography variant="body2" color="text.secondary">Tipo: {r.tipo}</Typography>
                                     <Typography variant="body2" color="text.secondary">Equipo: {r.idEquipo}</Typography>
                                 </CardContent>
                                 <CardActions>
-                                    {r.activo   ?
+                                    {r.activo ?
                                         <Button variant="text" color="success">Seleccionado</Button>
-                                        : <Button variant="contained" onClick={() => activarRobot(r.nombre, r.idEquipo)}>Seleccionar</Button>
+                                        : <Button variant="contained"
+                                                  onClick={() => activarRobot(r.nombre, r.idEquipo)}>Seleccionar</Button>
                                     }
-                                    <Button variant="contained" color="error" onClick={() => elimiarRobot(r.idRobot)}>Eliminar</Button>
+                                    <Button variant="contained" color="error"
+                                            onClick={() => elimiarRobot(r.idRobot)}>Eliminar</Button>
                                 </CardActions>
                             </Card>
                         </Grid>
