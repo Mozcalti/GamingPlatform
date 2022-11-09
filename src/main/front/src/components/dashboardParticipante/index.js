@@ -244,23 +244,22 @@ const DashboardParticipante = () => {
                                         </Grid>
                                             <Grid item xs={12} md={12}>
                                                     <Grid item xs={12} md={12}>
-                                                        <DataGrid rows={resultadosGlobal} columns={columnsResultadosGlobales}
-                                                                  getRowId={row => row.nombreRobot} initialState={{
-                                                            sorting: {
-                                                                sortModel: [{
-                                                                    field: 'puntuacion',
-                                                                    sort: 'asc',
-                                                                },],
-                                                            },
-                                                        }} autoHeight={true} hideFooter={true} style={gridStyle}
-                                                                  sx={{
-                                                                      '& .MuiDataGrid-columnHeaderTitle': {
-                                                                          textOverflow: "clip",
-                                                                          whiteSpace: "break-spaces",
-                                                                          lineHeight: 1,
-                                                                          textAlign: "center"
-                                                                      }
-                                                                  }}
+                                                        <DataGrid
+                                                            rows={resultadosGlobal}
+                                                            columns={columnsResultadosGlobales}
+                                                            getRowId={row => row.nombreRobot}
+                                                            initialState={{sorting: {sortModel: [{field: 'puntuacion', sort: 'asc',},],}}}
+                                                            pageSize={50}
+                                                            rowsPerPageOptions={[50]}
+                                                            pagination
+                                                            autoHeight={true} hideFooter={false} style={gridStyle} sx={{
+                                                            '& .MuiDataGrid-columnHeaderTitle': {
+                                                                textOverflow: "clip",
+                                                                whiteSpace: "break-spaces",
+                                                                lineHeight: 1,
+                                                                textAlign: "center"
+                                                            }
+                                                        }}
                                                         />
                                                         <br/>
                                                         <br/>
