@@ -14,7 +14,7 @@ class RobotsService {
         return axios
             .post("robot/cargarRobot", robot, {headers: {"Content-Type": "multipart/form-data"}})
             .then(response => {
-                this.guardarRobot(response.data)
+                return response;
             });
     }
 
