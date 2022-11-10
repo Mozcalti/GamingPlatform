@@ -43,25 +43,6 @@ public class TorneoValidation {
                     "Las fechas del nuevo torneo debe continuar después del último registrado");
         }
 
-        String diaSemanaFIT = DateUtils.getDateFormat(
-                DateUtils.getDateFormat(torneoDTO.getFechaInicio(), Constantes.FECHA_PATTERN).getTime(),
-                Constantes.DIA_PATTERN);
-        String diaSemanaFFT = DateUtils.getDateFormat(
-                DateUtils.getDateFormat(torneoDTO.getFechaFin(), Constantes.FECHA_PATTERN).getTime(),
-                Constantes.DIA_PATTERN);
-
-        if(diaSemanaFIT.contains(Constantes.SABADO) || diaSemanaFIT.contains(Constantes.DOMINGO)) {
-            throw new ValidacionException("Fecha de inicio del torneo no puede ser un día inhábil");
-        }
-
-        if(diaSemanaFFT.contains(Constantes.SABADO) || diaSemanaFFT.contains(Constantes.DOMINGO)) {
-            throw new ValidacionException("Fecha de fin del torneo no puede ser un día inhábil");
-        }
-
-        if(torneoDTO.getHorasHabiles() == null) {
-            throw new ValidacionException("Debe seleccionar por lo menos un horario para el torneo");
-        }
-
         for(HoraHabilDTO horaHabilDTO : torneoDTO.getHorasHabiles()) {
             DateUtils.isDatesRangoValid(horaHabilDTO.getHoraIniHabil(),
                     horaHabilDTO.getHoraFinHabil(),
@@ -127,23 +108,6 @@ public class TorneoValidation {
                     Constantes.FECHA_PATTERN,
                     "Fecha inicio de la etapa " + etapaDTO.getNumeroEtapa()
                             + " no puede ser mayor a la fecha fin");
-
-            String diaSemanaFIT = DateUtils.getDateFormat(
-                    DateUtils.getDateFormat(etapaDTO.getFechaInicio(), Constantes.FECHA_PATTERN).getTime(),
-                    Constantes.DIA_PATTERN);
-            String diaSemanaFFT = DateUtils.getDateFormat(
-                    DateUtils.getDateFormat(etapaDTO.getFechaFin(), Constantes.FECHA_PATTERN).getTime(),
-                    Constantes.DIA_PATTERN);
-
-            if(diaSemanaFIT.contains(Constantes.SABADO) || diaSemanaFIT.contains(Constantes.DOMINGO)) {
-                throw new ValidacionException("Fecha de inicio de la etapa "
-                        +  etapaDTO.getNumeroEtapa() + " no puede ser un día inhábil");
-            }
-
-            if(diaSemanaFFT.contains(Constantes.SABADO) || diaSemanaFFT.contains(Constantes.DOMINGO)) {
-                throw new ValidacionException("Fecha de fin de la etapa "
-                        +  etapaDTO.getNumeroEtapa() + " no puede ser un día inhábil");
-            }
 
             if(etapaDTO.getReglas() == null) {
                 throw new ValidacionException("Debe mandar las reglas para la etapa");

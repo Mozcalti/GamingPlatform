@@ -34,13 +34,7 @@ public final class TorneoUtils {
             do {
                 fechaInicio = DateUtils.addDias(fechaInicio, Constantes.FECHA_PATTERN, 1);
 
-                String diaSemana = DateUtils.getDateFormat(
-                        DateUtils.getDateFormat(fechaInicio, Constantes.FECHA_PATTERN).getTime(),
-                        Constantes.DIA_PATTERN);
-
-                boolean diaPermitido = !diaSemana.contains(Constantes.SABADO)
-                        && !diaSemana.contains(Constantes.DOMINGO)
-                        && DateUtils.isDatesRangoValid(fechaInicio, torneos.getFechaFin(), Constantes.FECHA_PATTERN);
+                boolean diaPermitido = DateUtils.isDatesRangoValid(fechaInicio, torneos.getFechaFin(), Constantes.FECHA_PATTERN);
 
                 if(diaPermitido) {
                     horariosPermitidos.add(new BatallaFechaHoraInicioDTO(id++, fechaInicio,
