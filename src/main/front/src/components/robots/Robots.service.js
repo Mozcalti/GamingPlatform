@@ -14,7 +14,7 @@ class RobotsService {
         return axios
             .post("robot/cargarRobot", robot, {headers: {"Content-Type": "multipart/form-data"}})
             .then(response => {
-                this.guardarRobot(response.data)
+                return response;
             });
     }
 
@@ -27,9 +27,9 @@ class RobotsService {
     }
 
 
-    eliminarRobot(idRobot) {
+    eliminarRobot(idRobot, idParticipante) {
         return axios
-            .delete("robot/eliminarRobot",{params: {"idRobot": idRobot}})
+            .delete("robot/eliminarRobot",{params: {"idRobot": idRobot, "idParticipante":idParticipante}})
             .then(response => {
                 return response;
             });

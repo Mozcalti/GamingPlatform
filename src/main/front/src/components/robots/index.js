@@ -15,7 +15,7 @@ import AuthService from "../../services/auth.service";
 
 const Robots = () => {
     const [robots, setRobots] = useState([]);
-    const [idParticipante, setIdParticipante] = useState([]);
+    const [idParticipante, setIdParticipante] = useState("");
     const [resultado, setResultado] = useState({
             success: false,
             error: false
@@ -25,7 +25,7 @@ const Robots = () => {
     const [successResponse, setSuccessResponse] = useState("");
     const user = AuthService.getCurrentUser();
 
-    const getRobots = (idParticipante) => {
+    const getRobots = () => {
         RobotsService.lista(idParticipante)
             .then(
                 (response) => {
@@ -37,13 +37,13 @@ const Robots = () => {
             )
     }
 
-    const elimiarRobot = (idRobot) => {
-        RobotsService.eliminarRobot(idRobot)
+    const elimiarRobot = (idRobot, idP) => {
+        RobotsService.eliminarRobot(idRobot, idP)
             .then(
                 () => {
                     setResultado({...resultado, success: true})
                     setSuccessResponse("Se elimino correctamente el Robot");
-                    getRobots(idParticipante)
+                    getRobots()
                 },
                 error => {
                     setErrorResponse(error.response.data.message)
@@ -51,17 +51,31 @@ const Robots = () => {
                 }
             )
     }
-
-    const activarRobot = (nombre, idEquipo) => {
+    const activarRobot = (nombre, idP) => {
         const formData = new FormData();
         formData.append("nombre", nombre);
-        formData.append("idEquipo", idEquipo);
+        formData.append("idParticipante", idP);
         RobotsService.seleccionarRobot(formData)
             .then(
                 () => {
                     setResultado({...resultado, success: true})
                     setSuccessResponse("Se selecciono correctamente el Robot");
-                    getRobots(idParticipante)
+                    getRobots()
+                },
+                error => {
+                    setErrorResponse(error.response.data.message)
+                    setResultado({...resultado, error: true})
+                }
+            )
+
+    }
+
+    const validarRobot = (robot) => {
+        RobotsService
+            .cargarRobot(robot)
+            .then(
+                (response) => {
+                    guardarRobot(response.data)
                 },
                 error => {
                     setErrorResponse(error.response.data.message)
@@ -70,15 +84,14 @@ const Robots = () => {
             )
     }
 
-    const agregarRobot = (robot) => {
+    const guardarRobot = (robotValid) => {
         RobotsService
-            .cargarRobot(robot)
+            .guardarRobot(robotValid)
             .then(
                 (response) => {
                     setResultado({...resultado, success: true})
                     setSuccessResponse("Se guardo correctamente el Robot");
-                    getParticipantePorCorreo(user.email)
-                    getRobots(idParticipante)
+                    getRobots()
                 },
                 error => {
                     setErrorResponse(error.response.data.message)
@@ -86,6 +99,7 @@ const Robots = () => {
                 }
             )
     }
+
 
     const ValidaForm = Yup.object().shape({
         file: Yup.mixed()
@@ -93,7 +107,7 @@ const Robots = () => {
                 if (value.length > 0) return true; else return false;
             })
             .test("fileType", "El formato del archivo no es valido", (value) => {
-                return value.length && ["application/x-java-archive", "application/java-archive"].includes(value[0].type)
+                return value.length && value[0].name.endsWith(".jar")
             }),
         tipo: Yup.string()
             .required('El tipo de robot es obligatorio')
@@ -105,21 +119,20 @@ const Robots = () => {
             .getPartiticpanteByCorreo(correo)
             .then(
                 (response) => {
-                    console.log(response.data)
                     setIdParticipante(response.data)
                 },
                 error => {
                     console.log(error)
                 }
             )
+
+
     }
-
-
     useEffect(() => {
         getParticipantePorCorreo(user.email)
-        getRobots(idParticipante)
+        getRobots()
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [idParticipante]);
 
     return (
         <>
@@ -133,7 +146,7 @@ const Robots = () => {
                     <Grid item xs={2} md={2}>
                     </Grid>
                     <Grid item xs={2} md={2}>
-                        <AgregarRobot ValidaForm={ValidaForm} addRobot={agregarRobot} idParticipante={idParticipante}/>
+                        <AgregarRobot ValidaForm={ValidaForm} addRobot={validarRobot} idParticipante={idParticipante}/>
                     </Grid>
                 </Grid>
                 <br/>
@@ -154,10 +167,10 @@ const Robots = () => {
                                     {r.activo ?
                                         <Button variant="text" color="success">Seleccionado</Button>
                                         : <Button variant="contained"
-                                                  onClick={() => activarRobot(r.nombre, r.idEquipo)}>Seleccionar</Button>
+                                                  onClick={() => activarRobot(r.nombre, idParticipante)}>Seleccionar</Button>
                                     }
                                     <Button variant="contained" color="error"
-                                            onClick={() => elimiarRobot(r.idRobot)}>Eliminar</Button>
+                                            onClick={() => elimiarRobot(r.idRobot, idParticipante)}>Eliminar</Button>
                                 </CardActions>
                             </Card>
                         </Grid>

@@ -139,7 +139,7 @@
         <dependency>
             <groupId>net.sf.robocode</groupId>
             <artifactId>robocode.api</artifactId>
-            <version>1.0.0</version>
+            <version>1.9.4.7</version>
             <scope>system</scope>
             <systemPath>${basedir}/libs/robocode.jar</systemPath>
         </dependency>
@@ -147,7 +147,7 @@
         <dependency>
             <groupId>net.sf.robocode</groupId>
             <artifactId>robocode.host</artifactId>
-            <version>1.0.0</version>
+            <version>1.9.4.7</version>
             <scope>system</scope>
             <systemPath>${basedir}/libs/robocode.host-1.9.4.7.jar</systemPath>
         </dependency>
@@ -156,14 +156,14 @@
             <groupId>net.sf.robocode</groupId>
             <artifactId>robocode.battle</artifactId>
             <scope>system</scope>
-            <version>1.0.0</version>
+            <version>1.9.4.7</version>
             <systemPath>${basedir}/libs/robocode.battle-1.9.4.7.jar</systemPath>
         </dependency>
 
         <dependency>
             <groupId>net.sf.robocode</groupId>
             <artifactId>robocode.repository</artifactId>
-            <version>1.0.0</version>
+            <version>1.9.4.7</version>
             <scope>system</scope>
             <systemPath>${basedir}/libs/robocode.repository-1.9.4.7.jar</systemPath>
         </dependency>
