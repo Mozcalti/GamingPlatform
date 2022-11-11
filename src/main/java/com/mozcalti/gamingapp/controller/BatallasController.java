@@ -24,7 +24,7 @@ public class BatallasController {
     @PostMapping("/save")
     public void saveBatallas(@RequestBody BatallasDTO batallasDTO) {
         batallasService.saveBatallas(batallasDTO);
-        //sendMailBatalla.mailInicioBatallas();
+        sendMailBatalla.mailInicioBatallas();
     }
 
     @GetMapping("/consulta/{idEtapa}")
