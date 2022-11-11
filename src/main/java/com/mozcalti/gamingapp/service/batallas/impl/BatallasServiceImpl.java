@@ -1,8 +1,5 @@
 package com.mozcalti.gamingapp.service.batallas.impl;
 
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.mozcalti.gamingapp.commons.GenericServiceImpl;
 import com.mozcalti.gamingapp.exceptions.UtilsException;
 import com.mozcalti.gamingapp.exceptions.ValidacionException;
@@ -11,7 +8,6 @@ import com.mozcalti.gamingapp.model.batallas.BatallaDTO;
 import com.mozcalti.gamingapp.model.batallas.BatallaFechaHoraInicioDTO;
 import com.mozcalti.gamingapp.model.batallas.BatallaParticipanteDTO;
 import com.mozcalti.gamingapp.model.batallas.BatallasDTO;
-import com.mozcalti.gamingapp.model.batallas.view.BatallaViewDTO;
 import com.mozcalti.gamingapp.model.catalogos.EtapasDTO;
 import com.mozcalti.gamingapp.model.catalogos.InstitucionDTO;
 import com.mozcalti.gamingapp.model.catalogos.ParticipanteDTO;
@@ -37,7 +33,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Service
@@ -114,7 +109,7 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
                 DashboardsGlobalResultadosValidation.validaBatalla(batalla);
 
                 String fechaSistema = DateUtils
-                        .getDateFormat(DateUtils.addMinutos(Calendar.getInstance().getTime(), Numeros.UNO.getNumero()),
+                        .getDateFormat(DateUtils.addMinutos(Calendar.getInstance().getTime(), Numeros.CINCO.getNumero()),
                                 Constantes.FECHA_HORA_PATTERN);
 
                 if(DateUtils.isHoursRangoValid(horaInicioBatalla, horaFinBatalla,
@@ -164,52 +159,6 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
             } catch (ValidacionException | UtilsException | IOException e) {
                 log.info(e.getMessage());
             }
-        }
-
-    }
-
-    @Override
-    public void generaJsonViewBattle(Batallas batallas, String token) {
-
-        try {
-            List<BatallaParticipantes> batallasParticipantes =
-                    batallaParticipantesRepository.findAllByIdBatalla(batallas.getIdBatalla());
-
-            List<String> battleParticipantes = new ArrayList<>();
-            for(BatallaParticipantes batallaParticipante : batallasParticipantes) {
-                battleParticipantes.add(batallaParticipante.getNombre());
-            }
-
-            StringBuilder battleFechaHora = new StringBuilder(batallas.getFecha()).append(Constantes.ESPACIO)
-                    .append(batallas.getHoraInicio());
-
-            String battleFecha = DateUtils.getDateFormat(
-                    DateUtils.getDateFormat(battleFechaHora.toString(), Constantes.FECHA_HORA_PATTERN).getTime(),
-                    Constantes.FECHA_HORA_PATTERN_VIEW
-            );
-
-            StringBuilder battleXml = new StringBuilder(Constantes.PATH_VIEW_XML).append(token)
-                    .append(Constantes.XML);
-
-            BatallaViewDTO batallaViewDTO = new BatallaViewDTO(
-                    battleParticipantes,
-                    battleFecha,
-                    battleXml.toString()
-            );
-
-            Gson gson = new GsonBuilder()
-                    .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
-                    .setPrettyPrinting().create();
-
-            StringBuilder jsonViewBattle = new StringBuilder(pathJsonView).append(Constantes.DIAGONAL)
-                    .append(token).append(Constantes.JSON);
-
-            org.apache.commons.io.FileUtils.writeStringToFile(
-                    new File(jsonViewBattle.toString()),
-                    gson.toJson(batallaViewDTO),
-                    StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            log.info(e.getMessage());
         }
 
     }
@@ -392,9 +341,6 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
                 batallaParticipantes = new BatallaParticipantes(batallaParticipanteDTO, batallas.getIdBatalla());
                 batallaParticipantesRepository.save(batallaParticipantes);
             }
-
-            generaJsonViewBattle(batallas, token);
-
         }
 
     }
