@@ -27,9 +27,9 @@ class RobotsService {
     }
 
 
-    eliminarRobot(idRobot) {
+    eliminarRobot(idRobot, idParticipante) {
         return axios
-            .delete("robot/eliminarRobot",{params: {"idRobot": idRobot}})
+            .delete("robot/eliminarRobot",{params: {"idRobot": idRobot, "idParticipante":idParticipante}})
             .then(response => {
                 return response;
             });
