@@ -6,8 +6,8 @@ logging:
   level:
     com.mozcalti.gamingapp: DEBUG
   file:
-    path: ${LOGGING_FILE_PATH}
-    name: ${LOGGING_FILE_NAME}
+    path: ${LOGGING_FILE_PATH:path}
+    name: ${LOGGING_FILE_NAME:name}
 
 security:
   account:
@@ -62,8 +62,6 @@ server:
       enabled: false
 
 cron:
-  mail-batallas: ${CRON_MAIL_BATTALLAS:0 0 1 * * *}
-  resultados-batallas: ${CRON_RESULTADOS_BATTALLAS:0 */1 * * * *}
   ejecuta-batallas: ${CRON_EJECUTA_BATTALLAS:0 */1 * * * *}
 
 mail:
