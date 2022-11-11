@@ -9,4 +9,6 @@ public interface BatallaParticipantesRepository extends CrudRepository<BatallaPa
 
     List<BatallaParticipantes> findAllByIdBatalla(Integer idBatalla);
 
+    BatallaParticipantes findByIdParticipanteEquipo(Integer idEquipo);
+
 }

@@ -23,6 +23,7 @@ explodedSound.autoplay = true;
 
 let battleXml;
 let battleParticipantes;
+let battleEstatus;
 
 function obtieneDatos() {
 
@@ -36,25 +37,25 @@ function obtieneDatos() {
         .then(function (data) {
             battleXml = data.battleXml;
             battleParticipantes = data.battleParticipantes;
+            battleEstatus = data.estatus;
             init(data.battleFecha);
         });
 }
 
 function getURLParameters(paramName)
 {
-    var sURL = window.document.URL.toString();
+    let sURL = window.document.URL.toString();
 
     if (sURL.indexOf("?") > 0)
     {
-        var arrParams = sURL.split("?");
-        var arrURLParams = arrParams[1].split("&");
-        var arrParamNames = new Array(arrURLParams.length);
-        var arrParamValues = new Array(arrURLParams.length);
+        let arrParams = sURL.split("?");
+        let arrURLParams = arrParams[1].split("&");
+        let arrParamNames = new Array(arrURLParams.length);
+        let arrParamValues = new Array(arrURLParams.length);
 
-        var i = 0;
-        for (i = 0; i<arrURLParams.length; i++)
+        for (let i = 0; i<arrURLParams.length; i++)
         {
-            var sParam =  arrURLParams[i].split("=");
+            let sParam =  arrURLParams[i].split("=");
             arrParamNames[i] = sParam[0];
             if (sParam[1] != "")
                 arrParamValues[i] = unescape(sParam[1]);
@@ -62,7 +63,7 @@ function getURLParameters(paramName)
                 arrParamValues[i] = "No Value";
         }
 
-        for (i=0; i<arrURLParams.length; i++)
+        for (let i=0; i<arrURLParams.length; i++)
         {
             if (arrParamNames[i] == paramName)
             {
@@ -128,7 +129,6 @@ function createResults(resultsArray){
     let refResultsTable = document.getElementById("resultsTable");
     let refTbody = createCustomElement("TBODY", "", "", "");
     let refTrH = createCustomElement("TR", "", "", "resultsRowHeader");
-
 
     //create headers
     for (let headerData of headerNames) {
@@ -201,24 +201,30 @@ function init(battleFecha){
 
         if(now >= battleDate){
 
-            if(battleXml == null) {
+            if(battleXml == null && (battleEstatus.localeCompare("TERMINADA") === 0)) {
                 window.location.reload();
+            } else {
+                document.getElementById("stateMsg").innerHTML = "Batalla CANCELADA";
             }
 
             //x minutes after battle date = replay, else it's a live battle
-            if(now >= battleDate.setMinutes(battleDate.getMinutes())){
+            if(now >= battleDate.setMinutes(battleDate.getMinutes()) && battleXml != null){
                 document.getElementById("streamMsg").innerHTML = "REPETICIÓN";
                 document.getElementById("resultsButton").style.display = "flex";
                 document.getElementById("repeatInfoMsg").innerHTML = "Esta batalla tuvo lugar el día  " +
                     battleDate.toLocaleDateString() + " a las " + battleDateDisplay.toLocaleTimeString() + " horas."
                 document.getElementById("participantsInfo").innerHTML = "Los participantes fueron: " + battleParticipantes.toString().replaceAll(",", ", ") + ".";
-            }else{
+            } else if (battleXml != null) {
                 document.getElementById("streamMsg").innerHTML = "EN VIVO";
             }
-            window.clearInterval(timer);
-            document.getElementById("stateMsg").innerHTML = "CARGANDO...";
-            initBattle();
-        }else{
+
+            if (battleXml != null) {
+                window.clearInterval(timer);
+                document.getElementById("stateMsg").innerHTML = "CARGANDO...";
+                initBattle();
+            }
+
+        } else {
             //battle date info
             document.getElementById("stateMsg").innerHTML = "La batalla entre los participantes:<br/>"+
                 battleParticipantes.toString().replaceAll(",", "<br/>") +
@@ -249,8 +255,8 @@ function initBattle() {
  */
 function getResponse(callback) {
     document.getElementById("stateScreen").style.display = "flex";
-    var parser = new DOMParser();
-    var xmlDoc = parser.parseFromString(battleXml, "text/xml");
+    let parser = new DOMParser();
+    let xmlDoc = parser.parseFromString(battleXml, "text/xml");
     prepareAnimation(xmlDoc, callback);
 }
 
@@ -693,13 +699,6 @@ function drawParts(bodyHeading, otherHeading, ctx, part, width, height) {
             ctx.rotate(otherHeading - bodyHeading);
         }
     }
-
-    //var imageObj1 = new Image();
-    //part.src = part.src.includes("body")
-    /*part.onload = function() {
-        ctx.drawImage(part, (width * -1) / 2, (height * -1) / 2, width, height);
-    }*/
-
     ctx.drawImage(part, (width * -1) / 2, (height * -1) / 2, width, height);
 }
 

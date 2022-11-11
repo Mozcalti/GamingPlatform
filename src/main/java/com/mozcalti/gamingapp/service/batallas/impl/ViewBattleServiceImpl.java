@@ -1,5 +1,6 @@
 package com.mozcalti.gamingapp.service.batallas.impl;
 
+import com.mozcalti.gamingapp.exceptions.ValidacionException;
 import com.mozcalti.gamingapp.model.Batallas;
 import com.mozcalti.gamingapp.model.batallas.view.BatallaViewDTO;
 import com.mozcalti.gamingapp.repository.BatallasRepository;
@@ -30,13 +31,17 @@ public class ViewBattleServiceImpl implements ViewBattleService {
     private String pathRobocodeBattles;
 
     @Override
-    public BatallaViewDTO obtieneDatosViewBattle(String idBatalla) {
+    public BatallaViewDTO obtieneDatosViewBattle(String idBatalla) throws ValidacionException {
 
         log.info("Obteniendo Json Visualización de la batalla: {}", idBatalla);
 
         Batallas batallas = batallasRepository.findByViewToken(idBatalla);
 
         BatallaViewDTO batallaViewDTO = new BatallaViewDTO();
+
+        if(batallas == null) {
+            throw new ValidacionException("No hay batallas para el id solicitado");
+        }
 
         List<String> participantes = new ArrayList<>();
         batallas.getBatallaParticipantesByIdBatalla().stream().forEach(
@@ -66,6 +71,8 @@ public class ViewBattleServiceImpl implements ViewBattleService {
                 log.error(e.getMessage());
             }
         }
+
+        batallaViewDTO.setEstatus(batallas.getEstatus());
 
         return batallaViewDTO;
     }
