@@ -68,7 +68,7 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
     @Override
     public RobotsDTO cargarRobot(int idParticipante, String tipo, MultipartFile file) throws IOException, ValidacionException {
 
-        ValidaHoraPermitida(idParticipante);
+        validaHoraPermitida(idParticipante);
 
         if (file != null) {
             if(!file.isEmpty()){
@@ -95,7 +95,7 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
     @Override
     public void eliminarRobot(int idRobot, int idParticipante) throws IOException, ValidacionException {
 
-        ValidaHoraPermitida(idParticipante);
+        validaHoraPermitida(idParticipante);
 
         Optional<Robots> robot = robotsRepository.findById(idRobot);
         if(robot.isPresent()){
@@ -110,7 +110,7 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
     @Override
     @Transactional
     public void seleccionarRobot(String nombre, int idParticipante){
-        ValidaHoraPermitida(idParticipante);
+        validaHoraPermitida(idParticipante);
         deseleccionarRobots(batallasService.getIdEquipoByIdParticipante(idParticipante));
         Robots robot = robotsRepository.findByNombre(nombre);
         robot.setActivo(Numeros.UNO.getNumero());
@@ -135,7 +135,7 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
     }
 
     @Override
-    public void ValidaHoraPermitida(int idParticipante) throws ValidacionException {
+    public void validaHoraPermitida(int idParticipante) throws ValidacionException {
 
         BatallaParticipantes batallaParticipantes = batallaParticipantesRepository.findByIdParticipanteEquipo(
                 batallasService.getIdEquipoByIdParticipante(idParticipante));
