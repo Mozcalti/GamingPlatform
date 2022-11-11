@@ -37,8 +37,8 @@ const Robots = () => {
             )
     }
 
-    const elimiarRobot = (idRobot) => {
-        RobotsService.eliminarRobot(idRobot)
+    const elimiarRobot = (idRobot, idP) => {
+        RobotsService.eliminarRobot(idRobot, idP)
             .then(
                 () => {
                     setResultado({...resultado, success: true})
@@ -51,10 +51,10 @@ const Robots = () => {
                 }
             )
     }
-    const activarRobot = (nombre, idEquipo) => {
+    const activarRobot = (nombre, idP) => {
         const formData = new FormData();
         formData.append("nombre", nombre);
-        formData.append("idEquipo", idEquipo);
+        formData.append("idParticipante", idP);
         RobotsService.seleccionarRobot(formData)
             .then(
                 () => {
@@ -167,10 +167,10 @@ const Robots = () => {
                                     {r.activo ?
                                         <Button variant="text" color="success">Seleccionado</Button>
                                         : <Button variant="contained"
-                                                  onClick={() => activarRobot(r.nombre, r.idEquipo)}>Seleccionar</Button>
+                                                  onClick={() => activarRobot(r.nombre, idParticipante)}>Seleccionar</Button>
                                     }
                                     <Button variant="contained" color="error"
-                                            onClick={() => elimiarRobot(r.idRobot)}>Eliminar</Button>
+                                            onClick={() => elimiarRobot(r.idRobot, idParticipante)}>Eliminar</Button>
                                 </CardActions>
                             </Card>
                         </Grid>
