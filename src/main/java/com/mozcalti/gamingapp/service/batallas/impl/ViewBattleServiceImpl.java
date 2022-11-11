@@ -63,7 +63,7 @@ public class ViewBattleServiceImpl implements ViewBattleService {
                 documentBuilder = getDocumentBuilder();
                 batallaViewDTO.setBattleXml(documentBuilder.parse(file));
             } catch (ParserConfigurationException | SAXException | IOException e) {
-                throw new RuntimeException(e);
+                log.error(e.getMessage());
             }
         }
 
