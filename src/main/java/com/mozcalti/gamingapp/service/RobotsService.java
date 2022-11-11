@@ -18,6 +18,6 @@ public interface RobotsService extends GenericServiceAPI<Robots, Integer> {
     @PostMapping(value = "/seleccionarRobot")
     void seleccionarRobot(String nombre, int idParticipante);
     List<RobotsDTO> obtenerRobots(Integer idParticipante);
-    void ValidaHoraPermitida(int idParticipante) throws ValidacionException;
+    void validaHoraPermitida(int idParticipante) throws ValidacionException;
 
 }
