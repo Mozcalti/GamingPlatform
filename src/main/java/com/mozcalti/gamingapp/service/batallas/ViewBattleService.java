@@ -4,6 +4,6 @@ import com.mozcalti.gamingapp.model.batallas.view.BatallaViewDTO;
 
 public interface ViewBattleService {
 
-    BatallaViewDTO obtieneDatosViewBattle(String token);
+    BatallaViewDTO obtieneDatosViewBattle(String idBatalla);
 
 }

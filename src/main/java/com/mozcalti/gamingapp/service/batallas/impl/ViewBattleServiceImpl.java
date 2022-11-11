@@ -30,11 +30,11 @@ public class ViewBattleServiceImpl implements ViewBattleService {
     private String pathRobocodeBattles;
 
     @Override
-    public BatallaViewDTO obtieneDatosViewBattle(String token) {
+    public BatallaViewDTO obtieneDatosViewBattle(String idBatalla) {
 
-        log.info("Obteniendo Json Visualización de la batalla: {}", token);
+        log.info("Obteniendo Json Visualización de la batalla: {}", idBatalla);
 
-        Batallas batallas = batallasRepository.findByViewToken(token);
+        Batallas batallas = batallasRepository.findByViewToken(idBatalla);
 
         BatallaViewDTO batallaViewDTO = new BatallaViewDTO();
 
@@ -55,7 +55,7 @@ public class ViewBattleServiceImpl implements ViewBattleService {
 
         batallaViewDTO.setBattleFecha(battleFecha);
 
-        File file = new File(pathRobocodeBattles + File.separator + token + ".xml");
+        File file = new File(pathRobocodeBattles + File.separator + idBatalla + ".xml");
 
         if (file.exists()) {
             DocumentBuilder documentBuilder;

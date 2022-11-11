@@ -15,9 +15,9 @@ public class ViewBattleController {
     @Autowired
     private ViewBattleService viewBattleService;
 
-    @GetMapping("/datos/{token}")
-    public BatallaViewDTO obtieneDatos(@PathVariable String token) {
-        return viewBattleService.obtieneDatosViewBattle(token);
+    @GetMapping("/datos/{idBatalla}")
+    public BatallaViewDTO obtieneDatos(@PathVariable String idBatalla) {
+        return viewBattleService.obtieneDatosViewBattle(idBatalla);
     }
 
 
