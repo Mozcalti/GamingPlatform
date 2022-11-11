@@ -30,7 +30,10 @@ public final class Constantes {
     public static final String ROL_PUBLIC = "PARTICIPANTE";
     public static final String PATH_VIEW_XML = "xml/";
     public static final String PARAM_TOKEN = "?token=";
-
     public static final String BATTLES = "battles";
+
+    public static final double CERO = 0d;
+
+    public static final double DEFAULT = 600d;
 
 }

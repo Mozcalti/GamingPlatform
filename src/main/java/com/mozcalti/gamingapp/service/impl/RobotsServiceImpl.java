@@ -2,19 +2,21 @@ package com.mozcalti.gamingapp.service.impl;
 
 import com.mozcalti.gamingapp.commons.GenericServiceImpl;
 import com.mozcalti.gamingapp.exceptions.RobotValidationException;
+import com.mozcalti.gamingapp.exceptions.ValidacionException;
+import com.mozcalti.gamingapp.model.BatallaParticipantes;
+import com.mozcalti.gamingapp.model.Batallas;
 import com.mozcalti.gamingapp.model.Equipos;
 import com.mozcalti.gamingapp.model.Robots;
 import com.mozcalti.gamingapp.model.dto.*;
+import com.mozcalti.gamingapp.repository.BatallaParticipantesRepository;
 import com.mozcalti.gamingapp.repository.EquiposRepository;
 import com.mozcalti.gamingapp.repository.RobotsRepository;
 import com.mozcalti.gamingapp.robocode.BattleRunner;
 import com.mozcalti.gamingapp.robocode.Robocode;
 import com.mozcalti.gamingapp.service.RobotsService;
 import com.mozcalti.gamingapp.service.batallas.BatallasService;
-import com.mozcalti.gamingapp.utils.Numeros;
-import com.mozcalti.gamingapp.utils.RobocodeUtils;
+import com.mozcalti.gamingapp.utils.*;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DuplicateKeyException;
@@ -43,6 +45,9 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
     @Autowired
     private BatallasService batallasService;
 
+    @Autowired
+    private BatallaParticipantesRepository batallaParticipantesRepository;
+
     @Override
     public CrudRepository<Robots, Integer> getDao() {
         return null;
@@ -61,7 +66,10 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
     private static final Character[] INVALID_WINDOWS_SPECIFIC_CHARS = {'"', '*', '<', '>', '?', '|'};
     private static final Character[] INVALID_UNIX_SPECIFIC_CHARS = {'\000'};
     @Override
-    public RobotsDTO cargarRobot(int idParticipante, String tipo, MultipartFile file) throws IOException {
+    public RobotsDTO cargarRobot(int idParticipante, String tipo, MultipartFile file) throws IOException, ValidacionException {
+
+        ValidaHoraPermitida(idParticipante);
+
         if (file != null) {
             if(!file.isEmpty()){
                 if(safetyCheckForFileName(file)){
@@ -85,7 +93,10 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
     }
 
     @Override
-    public void eliminarRobot(int idRobot) throws IOException {
+    public void eliminarRobot(int idRobot, int idParticipante) throws IOException, ValidacionException {
+
+        ValidaHoraPermitida(idParticipante);
+
         Optional<Robots> robot = robotsRepository.findById(idRobot);
         if(robot.isPresent()){
             Path jarFile = Paths.get(pathRobots + File.separator + robot.get().getNombre());
@@ -98,8 +109,9 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
 
     @Override
     @Transactional
-    public void seleccionarRobot(String nombre, int idEquipo){
-        deseleccionarRobots(idEquipo);
+    public void seleccionarRobot(String nombre, int idParticipante){
+        ValidaHoraPermitida(idParticipante);
+        deseleccionarRobots(batallasService.getIdEquipoByIdParticipante(idParticipante));
         Robots robot = robotsRepository.findByNombre(nombre);
         robot.setActivo(Numeros.UNO.getNumero());
     }
@@ -120,6 +132,26 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
             listaRobotsDTO.add(new RobotsDTO(robot.getIdRobot(), robot.getNombre(), robot.getActivo(), robot.getIdEquipo(), robot.getClassName(), robot.getTipo()));
         }
         return listaRobotsDTO;
+    }
+
+    @Override
+    public void ValidaHoraPermitida(int idParticipante) throws ValidacionException {
+
+        BatallaParticipantes batallaParticipantes = batallaParticipantesRepository.findByIdParticipanteEquipo(
+                batallasService.getIdEquipoByIdParticipante(idParticipante));
+
+        Batallas batalla = batallasService.get(batallaParticipantes.getIdBatalla());
+
+        String horaFinBatalla = batalla.getFecha() + Constantes.ESPACIO + batalla.getHoraInicio();
+
+        String horaInicioBatalla = DateUtils.addMinutos(horaFinBatalla, Constantes.FECHA_HORA_PATTERN, Numeros.SEIS_NEGATIVO.getNumero());
+
+        String fechaSistema = DateUtils.getDateFormat(Calendar.getInstance().getTime(), Constantes.FECHA_HORA_PATTERN);
+
+        if(DateUtils.isHoursRangoValid(horaInicioBatalla, horaFinBatalla, fechaSistema, Constantes.FECHA_HORA_PATTERN)) {
+            throw new ValidacionException("No es posible cargar robots este momento, espera hasta que inicie la batalla");
+        }
+
     }
 
     public RobotsDTO validateRobotJar(String originalFileName, String tipo, int idParticipante, byte[] bytes) throws IOException {

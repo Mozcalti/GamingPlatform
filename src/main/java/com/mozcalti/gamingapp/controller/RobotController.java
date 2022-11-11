@@ -42,8 +42,9 @@ public class RobotController {
 
     @Transactional
     @DeleteMapping(value = "/eliminarRobot")
-    public void eliminarRobot(@RequestParam(value="idRobot") int idRobot) throws IOException {
-        robotsService.eliminarRobot(idRobot);
+    public void eliminarRobot(@RequestParam(value="idRobot") int idRobot,
+                              @RequestParam(value="idParticipante") int idParticipante) throws IOException {
+        robotsService.eliminarRobot(idRobot, idParticipante);
     }
 
     @GetMapping(value ="/verRobots")
@@ -53,7 +54,8 @@ public class RobotController {
 
     @Transactional
     @PutMapping(value = "/seleccionarRobot")
-    public void seleccionarRobot(@RequestParam(value="nombre") String nombre, @RequestParam(value="idEquipo") int idEquipo) {
-        robotsService.seleccionarRobot(nombre, idEquipo);
+    public void seleccionarRobot(@RequestParam(value="nombre") String nombre,
+                                 @RequestParam(value="idParticipante") int idParticipante) {
+        robotsService.seleccionarRobot(nombre, idParticipante);
     }
 }
