@@ -73,6 +73,9 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
     @Autowired
     private ParticipanteEquipoRepository participanteEquipoRepository;
 
+    @Autowired
+    private ResultadosRepository resultadosRepository;
+
     @Override
     public CrudRepository<Batallas, Integer> getDao() {
         return batallasRepository;
@@ -169,6 +172,7 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
 
         StringBuilder robotClassName = new StringBuilder();
         String robots = null;
+        int numRobot = 0;
         for(BatallaParticipantes batallaParticipante : batallaParticipantes) {
             Equipos equipos = equiposRepository
                     .findById(batallaParticipante.getIdParticipanteEquipo()).orElseThrow();
@@ -177,11 +181,30 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
                     .filter(r -> r.getActivo().equals(Numeros.UNO.getNumero())).findFirst();
 
             if(robot.isPresent()) {
+                numRobot+=1;
                 robotClassName.append(robot.orElseThrow().getClassName()).append(Constantes.COMA);
             }
         }
 
-        if(!robotClassName.isEmpty()) {
+        if(numRobot == Numeros.UNO.getNumero()) {
+            Resultados resultados = new Resultados();
+            resultados.setTeamleadername(robotClassName.substring(Numeros.CERO.getNumero(), robotClassName.length()-Numeros.UNO.getNumero()));
+            resultados.setRank(Numeros.UNO.getNumero());
+            resultados.setScore(Constantes.DEFAULT);
+            resultados.setSurvival(Constantes.CERO);
+            resultados.setLastsurvivorbonus(Constantes.CERO);
+            resultados.setBulletdamage(Constantes.CERO);
+            resultados.setBulletdamagebonus(Constantes.CERO);
+            resultados.setRamdamage(Constantes.CERO);
+            resultados.setRamdamagebonus(Constantes.CERO);
+            resultados.setFirsts(Numeros.CERO.getNumero());
+            resultados.setSeconds(Numeros.CERO.getNumero());
+            resultados.setThirds(Numeros.CERO.getNumero());
+            resultados.setVer(Numeros.CERO.getNumero());
+
+            resultadosRepository.save(resultados);
+
+        } else if(!robotClassName.isEmpty()) {
             robots = robotClassName.substring(Numeros.CERO.getNumero(), robotClassName.length()-Numeros.UNO.getNumero());
         }
 

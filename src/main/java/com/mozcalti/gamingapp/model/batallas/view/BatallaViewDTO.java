@@ -17,5 +17,6 @@ public class BatallaViewDTO {
     List<String> battleParticipantes;
     String battleFecha;
     Document battleXml;
+    String estatus;
 
 }

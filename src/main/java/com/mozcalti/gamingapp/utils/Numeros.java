@@ -19,7 +19,10 @@ public enum Numeros {
     DIEZ(10),
 
     UNO_NEGATIVO(-1),
-    DOS_NEGATIVO(-2);
+
+    DOS_NEGATIVO(-2),
+
+    SEIS_NEGATIVO(-6);
 
     private final int numero;
 
