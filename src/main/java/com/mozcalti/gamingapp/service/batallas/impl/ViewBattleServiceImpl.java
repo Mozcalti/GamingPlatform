@@ -55,7 +55,7 @@ public class ViewBattleServiceImpl implements ViewBattleService {
 
         batallaViewDTO.setBattleFecha(battleFecha);
 
-        File file = new File(pathRobocodeBattles + File.separator + idBatalla + ".xml");
+        File file = new File(pathRobocodeBattles + File.separator + batallas.getViewToken() + ".xml");
 
         if (file.exists()) {
             DocumentBuilder documentBuilder;
