@@ -69,7 +69,6 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
                 Iterator<Cell> cellIterator = nextRow.cellIterator();
                 Participantes participantes = new Participantes();
 
-
                 while (cellIterator.hasNext()) {
                     Cell nextCell = cellIterator.next();
                     if (nextCell.getColumnIndex() == Numeros.UNO.getNumero())
@@ -207,6 +206,7 @@ public class ParticipantesServiceImpl extends GenericServiceImpl<Participantes, 
         participante.setInstitucion(institucionRepository.findById(participanteDTO.getIdInstitucion()).orElse(null));
 
         usuarioService.save(new UsuarioDTO(participante));
+        sendMailInvitacionSevice.mailsInvitacion(participante);
 
         return participantesRepository.save(participante);
     }

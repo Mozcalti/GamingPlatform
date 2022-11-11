@@ -5,6 +5,9 @@ spring:
 logging:
   level:
     com.mozcalti.gamingapp: DEBUG
+  file:
+    path: ${LOGGING_FILE_PATH:path}
+    name: ${LOGGING_FILE_NAME:name}
 
 security:
   account:
@@ -16,7 +19,7 @@ security:
       duration: 36000
       prefix: Bearer
   paths:
-    open-paths: /, /static/**, /index.html, /css/**, /js/**, /img/**, /api/login/**, /users/verifyToken/**, /users/registrationConfirm/**
+    open-paths: /, /static/**, /index.html, /css/**, /js/**, /img/**, /api/login/**, /users/verifyToken/**, /users/registrationConfirm/**, /battle/**, /visualizar/**
 
 spring:
   config:
@@ -59,8 +62,6 @@ server:
       enabled: false
 
 cron:
-  mail-batallas: ${CRON_MAIL_BATTALLAS:0 0 1 * * *}
-  resultados-batallas: ${CRON_RESULTADOS_BATTALLAS:0 */1 * * * *}
   ejecuta-batallas: ${CRON_EJECUTA_BATTALLAS:0 */1 * * * *}
 
 mail:
