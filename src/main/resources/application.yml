@@ -5,6 +5,9 @@ spring:
 logging:
   level:
     com.mozcalti.gamingapp: DEBUG
+  file:
+    path: ${LOGGING_FILE_PATH}
+    name: ${LOGGING_FILE_NAME}
 
 security:
   account:
@@ -16,7 +19,7 @@ security:
       duration: 36000
       prefix: Bearer
   paths:
-    open-paths: /, /static/**, /index.html, /css/**, /js/**, /img/**, /api/login/**, /users/verifyToken/**, /users/registrationConfirm/**
+    open-paths: /, /static/**, /index.html, /css/**, /js/**, /img/**, /api/login/**, /users/verifyToken/**, /users/registrationConfirm/**, /battle/**, /visualizar/**
 
 spring:
   config:

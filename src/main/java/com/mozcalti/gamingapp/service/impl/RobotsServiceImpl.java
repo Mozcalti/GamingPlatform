@@ -55,7 +55,7 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
     private static final String REPLAYTYPE = "xml";
     private static final String ROBOTEXTENSION = ".jar";
     private static final String TESTFILEID = "PRUEBA";
-    private static final boolean TESTISRECORDED = true;
+    private static final boolean TESTISRECORDED = false;
     private static final int TESTSIZE = 800;
     private static final int TESTROUNDS = 1;
     private static final Character[] INVALID_WINDOWS_SPECIFIC_CHARS = {'"', '*', '<', '>', '?', '|'};

@@ -24,8 +24,12 @@ explodedSound.autoplay = true;
 let battleXml;
 let battleParticipantes;
 
-function obtieneJson() {
-    fetch("./json/" + getURLParameters("token") + ".json")
+function obtieneDatos() {
+
+    document.getElementById("stateMsg").innerHTML = "CARGANDO...";
+    document.getElementById("stateScreen").style.display = "flex";
+
+    fetch("https://robocode.mozcalti.com/visualizar/datos/" + getURLParameters("token"), {method: 'GET'})
         .then(function (resp) {
             return resp.json();
         })
@@ -185,7 +189,6 @@ function init(battleFecha){
     let battleDate = new Date(battleFecha);
     let battleDateDisplay = new Date(battleFecha);
     let interval = 400;
-    let minutesOffset = 3;
     let timer = window.setInterval(function () {
         let now = new Date().getTime();
         let distance = battleDate - now;
@@ -196,13 +199,14 @@ function init(battleFecha){
         let seconds = Math.floor((distance % (1000 * 60)) / 1000);
         //we reached battle date
 
-        if(now == battleDate) {
-            window.location.reload();
-        }
-
         if(now >= battleDate){
+
+            if(battleXml == null) {
+                window.location.reload();
+            }
+
             //x minutes after battle date = replay, else it's a live battle
-            if(now >= battleDate.setMinutes(battleDate.getMinutes() + minutesOffset)){
+            if(now >= battleDate.setMinutes(battleDate.getMinutes())){
                 document.getElementById("streamMsg").innerHTML = "REPETICIÓN";
                 document.getElementById("resultsButton").style.display = "flex";
                 document.getElementById("repeatInfoMsg").innerHTML = "Esta batalla tuvo lugar el día  " +
@@ -215,20 +219,14 @@ function init(battleFecha){
             document.getElementById("stateMsg").innerHTML = "CARGANDO...";
             initBattle();
         }else{
-            //x minutes before battle date
-            if (battleDate < new Date().setMinutes(new Date().getMinutes() + minutesOffset)){
-                document.getElementById("stateMsg").innerHTML = "CARGANDO...";
-            }
-            else {
-                //battle date info
-                document.getElementById("stateMsg").innerHTML = "La batalla entre los participantes:<br/>"+
-                    battleParticipantes.toString().replaceAll(",", "<br/>") +
-                    "<br/><br/>Esta programada para el día:<br/>"+
-                    battleDate.getDate() + " / " + (battleDate.getMonth()+1) + " / " + battleDate.getUTCFullYear() + " a las "+battleDate.getHours()
-                    +":"+battleDate.getMinutes()+" horas<br /><br />" +
-                    "La batalla iniciará en:<br/>"  +
-                    days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
-            }
+            //battle date info
+            document.getElementById("stateMsg").innerHTML = "La batalla entre los participantes:<br/>"+
+                battleParticipantes.toString().replaceAll(",", "<br/>") +
+                "<br/><br/>Esta programada para el día:<br/>"+
+                battleDate.getDate() + " / " + (battleDate.getMonth()+1) + " / " + battleDate.getUTCFullYear() + " a las "+battleDate.getHours()
+                +":"+battleDate.getMinutes()+" horas<br /><br />" +
+                "La batalla iniciará en:<br/>"  +
+                days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
         }
     }, interval);
 }
@@ -250,24 +248,10 @@ function initBattle() {
  * @return
  */
 function getResponse(callback) {
-
-    const battleFiles = [battleXml];
-
-    let battleNumber = 0;
-    let xhr = new XMLHttpRequest();
-    let url = battleFiles[battleNumber];
     document.getElementById("stateScreen").style.display = "flex";
-    xhr.open("GET", url, true);
-    xhr.onreadystatechange = function () {
-        if (this.readyState === 4 && this.status === 200) {
-            let xmlDoc = xhr.responseXML;
-            document.getElementById("repeatInfoDiv").style.display = "flex";
-            document.getElementById("gameContainer").style.display = "flex";
-            document.getElementById("stateScreen").style.display = "none";
-            prepareAnimation(xmlDoc, callback);
-        }
-    };
-    xhr.send();
+    var parser = new DOMParser();
+    var xmlDoc = parser.parseFromString(battleXml, "text/xml");
+    prepareAnimation(xmlDoc, callback);
 }
 
 /**
@@ -470,6 +454,9 @@ function prepareAnimation(xmlDoc, callback) {
     attackImagesArray.push(goneImage);
     attackImagesArray.push(explosionFramesArr);
     attackImagesArray.push(hitTargetFramesArr);
+    document.getElementById("repeatInfoDiv").style.display = "flex";
+    document.getElementById("gameContainer").style.display = "flex";
+    document.getElementById("stateScreen").style.display = "none";
     window.requestAnimationFrame(function () {
         animate(record, control, ctx, attackImagesArray, callback);
 
@@ -801,4 +788,4 @@ function selectPartImage(color, part) {
     return image;
 }
 
-window.addEventListener('load', () => obtieneJson());
+window.addEventListener('load', () => obtieneDatos());
