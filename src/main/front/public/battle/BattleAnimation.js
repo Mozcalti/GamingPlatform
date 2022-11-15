@@ -24,6 +24,7 @@ explodedSound.autoplay = true;
 let battleXml;
 let battleParticipantes;
 let battleEstatus;
+let battleNombrePaticipanteDefault;
 
 function obtieneDatos() {
 
@@ -31,6 +32,7 @@ function obtieneDatos() {
     document.getElementById("stateScreen").style.display = "flex";
 
     fetch("https://robocode.mozcalti.com/visualizar/datos/" + getURLParameters("token"), {method: 'GET'})
+    //fetch("http://localhost:8080/visualizar/datos/" + getURLParameters("token"), {method: 'GET'})
         .then(function (resp) {
             return resp.json();
         })
@@ -38,6 +40,7 @@ function obtieneDatos() {
             battleXml = data.battleXml;
             battleParticipantes = data.battleParticipantes;
             battleEstatus = data.estatus;
+            battleNombrePaticipanteDefault = data.nombreParticipanteDefault;
             init(data.battleFecha);
         });
 }
@@ -203,8 +206,11 @@ function init(battleFecha){
 
             if(battleXml == null && (battleEstatus.localeCompare("TERMINADA") === 0)) {
                 window.location.reload();
-            } else {
-                document.getElementById("stateMsg").innerHTML = "Batalla CANCELADA";
+            } else if(battleEstatus.localeCompare("CANCELADA") === 0) {
+                document.getElementById("stateMsg").innerHTML = "Batalla CANCELADA: ninguno de los participantes seleccionó a un robot";
+            } else if(battleEstatus.localeCompare("INCOMPLETA") === 0) {
+                document.getElementById("stateMsg").innerHTML = "Batalla NO COMPLETADA: el participante " + battleNombrePaticipanteDefault
+                    + " fue el único participante en la batalla que seleccionó a un robot";
             }
 
             //x minutes after battle date = replay, else it's a live battle

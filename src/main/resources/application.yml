@@ -73,5 +73,3 @@ mail:
 
 view:
   htmlViewBattle: ${HTML_VIEW_BATTLE:html}
-  xmlViewBattle: ${PATH_XML_VIEW:path}
-  jsonViewBattle: ${PATH_JSON_VIEW:path}

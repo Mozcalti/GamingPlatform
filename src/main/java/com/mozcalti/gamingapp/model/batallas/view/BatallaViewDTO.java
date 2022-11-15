@@ -18,5 +18,6 @@ public class BatallaViewDTO {
     String battleFecha;
     Document battleXml;
     String estatus;
+    String nombreParticipanteDefault;
 
 }
