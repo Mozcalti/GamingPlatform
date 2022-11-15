@@ -4,10 +4,7 @@ import com.mozcalti.gamingapp.commons.GenericServiceImpl;
 import com.mozcalti.gamingapp.exceptions.UtilsException;
 import com.mozcalti.gamingapp.exceptions.ValidacionException;
 import com.mozcalti.gamingapp.model.*;
-import com.mozcalti.gamingapp.model.batallas.BatallaDTO;
-import com.mozcalti.gamingapp.model.batallas.BatallaFechaHoraInicioDTO;
-import com.mozcalti.gamingapp.model.batallas.BatallaParticipanteDTO;
-import com.mozcalti.gamingapp.model.batallas.BatallasDTO;
+import com.mozcalti.gamingapp.model.batallas.*;
 import com.mozcalti.gamingapp.model.catalogos.EtapasDTO;
 import com.mozcalti.gamingapp.model.catalogos.InstitucionDTO;
 import com.mozcalti.gamingapp.model.catalogos.ParticipanteDTO;
@@ -87,12 +84,6 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
     private String baseUrl;
     @Value("${view.htmlViewBattle}")
     private String htmlViewBattle;
-    @Value("${view.xmlViewBattle}")
-    private String pathXmlView;
-    @Value("${view.jsonViewBattle}")
-    private String pathJsonView;
-    @Value("${robocode.executable}")
-    private String pathRobocodeExecutable;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class, RuntimeException.class})
@@ -128,28 +119,41 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
                     batalla.setEstatus(EstadosBatalla.EN_PROCESO.getEstado());
                     batallasRepository.save(batalla);
 
-                     if(obtieneRobots(batalla.getBatallaParticipantesByIdBatalla().stream().toList()) != null) {
+                    RobotParticipanteDTO robotParticipanteDTO = numeroRobotsActivos(
+                            batalla.getBatallaParticipantesByIdBatalla().stream().toList());
+
+                     if(robotParticipanteDTO.getNumeroRobots() > Numeros.UNO.getNumero()) {
                          BattleRunner br = new BattleRunner(new Robocode(), batalla.getViewToken(), RECORDER,
                                  etapa.getReglas().getArenaAncho(), etapa.getReglas().getArenaAlto(),
-                                 obtieneRobots(batalla.getBatallaParticipantesByIdBatalla().stream().toList()),
+                                 robotParticipanteDTO.getNombreRobotsActivos(),
                                  etapa.getReglas().getNumRondas());
 
                          br.runBattle(pathRobocode, REPLAY_TYPE);
 
                          dashboardsGlobalResultadosService.buscaSalidaBatallas(batalla);
 
-                         StringBuilder battleXmlOrigin = new StringBuilder(pathRobocodeExecutable)
-                                 .append(Constantes.DIAGONAL).append(Constantes.BATTLES).append(Constantes.DIAGONAL)
-                                 .append(batalla.getViewToken()).append(Constantes.XML);
-
-                         StringBuilder battleXmlDestino = new StringBuilder(pathXmlView).append(Constantes.DIAGONAL)
-                                 .append(batalla.getViewToken()).append(Constantes.XML);
-
-                        org.apache.commons.io.FileUtils.copyFile(
-                                new File(battleXmlOrigin.toString()),
-                                new File(battleXmlDestino.toString()));
-
                          batalla.setEstatus(EstadosBatalla.TERMINADA.getEstado());
+                         batallasRepository.save(batalla);
+                     } else if(robotParticipanteDTO.getNumeroRobots() == Numeros.UNO.getNumero()) {
+
+                         Resultados resultados = new Resultados();
+                         resultados.setTeamleadername(robotParticipanteDTO.getNombreRobotsActivos());
+                         resultados.setRank(Numeros.UNO.getNumero());
+                         resultados.setScore(Constantes.DEFAULT);
+                         resultados.setSurvival(Constantes.CERO);
+                         resultados.setLastsurvivorbonus(Constantes.CERO);
+                         resultados.setBulletdamage(Constantes.CERO);
+                         resultados.setBulletdamagebonus(Constantes.CERO);
+                         resultados.setRamdamage(Constantes.CERO);
+                         resultados.setRamdamagebonus(Constantes.CERO);
+                         resultados.setFirsts(Numeros.CERO.getNumero());
+                         resultados.setSeconds(Numeros.CERO.getNumero());
+                         resultados.setThirds(Numeros.CERO.getNumero());
+                         resultados.setVer(Numeros.CERO.getNumero());
+                         resultados.setIdBatalla(batalla.getIdBatalla());
+                         resultadosRepository.save(resultados);
+
+                         batalla.setEstatus(EstadosBatalla.INCOMPLETA.getEstado());
                          batallasRepository.save(batalla);
                      } else {
                          log.info("No existen robots para la batalla: " + batalla.getIdBatalla());
@@ -159,7 +163,7 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
 
                 }
 
-            } catch (ValidacionException | UtilsException | IOException e) {
+            } catch (ValidacionException | UtilsException e) {
                 log.info(e.getMessage());
             }
         }
@@ -168,7 +172,7 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public String obtieneRobots(List<BatallaParticipantes> batallaParticipantes) {
+    public RobotParticipanteDTO numeroRobotsActivos(List<BatallaParticipantes> batallaParticipantes) {
 
         StringBuilder robotClassName = new StringBuilder();
         String robots = null;
@@ -186,29 +190,12 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
             }
         }
 
-        if(numRobot == Numeros.UNO.getNumero()) {
-            Resultados resultados = new Resultados();
-            resultados.setTeamleadername(robotClassName.substring(Numeros.CERO.getNumero(), robotClassName.length()-Numeros.UNO.getNumero()));
-            resultados.setRank(Numeros.UNO.getNumero());
-            resultados.setScore(Constantes.DEFAULT);
-            resultados.setSurvival(Constantes.CERO);
-            resultados.setLastsurvivorbonus(Constantes.CERO);
-            resultados.setBulletdamage(Constantes.CERO);
-            resultados.setBulletdamagebonus(Constantes.CERO);
-            resultados.setRamdamage(Constantes.CERO);
-            resultados.setRamdamagebonus(Constantes.CERO);
-            resultados.setFirsts(Numeros.CERO.getNumero());
-            resultados.setSeconds(Numeros.CERO.getNumero());
-            resultados.setThirds(Numeros.CERO.getNumero());
-            resultados.setVer(Numeros.CERO.getNumero());
-
-            resultadosRepository.save(resultados);
-
-        } else if(!robotClassName.isEmpty()) {
+        if(!robotClassName.isEmpty()) {
             robots = robotClassName.substring(Numeros.CERO.getNumero(), robotClassName.length()-Numeros.UNO.getNumero());
         }
 
-        return robots;
+        return new RobotParticipanteDTO(numRobot, robots);
+
     }
 
     @Override
