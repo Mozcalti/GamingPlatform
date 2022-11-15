@@ -9,4 +9,6 @@ public interface ParticipanteEquipoRepository extends CrudRepository<Participant
 
     ParticipanteEquipo findByIdParticipante(Integer idParticipante);
 
+    ParticipanteEquipo findByIdEquipo(Integer idEquipo);
+
 }
