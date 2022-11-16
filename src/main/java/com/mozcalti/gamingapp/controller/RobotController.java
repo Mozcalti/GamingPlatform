@@ -24,9 +24,10 @@ public class RobotController {
     @PostMapping(value = "/cargarRobot", produces = MediaType.APPLICATION_JSON_VALUE)
     public RobotsDTO cargarArchivo(
             @RequestParam(value="idParticipante") int idParticipante,
+            @RequestParam(value="idEtapa") int idEtapa,
             @RequestParam(value="tipo") String tipo,
             @RequestParam(value = "file") MultipartFile file) throws IOException {
-        return robotsService.cargarRobot(idParticipante, tipo, file);
+        return robotsService.cargarRobot(idEtapa, idParticipante, tipo, file);
     }
 
     @PostMapping(value = "/guardarRobot")
@@ -43,19 +44,22 @@ public class RobotController {
     @Transactional
     @DeleteMapping(value = "/eliminarRobot")
     public void eliminarRobot(@RequestParam(value="idRobot") int idRobot,
+                              @RequestParam(value="idEtapa") int idEtapa,
                               @RequestParam(value="idParticipante") int idParticipante) throws IOException {
-        robotsService.eliminarRobot(idRobot, idParticipante);
+        robotsService.eliminarRobot(idRobot, idEtapa, idParticipante);
     }
 
     @GetMapping(value ="/verRobots")
-    public List<RobotsDTO> verRobots(@RequestParam Integer idParticipante){
-        return robotsService.obtenerRobots(idParticipante);
+    public List<RobotsDTO> verRobots(@RequestParam Integer idEtapa,
+                                     @RequestParam Integer idParticipante){
+        return robotsService.obtenerRobots(idEtapa, idParticipante);
     }
 
     @Transactional
     @PutMapping(value = "/seleccionarRobot")
     public void seleccionarRobot(@RequestParam(value="nombre") String nombre,
+                                 @RequestParam(value="idEtapa") int idEtapa,
                                  @RequestParam(value="idParticipante") int idParticipante) {
-        robotsService.seleccionarRobot(nombre, idParticipante);
+        robotsService.seleccionarRobot(nombre, idEtapa, idParticipante);
     }
 }
