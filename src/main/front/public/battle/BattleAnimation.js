@@ -202,9 +202,11 @@ function init(battleFecha){
         let seconds = Math.floor((distance % (1000 * 60)) / 1000);
         //we reached battle date
 
+        console.log(battleEstatus);
+
         if(now >= battleDate){
 
-            if(battleXml == null && (battleEstatus.localeCompare("TERMINADA") === 0)) {
+            if(battleXml == null && (battleEstatus.localeCompare("PENDIENTE") === 0)) {
                 window.location.reload();
             } else if(battleEstatus.localeCompare("CANCELADA") === 0) {
                 document.getElementById("stateMsg").innerHTML = "Batalla CANCELADA: ninguno de los participantes seleccionó a un robot";

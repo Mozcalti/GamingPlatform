@@ -10,6 +10,7 @@ import com.mozcalti.gamingapp.model.participantes.InstitucionEquiposDTO;
 import com.mozcalti.gamingapp.model.torneos.EtapaDTO;
 import com.mozcalti.gamingapp.model.torneos.HoraHabilDTO;
 import com.mozcalti.gamingapp.model.torneos.TorneoDTO;
+import com.mozcalti.gamingapp.service.equipo.EquiposService;
 import com.mozcalti.gamingapp.service.torneo.TorneosService;
 import com.mozcalti.gamingapp.model.*;
 import com.mozcalti.gamingapp.repository.*;
@@ -49,6 +50,9 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
     private ReglasRepository reglasRepository;
     @Autowired
     private ParticipanteEquipoRepository participanteEquipoRepository;
+    @Autowired
+    private EquiposService equiposService;
+
     @Value("${server.baseUrl}")
     private String baseUrl;
 
@@ -130,7 +134,7 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public EquiposDTO obtieneInstitucionEquipos() throws ValidacionException {
+    public EquiposDTO obtieneInstitucionEquipos(int idEtapa) throws ValidacionException {
 
         EquiposDTO equiposDTOS = new EquiposDTO();
         List<InstitucionEquiposDTO> institucionEquiposDTOS = new ArrayList<>();
@@ -138,19 +142,18 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
         List<Institucion> instituciones = new ArrayList<>();
         institucionRepository.findAll().forEach(instituciones::add);
         for(Institucion institucion : instituciones) {
+
             Set<Integer> idEquiposActivos = new HashSet<>();
             boolean bndInsVacio = true;
+
             for(Participantes participantes : participantesRepository.findAllByInstitucionId(institucion.getId())
                     .stream().filter(p -> !p.getParticipanteEquiposByIdParticipante().isEmpty()).toList()) {
                 bndInsVacio = false;
-                for(ParticipanteEquipo participanteEquipo : participantes.getParticipanteEquiposByIdParticipante()) {
-                    Optional<Equipos> equipos = equiposRepository.findById(participanteEquipo.getIdEquipo())
-                            .filter(Equipos::isActivo);
 
-                    if(equipos.isPresent()) {
-                        idEquiposActivos.add(equipos.orElseThrow().getIdEquipo());
-                        equiposDTOS.getIdEquipos().add(equipos.orElseThrow().getIdEquipo());
-                    }
+                Integer idEquipo = equiposService
+                        .getIdEquipoByIdParticipante(idEtapa, participantes.getIdParticipante());
+                if(idEquipo != null && !equiposDTOS.getIdEquipos().contains(idEquipo)) {
+                    equiposDTOS.getIdEquipos().add(idEquipo);
                 }
             }
 
@@ -325,17 +328,10 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
             reglasRepository.save(new Reglas(etapaDTO.getReglas(), etapas.getIdEtapa()));
 
             // Participantes
-            if(etapaDTO.getReglas().getTrabajo().equals(TipoBatalla.MIXTO.getTrabajo())) {
-                List<Participantes> lstParticipantes = new ArrayList<>();
-                participantesRepository.findAll().forEach(lstParticipantes::add);
-
-                for(Participantes participantes : lstParticipantes) {
-                    Equipos equipos = equiposRepository.save(new Equipos(true));
-
-                    etapaEquipoRepository.save(new EtapaEquipo(etapas.getIdEtapa(), equipos.getIdEquipo()));
-
-                    participanteEquipoRepository.save(new ParticipanteEquipo(participantes.getIdParticipante(), equipos.getIdEquipo()));
-                }
+            for(Integer participante : etapaDTO.getParticipantes()) {
+                Equipos equipos = equiposRepository.save(new Equipos(true));
+                etapaEquipoRepository.save(new EtapaEquipo(etapas.getIdEtapa(), equipos.getIdEquipo()));
+                participanteEquipoRepository.save(new ParticipanteEquipo(participante, equipos.getIdEquipo()));
             }
         }
 

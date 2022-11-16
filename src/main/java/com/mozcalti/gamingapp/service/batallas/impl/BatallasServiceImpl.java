@@ -28,8 +28,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 @Service
@@ -66,9 +64,6 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
 
     @Autowired
     private DashboardService dashboardsGlobalResultadosService;
-
-    @Autowired
-    private ParticipanteEquipoRepository participanteEquipoRepository;
 
     @Autowired
     private ResultadosRepository resultadosRepository;
@@ -258,11 +253,6 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
     }
 
     @Override
-    public Integer getIdEquipoByIdParticipante(Integer idParticipante) throws ValidacionException {
-        return participanteEquipoRepository.findByIdParticipante(idParticipante).getIdEquipo();
-    }
-
-    @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public BatallasDTO generaBatallas(Integer idEtapa) {
 
@@ -274,7 +264,7 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
         Integer numCompetidores = etapas.getReglas().getNumCompetidores();
         Integer numRondas = etapas.getReglas().getNumRondas();
 
-        EquiposDTO equiposDTO = torneosService.obtieneInstitucionEquipos();
+        EquiposDTO equiposDTO = torneosService.obtieneInstitucionEquipos(idEtapa);
 
         List<BatallaFechaHoraInicioDTO> batallaFechaHoraInicioDTOS =
                 torneosService.obtieneFechasBatalla(idEtapa, TorneoUtils
