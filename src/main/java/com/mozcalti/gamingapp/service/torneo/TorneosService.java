@@ -16,7 +16,7 @@ public interface TorneosService extends GenericServiceAPI<Torneos, Integer> {
 
     List<BatallaFechaHoraInicioDTO> obtieneFechasBatalla(Integer idEtapa, Integer numeroFechas) throws ValidacionException;
 
-    EquiposDTO obtieneInstitucionEquipos() throws ValidacionException;
+    EquiposDTO obtieneInstitucionEquipos(int idEtapa) throws ValidacionException;
 
     List<List<BatallaParticipanteDTO>> obtieneParticipantes(List<Integer> idEquipos, Integer numCompetidores) throws ValidacionException;
 

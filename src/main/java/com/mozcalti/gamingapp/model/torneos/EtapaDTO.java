@@ -21,8 +21,7 @@ public class EtapaDTO {
     private String fechaFin;
     private ReglasDTO reglas;
 
-    @JsonIgnore
-    private List<ParticipanteDTO> participantes;
+    private List<Integer> participantes;
 
     @JsonIgnore
     private List<EquipoDTO> equipos;
@@ -34,4 +33,14 @@ public class EtapaDTO {
         this.fechaFin = etapa.getFechaFin();
         this.reglas = new ReglasDTO(etapa.getReglas());
     }
+
+    public EtapaDTO(Etapas etapa, List<Integer> participantes) {
+        this.idEtapa = etapa.getIdEtapa();
+        this.numeroEtapa = etapa.getNumeroEtapa();
+        this.fechaInicio = etapa.getFechaInicio();
+        this.fechaFin = etapa.getFechaFin();
+        this.reglas = new ReglasDTO(etapa.getReglas());
+        this.participantes = participantes;
+    }
+
 }

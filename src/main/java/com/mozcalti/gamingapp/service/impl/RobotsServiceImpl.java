@@ -15,6 +15,7 @@ import com.mozcalti.gamingapp.robocode.BattleRunner;
 import com.mozcalti.gamingapp.robocode.Robocode;
 import com.mozcalti.gamingapp.service.RobotsService;
 import com.mozcalti.gamingapp.service.batallas.BatallasService;
+import com.mozcalti.gamingapp.service.equipo.EquiposService;
 import com.mozcalti.gamingapp.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,9 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
     @Autowired
     private BatallaParticipantesRepository batallaParticipantesRepository;
 
+    @Autowired
+    private EquiposService equiposService;
+
     @Override
     public CrudRepository<Robots, Integer> getDao() {
         return null;
@@ -66,15 +70,15 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
     private static final Character[] INVALID_WINDOWS_SPECIFIC_CHARS = {'"', '*', '<', '>', '?', '|'};
     private static final Character[] INVALID_UNIX_SPECIFIC_CHARS = {'\000'};
     @Override
-    public RobotsDTO cargarRobot(int idParticipante, String tipo, MultipartFile file) throws IOException, ValidacionException {
+    public RobotsDTO cargarRobot(int idEtapa, int idParticipante, String tipo, MultipartFile file) throws IOException, ValidacionException {
 
-        validaHoraPermitida(idParticipante);
+        validaHoraPermitida(idEtapa, idParticipante);
 
         if (file != null) {
             if(!file.isEmpty()){
                 if(safetyCheckForFileName(file)){
                     byte[] bytes = file.getBytes();
-                    return validateRobotJar(file.getOriginalFilename(), tipo, idParticipante, bytes);
+                    return validateRobotJar(file.getOriginalFilename(), tipo, idEtapa, idParticipante, bytes);
                 }
             } else {
                 throw new RobotValidationException("El archivo que intentas cargar esta vacío.");
@@ -93,9 +97,9 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
     }
 
     @Override
-    public void eliminarRobot(int idRobot, int idParticipante) throws IOException, ValidacionException {
+    public void eliminarRobot(int idRobot, int idEtapa, int idParticipante) throws IOException, ValidacionException {
 
-        validaHoraPermitida(idParticipante);
+        validaHoraPermitida(idEtapa, idParticipante);
 
         Optional<Robots> robot = robotsRepository.findById(idRobot);
         if(robot.isPresent()){
@@ -109,9 +113,9 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
 
     @Override
     @Transactional
-    public void seleccionarRobot(String nombre, int idParticipante){
-        validaHoraPermitida(idParticipante);
-        deseleccionarRobots(batallasService.getIdEquipoByIdParticipante(idParticipante));
+    public void seleccionarRobot(String nombre, int idEtapa, int idParticipante){
+        validaHoraPermitida(idEtapa, idParticipante);
+        deseleccionarRobots(equiposService.getIdEquipoByIdParticipante(idEtapa, idParticipante));
         Robots robot = robotsRepository.findByNombre(nombre);
         robot.setActivo(Numeros.UNO.getNumero());
     }
@@ -124,9 +128,9 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
         }
     }
     @Override
-    public List<RobotsDTO> obtenerRobots(Integer idParticipante){
+    public List<RobotsDTO> obtenerRobots(Integer idEtapa, Integer idParticipante){
         List<Robots> listaRobots = robotsRepository.findAllByIdEquipo(
-                batallasService.getIdEquipoByIdParticipante(idParticipante));
+                equiposService.getIdEquipoByIdParticipante(idEtapa, idParticipante));
         List<RobotsDTO> listaRobotsDTO = new ArrayList<>();
         for (Robots robot: listaRobots) {
             listaRobotsDTO.add(new RobotsDTO(robot.getIdRobot(), robot.getNombre(), robot.getActivo(), robot.getIdEquipo(), robot.getClassName(), robot.getTipo()));
@@ -135,10 +139,14 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
     }
 
     @Override
-    public void validaHoraPermitida(int idParticipante) throws ValidacionException {
+    public void validaHoraPermitida(int idEtapa, int idParticipante) throws ValidacionException {
 
         BatallaParticipantes batallaParticipantes = batallaParticipantesRepository.findByIdParticipanteEquipo(
-                batallasService.getIdEquipoByIdParticipante(idParticipante));
+                equiposService.getIdEquipoByIdParticipante(idEtapa, idParticipante));
+
+        if(batallaParticipantes == null) {
+            throw new ValidacionException("El participante no esta asignado a una batalla");
+        }
 
         Batallas batalla = batallasService.get(batallaParticipantes.getIdBatalla());
 
@@ -154,7 +162,7 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
 
     }
 
-    public RobotsDTO validateRobotJar(String originalFileName, String tipo, int idParticipante, byte[] bytes) throws IOException {
+    public RobotsDTO validateRobotJar(String originalFileName, String tipo, int idEtapa, int idParticipante, byte[] bytes) throws IOException {
         if(originalFileName != null){
             if(originalFileName.endsWith(ROBOTEXTENSION)) {
                 log.error(originalFileName);
@@ -171,7 +179,7 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
                     Path path = Paths.get(pathRobots);
                     Path serverFile = Files.createTempFile(path, "robot", ".jar");
                     String serverFileName = serverFile.toFile().getName();
-                    return validateRobot(originalFileName, bytes, serverFile, tipo, idParticipante, serverFileName);
+                    return validateRobot(originalFileName, bytes, serverFile, tipo, idEtapa, idParticipante, serverFileName);
                 }
             }else{
                 throw new RobotValidationException("El archivo que intentas cargar no es un robot empaquetado en formato JAR.");
@@ -181,7 +189,7 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
         }
     }
 
-    public RobotsDTO validateRobot(String originalFileName, byte[] bytes, Path serverFile, String tipo, int idParticipante, String tempFileName) throws IOException {
+    public RobotsDTO validateRobot(String originalFileName, byte[] bytes, Path serverFile, String tipo, int idEtapa, int idParticipante, String tempFileName) throws IOException {
 
         String src = serverFile.toAbsolutePath().toString();
         try(BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile.toFile()))) {
@@ -226,7 +234,7 @@ public class RobotsServiceImpl extends GenericServiceImpl<Robots, Integer> imple
             robot.setNombre(originalFileName);
             robot.setActivo(Numeros.CERO.getNumero());
 
-            robot.setIdEquipo(batallasService.getIdEquipoByIdParticipante(idParticipante));
+            robot.setIdEquipo(equiposService.getIdEquipoByIdParticipante(idEtapa, idParticipante));
 
             robot.setClassName(className);
             robot.setTipo(tipo);
