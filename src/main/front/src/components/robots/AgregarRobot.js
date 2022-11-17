@@ -34,6 +34,7 @@ function AgregarRobot(props) {
     const guardarRobot = data => {
         const formData = new FormData();
         formData.append("idParticipante", props.idParticipante);
+        formData.append("idEtapa", props.idEtapa);
         formData.append("tipo", data.tipo);
         formData.append("file", data.file[0]);
         props.addRobot(formData);

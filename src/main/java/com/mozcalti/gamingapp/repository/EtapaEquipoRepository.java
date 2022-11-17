@@ -7,4 +7,8 @@ public interface EtapaEquipoRepository extends CrudRepository<EtapaEquipo, Integ
 
     EtapaEquipo findByIdEquipoAndIdEtapa(Integer idEquipo, Integer idEtapa);
 
+    EtapaEquipo findByIdEquipo(Integer idEquipo);
+
+
+
 }

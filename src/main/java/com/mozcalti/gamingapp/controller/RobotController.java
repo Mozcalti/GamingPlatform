@@ -3,6 +3,7 @@ package com.mozcalti.gamingapp.controller;
 import com.mozcalti.gamingapp.model.Robots;
 import com.mozcalti.gamingapp.model.dto.*;
 import com.mozcalti.gamingapp.service.RobotsService;
+import com.mozcalti.gamingapp.service.equipo.EtapaEquipoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -20,6 +21,7 @@ import java.util.List;
 public class RobotController {
 
     private final RobotsService robotsService;
+    private final EtapaEquipoService etapaEquipoService;
 
     @PostMapping(value = "/cargarRobot", produces = MediaType.APPLICATION_JSON_VALUE)
     public RobotsDTO cargarArchivo(
@@ -61,5 +63,10 @@ public class RobotController {
                                  @RequestParam(value="idEtapa") int idEtapa,
                                  @RequestParam(value="idParticipante") int idParticipante) {
         robotsService.seleccionarRobot(nombre, idEtapa, idParticipante);
+    }
+
+    @GetMapping(value = "/obteterEtapa")
+    public Integer obtenerEtapaPorIdParticipante(@RequestParam(value="idParticipante") int idParticipante){
+        return etapaEquipoService.getEtapaPorEquipo(idParticipante);
     }
 }
