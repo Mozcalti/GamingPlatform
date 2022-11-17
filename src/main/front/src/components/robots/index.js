@@ -16,6 +16,7 @@ import AuthService from "../../services/auth.service";
 const Robots = () => {
     const [robots, setRobots] = useState([]);
     const [idParticipante, setIdParticipante] = useState("");
+    const [idEtapa, setIdEtapa] = useState("");
     const [resultado, setResultado] = useState({
             success: false,
             error: false
@@ -26,7 +27,7 @@ const Robots = () => {
     const user = AuthService.getCurrentUser();
 
     const getRobots = () => {
-        RobotsService.lista(idParticipante)
+        RobotsService.lista(idParticipante, idEtapa)
             .then(
                 (response) => {
                     setRobots(response.data)
@@ -37,8 +38,8 @@ const Robots = () => {
             )
     }
 
-    const elimiarRobot = (idRobot, idP) => {
-        RobotsService.eliminarRobot(idRobot, idP)
+    const elimiarRobot = (idRobot, idP, idE) => {
+        RobotsService.eliminarRobot(idRobot, idP,idE)
             .then(
                 () => {
                     setResultado({...resultado, success: true})
@@ -51,10 +52,11 @@ const Robots = () => {
                 }
             )
     }
-    const activarRobot = (nombre, idP) => {
+    const activarRobot = (nombre, idP,idE) => {
         const formData = new FormData();
         formData.append("nombre", nombre);
         formData.append("idParticipante", idP);
+        formData.append("idEtapa", idE);
         RobotsService.seleccionarRobot(formData)
             .then(
                 () => {
@@ -119,15 +121,32 @@ const Robots = () => {
             .getPartiticpanteByCorreo(correo)
             .then(
                 (response) => {
+                    getEtapaPorParticipante(response.data)
                     setIdParticipante(response.data)
                 },
                 error => {
                     console.log(error)
                 }
             )
+    }
 
+
+    const getEtapaPorParticipante = (id) => {
+        RobotsService
+            .getEtapaPorParticipante(id)
+            .then(
+                (response) => {
+                    setIdEtapa(response.data)
+                },
+                error => {
+                    console.log(error)
+                }
+            )
 
     }
+
+
+
     useEffect(() => {
         getParticipantePorCorreo(user.email)
         getRobots()
@@ -146,7 +165,7 @@ const Robots = () => {
                     <Grid item xs={2} md={2}>
                     </Grid>
                     <Grid item xs={2} md={2}>
-                        <AgregarRobot ValidaForm={ValidaForm} addRobot={validarRobot} idParticipante={idParticipante}/>
+                        <AgregarRobot ValidaForm={ValidaForm} addRobot={validarRobot} idParticipante={idParticipante} idEtapa={idEtapa}/>
                     </Grid>
                 </Grid>
                 <br/>
@@ -167,10 +186,10 @@ const Robots = () => {
                                     {r.activo ?
                                         <Button variant="text" color="success">Seleccionado</Button>
                                         : <Button variant="contained"
-                                                  onClick={() => activarRobot(r.nombre, idParticipante)}>Seleccionar</Button>
+                                                  onClick={() => activarRobot(r.nombre, idParticipante,idEtapa)}>Seleccionar</Button>
                                     }
                                     <Button variant="contained" color="error"
-                                            onClick={() => elimiarRobot(r.idRobot, idParticipante)}>Eliminar</Button>
+                                            onClick={() => elimiarRobot(r.idRobot, idParticipante, idEtapa)}>Eliminar</Button>
                                 </CardActions>
                             </Card>
                         </Grid>
