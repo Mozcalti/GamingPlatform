@@ -10,6 +10,7 @@ public interface ParticipanteEquipoRepository extends CrudRepository<Participant
     void deleteByIdEquipo(Integer idEquipo);
 
     List<ParticipanteEquipo> findAllByIdParticipante(Integer idParticipante);
+    ParticipanteEquipo findByIdParticipante(Integer idParticipante);
 
     ParticipanteEquipo findByIdEquipo(Integer idEquipo);
 
