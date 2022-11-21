@@ -2,6 +2,7 @@ package com.mozcalti.gamingapp.service.torneo;
 
 import com.mozcalti.gamingapp.commons.GenericServiceAPI;
 import com.mozcalti.gamingapp.exceptions.ValidacionException;
+import com.mozcalti.gamingapp.model.Etapas;
 import com.mozcalti.gamingapp.model.Torneos;
 import com.mozcalti.gamingapp.model.batallas.BatallaFechaHoraInicioDTO;
 import com.mozcalti.gamingapp.model.batallas.BatallaParticipanteDTO;
@@ -47,5 +48,7 @@ public interface TorneosService extends GenericServiceAPI<Torneos, Integer> {
     EtapaDTO obtieneEtapa(Integer idEtapa) throws ValidacionException;
 
     void modificaEtapa(Integer idEtapa, EtapaDTO etapaDTO);
+
+    List<Integer> obtieneParticipantes(Etapas etapa);
 
 }

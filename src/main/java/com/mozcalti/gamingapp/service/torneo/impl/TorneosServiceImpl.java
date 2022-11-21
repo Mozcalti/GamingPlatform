@@ -344,13 +344,7 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
 
         List<EtapaDTO> etapaDTOS = new ArrayList<>();
         for(Etapas etapa : etapas) {
-            List<Integer> participantes = new ArrayList<>();
-            for(EtapaEquipo etapaEquipo : etapaEquipoRepository.findAllByIdEtapa(etapa.getIdEtapa())) {
-                participantes.add(participanteEquipoRepository.findByIdEquipo(etapaEquipo.getIdEquipo())
-                        .getIdParticipante());
-            }
-
-            etapaDTOS.add(new EtapaDTO(etapa, participantes));
+            etapaDTOS.add(new EtapaDTO(etapa, obtieneParticipantes(etapa)));
         }
 
         return etapaDTOS;
@@ -458,13 +452,7 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
         EtapaDTO etapaDTO = null;
 
         if(etapa.isPresent()) {
-            List<Integer> participantes = new ArrayList<>();
-            for(EtapaEquipo etapaEquipo : etapaEquipoRepository.findAllByIdEtapa(etapa.orElseThrow().getIdEtapa())) {
-                participantes.add(participanteEquipoRepository.findByIdEquipo(etapaEquipo.getIdEquipo())
-                        .getIdParticipante());
-            }
-
-            etapaDTO = new EtapaDTO(etapa.orElseThrow(), participantes);
+            etapaDTO = new EtapaDTO(etapa.orElseThrow(), obtieneParticipantes(etapa.orElseThrow()));
         } else {
             throw new ValidacionException("Etapa no encontrada: " + idEtapa);
         }
@@ -513,6 +501,17 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
             participanteEquipoRepository.save(new ParticipanteEquipo(participante, equipos.getIdEquipo()));
         }
 
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public List<Integer> obtieneParticipantes(Etapas etapa) {
+        List<Integer> participantes = new ArrayList<>();
+        for(EtapaEquipo etapaEquipo : etapaEquipoRepository.findAllByIdEtapa(etapa.getIdEtapa())) {
+            participantes.add(participanteEquipoRepository.findByIdEquipo(etapaEquipo.getIdEquipo())
+                    .getIdParticipante());
+        }
+        return participantes;
     }
 
 }

@@ -11,7 +11,7 @@ public interface EtapaEquipoRepository extends CrudRepository<EtapaEquipo, Integ
 
     EtapaEquipo findByIdEquipo(Integer idEquipo);
 
-    List<EtapaEquipo> findAllByIdEtapa(Integer IdEtapa);
+    List<EtapaEquipo> findAllByIdEtapa(Integer idEtapa);
 
     void deleteByIdEquipo(Integer idEquipo);
 
