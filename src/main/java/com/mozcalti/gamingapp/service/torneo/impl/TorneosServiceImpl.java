@@ -504,7 +504,6 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
     public List<Integer> obtieneParticipantes(Etapas etapa) {
         List<Integer> participantes = new ArrayList<>();
         for(EtapaEquipo etapaEquipo : etapaEquipoRepository.findAllByIdEtapa(etapa.getIdEtapa())) {
