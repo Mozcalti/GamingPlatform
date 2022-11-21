@@ -373,34 +373,6 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class, RuntimeException.class})
-    public void modificaEtapas(Integer idTorneo, List<EtapaDTO> etapasDTOS) throws ValidacionException {
-
-        Optional<Torneos> torneos = torneosRepository.findById(idTorneo);
-        TorneoValidation.validaGuardarEtapas(torneos, etapasDTOS);
-
-        for(EtapaDTO etapaDTO : etapasDTOS) {
-            // Etapa
-            Etapas etapa = etapasRepository.findById(etapaDTO.getIdEtapa()).orElseThrow();
-            etapa.setNumeroEtapa(etapaDTO.getNumeroEtapa());
-            etapa.setFechaInicio(etapaDTO.getFechaInicio());
-            etapa.setFechaFin(etapaDTO.getFechaFin());
-            etapasRepository.save(etapa);
-
-            // Reglas
-            etapa.getReglas().setNumCompetidores(etapaDTO.getReglas().getNumCompetidores());
-            etapa.getReglas().setNumRondas(etapaDTO.getReglas().getNumRondas());
-            etapa.getReglas().setTiempoBatallaAprox(etapaDTO.getReglas().getTiempoBatallaAprox());
-            etapa.getReglas().setTrabajo(etapaDTO.getReglas().getTrabajo());
-            etapa.getReglas().setTiempoEspera(etapaDTO.getReglas().getTiempoEspera());
-            etapa.getReglas().setArenaAncho(etapaDTO.getReglas().getArenaAncho());
-            etapa.getReglas().setArenaAlto(etapaDTO.getReglas().getArenaAlto());
-
-            etapasRepository.save(etapa);
-        }
-    }
-
-    @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public List<DatosCorreoBatallaDTO> getDatosCorreoBatalla() throws ValidacionException {
 
@@ -449,7 +421,7 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
     public EtapaDTO obtieneEtapa(Integer idEtapa) throws ValidacionException {
 
         Optional<Etapas> etapa = etapasRepository.findById(idEtapa);
-        EtapaDTO etapaDTO = null;
+        EtapaDTO etapaDTO;
 
         if(etapa.isPresent()) {
             etapaDTO = new EtapaDTO(etapa.orElseThrow(), obtieneParticipantes(etapa.orElseThrow()));
@@ -486,16 +458,13 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
         etapasRepository.save(etapa);
 
         // Participantes
+        for(EtapaEquipo etapaEquipo : etapaEquipoRepository.findAllByIdEtapa(etapa.getIdEtapa())) {
+            etapaEquipoRepository.deleteByIdEquipo(etapaEquipo.getIdEquipo());
+            participanteEquipoRepository.deleteByIdEquipo(etapaEquipo.getIdEquipo());
+            equiposRepository.deleteById(etapaEquipo.getIdEquipo());
+        }
+
         for(Integer participante : etapaDTO.getParticipantes()) {
-            Integer idEquipo = equiposService
-                    .getIdEquipoByIdParticipante(etapa.getIdEtapa(), participante);
-
-            if(idEquipo != null) {
-                etapaEquipoRepository.deleteByIdEquipo(idEquipo);
-                participanteEquipoRepository.deleteByIdEquipo(idEquipo);
-                equiposRepository.deleteById(idEquipo);
-            }
-
             Equipos equipos = equiposRepository.save(new Equipos(true));
             etapaEquipoRepository.save(new EtapaEquipo(etapa.getIdEtapa(), equipos.getIdEquipo()));
             participanteEquipoRepository.save(new ParticipanteEquipo(participante, equipos.getIdEquipo()));
