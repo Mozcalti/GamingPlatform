@@ -63,4 +63,14 @@ public class TorneoControlller {
         torneosService.modificaEtapas(idTorneo, etapasDTOS);
     }
 
+    @GetMapping("/etapa/consulta/{idEtapa}")
+    public EtapaDTO obtieneEtapa(@PathVariable Integer idEtapa) {
+        return torneosService.obtieneEtapa(idEtapa);
+    }
+
+    @PutMapping("/etapa/cambiar/{idEtapa}")
+    public void modificaEtapa(@PathVariable Integer idEtapa, @RequestBody EtapaDTO etapaDTO) {
+        torneosService.modificaEtapa(idEtapa, etapaDTO);
+    }
+
 }

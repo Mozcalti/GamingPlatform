@@ -344,7 +344,13 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
 
         List<EtapaDTO> etapaDTOS = new ArrayList<>();
         for(Etapas etapa : etapas) {
-            etapaDTOS.add(new EtapaDTO(etapa));
+            List<Integer> participantes = new ArrayList<>();
+            for(EtapaEquipo etapaEquipo : etapaEquipoRepository.findAllByIdEtapa(etapa.getIdEtapa())) {
+                participantes.add(participanteEquipoRepository.findByIdEquipo(etapaEquipo.getIdEquipo())
+                        .getIdParticipante());
+            }
+
+            etapaDTOS.add(new EtapaDTO(etapa, participantes));
         }
 
         return etapaDTOS;
@@ -443,6 +449,70 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
         }
 
         return mailsbatallas;
+    }
+
+    @Override
+    public EtapaDTO obtieneEtapa(Integer idEtapa) throws ValidacionException {
+
+        Optional<Etapas> etapa = etapasRepository.findById(idEtapa);
+        EtapaDTO etapaDTO = null;
+
+        if(etapa.isPresent()) {
+            List<Integer> participantes = new ArrayList<>();
+            for(EtapaEquipo etapaEquipo : etapaEquipoRepository.findAllByIdEtapa(etapa.orElseThrow().getIdEtapa())) {
+                participantes.add(participanteEquipoRepository.findByIdEquipo(etapaEquipo.getIdEquipo())
+                        .getIdParticipante());
+            }
+
+            etapaDTO = new EtapaDTO(etapa.orElseThrow(), participantes);
+        } else {
+            throw new ValidacionException("Etapa no encontrada: " + idEtapa);
+        }
+
+        return etapaDTO;
+
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void modificaEtapa(Integer idEtapa, EtapaDTO etapaDTO) {
+
+        TorneoValidation.validaEtapa(etapaDTO);
+
+        // Etapa
+        Etapas etapa = etapasRepository.findById(etapaDTO.getIdEtapa()).orElseThrow();
+        etapa.setNumeroEtapa(etapaDTO.getNumeroEtapa());
+        etapa.setFechaInicio(etapaDTO.getFechaInicio());
+        etapa.setFechaFin(etapaDTO.getFechaFin());
+        etapasRepository.save(etapa);
+
+        // Reglas
+        etapa.getReglas().setNumCompetidores(etapaDTO.getReglas().getNumCompetidores());
+        etapa.getReglas().setNumRondas(etapaDTO.getReglas().getNumRondas());
+        etapa.getReglas().setTiempoBatallaAprox(etapaDTO.getReglas().getTiempoBatallaAprox());
+        etapa.getReglas().setTrabajo(etapaDTO.getReglas().getTrabajo());
+        etapa.getReglas().setTiempoEspera(etapaDTO.getReglas().getTiempoEspera());
+        etapa.getReglas().setArenaAncho(etapaDTO.getReglas().getArenaAncho());
+        etapa.getReglas().setArenaAlto(etapaDTO.getReglas().getArenaAlto());
+
+        etapasRepository.save(etapa);
+
+        // Participantes
+        for(Integer participante : etapaDTO.getParticipantes()) {
+            Integer idEquipo = equiposService
+                    .getIdEquipoByIdParticipante(etapa.getIdEtapa(), participante);
+
+            if(idEquipo != null) {
+                etapaEquipoRepository.deleteByIdEquipo(idEquipo);
+                participanteEquipoRepository.deleteByIdEquipo(idEquipo);
+                equiposRepository.deleteById(idEquipo);
+            }
+
+            Equipos equipos = equiposRepository.save(new Equipos(true));
+            etapaEquipoRepository.save(new EtapaEquipo(etapa.getIdEtapa(), equipos.getIdEquipo()));
+            participanteEquipoRepository.save(new ParticipanteEquipo(participante, equipos.getIdEquipo()));
+        }
+
     }
 
 }

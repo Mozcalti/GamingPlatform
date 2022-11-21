@@ -44,4 +44,8 @@ public interface TorneosService extends GenericServiceAPI<Torneos, Integer> {
 
     List<DatosCorreoBatallaDTO> getDatosCorreoBatalla() throws ValidacionException;
 
+    EtapaDTO obtieneEtapa(Integer idEtapa) throws ValidacionException;
+
+    void modificaEtapa(Integer idEtapa, EtapaDTO etapaDTO);
+
 }
