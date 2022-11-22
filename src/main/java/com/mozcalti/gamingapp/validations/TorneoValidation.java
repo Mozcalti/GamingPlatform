@@ -90,30 +90,30 @@ public class TorneoValidation {
             throw new ValidacionException("Debe por lo menos agregar una etapa");
         }
 
-        if (etapasDTOS.size() > Numeros.DOS.getNumero()) {
-            throw new ValidacionException("No es posible agregas más de 2 etapas por el momento");
-        }
-
         for(EtapaDTO etapaDTO : etapasDTOS) {
-            DateUtils.isValidDate(etapaDTO.getFechaInicio(),
-                    Constantes.FECHA_PATTERN,
-                    "Fecha de inicio de la etapa " + etapaDTO.getNumeroEtapa() + " no válido");
-
-            DateUtils.isValidDate(etapaDTO.getFechaFin(),
-                    Constantes.FECHA_PATTERN,
-                    "Fecha de fin de la etapa " + etapaDTO.getNumeroEtapa() + " no válido");
-
-            DateUtils.isDatesRangoValid(etapaDTO.getFechaInicio(),
-                    etapaDTO.getFechaFin(),
-                    Constantes.FECHA_PATTERN,
-                    "Fecha inicio de la etapa " + etapaDTO.getNumeroEtapa()
-                            + " no puede ser mayor a la fecha fin");
-
-            if(etapaDTO.getReglas() == null) {
-                throw new ValidacionException("Debe mandar las reglas para la etapa");
-            }
+            validaEtapa(etapaDTO);
         }
 
+    }
+
+    public static void validaEtapa(@NonNull EtapaDTO etapaDTO) {
+        DateUtils.isValidDate(etapaDTO.getFechaInicio(),
+                Constantes.FECHA_PATTERN,
+                "Fecha de inicio de la etapa " + etapaDTO.getNumeroEtapa() + " no válido");
+
+        DateUtils.isValidDate(etapaDTO.getFechaFin(),
+                Constantes.FECHA_PATTERN,
+                "Fecha de fin de la etapa " + etapaDTO.getNumeroEtapa() + " no válido");
+
+        DateUtils.isDatesRangoValid(etapaDTO.getFechaInicio(),
+                etapaDTO.getFechaFin(),
+                Constantes.FECHA_PATTERN,
+                "Fecha inicio de la etapa " + etapaDTO.getNumeroEtapa()
+                        + " no puede ser mayor a la fecha fin");
+
+        if(etapaDTO.getReglas() == null) {
+            throw new ValidacionException("Debe mandar las reglas para la etapa");
+        }
     }
 
     public static void validaEliminaEtapas(List<Etapas> etapas) {
