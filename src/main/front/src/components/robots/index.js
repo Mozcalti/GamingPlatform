@@ -121,7 +121,6 @@ const Robots = () => {
             .getPartiticpanteByCorreo(correo)
             .then(
                 (response) => {
-                    getEtapaPorParticipante(response.data)
                     setIdParticipante(response.data)
                 },
                 error => {
@@ -149,9 +148,10 @@ const Robots = () => {
 
     useEffect(() => {
         getParticipantePorCorreo(user.email)
+        getEtapaPorParticipante(idParticipante)
         getRobots()
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [idParticipante]);
+    }, [idParticipante,idEtapa]);
 
     return (
         <>
