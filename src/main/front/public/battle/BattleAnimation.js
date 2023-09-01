@@ -31,7 +31,7 @@ function obtieneDatos() {
     document.getElementById("stateMsg").innerHTML = "CARGANDO...";
     document.getElementById("stateScreen").style.display = "flex";
 
-    fetch("https://robocode.mozcalti.com/visualizar/datos/" + getURLParameters("token"), {method: 'GET'})
+    fetch("http://localhost:8080/visualizar/datos/" + getURLParameters("token"), {method: 'GET'})
     //fetch("http://localhost:8080/visualizar/datos/" + getURLParameters("token"), {method: 'GET'})
         .then(function (resp) {
             return resp.json();
