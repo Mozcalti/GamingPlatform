@@ -297,6 +297,10 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
             List<List<BatallaParticipanteDTO>> lists = torneosService.obtieneParticipantes(
                     randomNumbers, numCompetidores);
 
+            if(lists.size() > batallaFechaHoraInicioDTOS.size()) {
+                throw new ValidacionException("No es posible generar batallas, ya que se crearia una batalla con 1 participante");
+            }
+
             for(int x=Numeros.CERO.getNumero(); x<lists.size(); x++) {
                 BatallaDTO batallaDTO = new BatallaDTO(batallaFechaHoraInicioDTOS.get(x));
                 batallaDTO.setIdEtapa(idEtapa);
