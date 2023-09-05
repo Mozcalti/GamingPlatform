@@ -92,7 +92,7 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
             Optional<TorneoHorasHabiles> torneoHorasHabiles = torneos.getTorneoHorasHabilesByIdTorneo().stream()
                     .sorted(Comparator.comparing(TorneoHorasHabiles::getIdHoraHabil)).findFirst();
 
-            fecha = torneos.getFechaInicio();
+            fecha = etapas.getFechaInicio();
             horaInicioBatalla = torneoHorasHabiles.orElseThrow().getHoraIniHabil();
             horaFinBatalla = DateUtils.addMinutos(horaInicioBatalla, Constantes.HORA_PATTERN, tiempoBatalla);
         }
@@ -319,6 +319,16 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
         Optional<Torneos> torneos = torneosRepository.findById(idTorneo);
         TorneoValidation.validaGuardarEtapas(torneos, etapaDTOS);
 
+        // Inacticar equipos
+        if(equiposRepository.findAll() != null) {
+            equiposRepository.findAll().forEach(
+                    equipos -> {
+                        equipos.setActivo(false);
+                        equiposRepository.save(equipos);
+                    }
+            );
+        }
+
         for(EtapaDTO etapaDTO : etapaDTOS) {
             // Etapa
             Etapas etapas = new Etapas(etapaDTO, torneos.orElseThrow().getIdTorneo());
@@ -328,11 +338,23 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
             reglasRepository.save(new Reglas(etapaDTO.getReglas(), etapas.getIdEtapa()));
 
             // Participantes
-            for(Integer participante : etapaDTO.getParticipantes()) {
-                Equipos equipos = equiposRepository.save(new Equipos(true));
-                etapaEquipoRepository.save(new EtapaEquipo(etapas.getIdEtapa(), equipos.getIdEquipo()));
-                participanteEquipoRepository.save(new ParticipanteEquipo(participante, equipos.getIdEquipo()));
+            if(etapaDTO.getParticipantes() != null) {
+                for(Integer participante : etapaDTO.getParticipantes()) {
+                    Equipos equipos = equiposRepository.save(new Equipos(true));
+                    etapaEquipoRepository.save(new EtapaEquipo(etapas.getIdEtapa(), equipos.getIdEquipo()));
+                    participanteEquipoRepository.save(new ParticipanteEquipo(participante, equipos.getIdEquipo()));
+                }
+            } else {
+                int idEtapa = etapas.getIdEtapa();
+                participantesRepository.findAll().forEach(
+                        p -> {
+                            Equipos equipos = equiposRepository.save(new Equipos(true));
+                            etapaEquipoRepository.save(new EtapaEquipo(idEtapa, equipos.getIdEquipo()));
+                            participanteEquipoRepository.save(new ParticipanteEquipo(p.getIdParticipante(), equipos.getIdEquipo()));
+                        }
+                );
             }
+
         }
 
     }
