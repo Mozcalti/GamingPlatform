@@ -433,6 +433,8 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
 
                 batalla.setBndEnvioCorreo(Numeros.UNO.getNumero());
                 batallasRepository.save(batalla);
+
+
             }
         }
 
