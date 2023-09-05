@@ -14,6 +14,7 @@ public interface VerificationTokenService {
     Optional<VerificationToken> getVerificationToken(String token);
 
     Optional<UsuarioDTO> activateUserAccount(String token, String plainPassword);
+    Optional<UsuarioDTO> resetPassword(String email);
 
     default Optional<String> findTokenErrors(Optional<VerificationToken> maybeVerificationToken) {
 
