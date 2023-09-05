@@ -4,8 +4,8 @@ import './index.css';
 import App from './App';
 import axios from 'axios';
 
-//axios.defaults.baseURL = 'http://localhost:8080'; // dev
-axios.defaults.baseURL = 'https://robocode.mozcalti.com'; // prod
+axios.defaults.baseURL = 'http://localhost:8080/'; // dev
+//axios.defaults.baseURL = 'https://robocode.mozcalti.com'; // prod
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 axios.defaults.withCredentials = true;
 

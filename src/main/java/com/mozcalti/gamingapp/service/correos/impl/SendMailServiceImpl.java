@@ -61,7 +61,7 @@ public class SendMailServiceImpl implements SendMailService {
 
         try {
             Map<String, String> imagesMessage = new HashMap<>();
-            imagesMessage.put("logo_plai", Constantes.IMAGES_PLAI_LOGO);
+            imagesMessage.put("logo_mozcalti", Constantes.IMAGES_MOZCALTI_LOGO);
             // SMTP server properties
             Properties properties = new Properties();
             properties.put("mail.smtp.host", mailHost);

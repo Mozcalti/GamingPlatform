@@ -1,0 +1,27 @@
+<html>
+<meta charset="UTF-8">
+<style type="text/css">
+    .style1 {
+        font-family: Arial, Helvetica, sans-serif
+    }
+</style>
+
+<body>
+<p><img src="cid:logo_mozcalti" width="267" height="80"><br>
+    <br>
+    <span class="style1">Hola, ${nombre} ${apellido}. El presente correo es para infórmate que se ha restablecido tu contraseña de acceso al sistema para el torneo RoboCode, organizado por Mozcalti.</span>
+</p>
+<p>
+    <span class="style1">Ingresa al siguiente enlace para crear una nueva contraseña de acceso:</span>
+<p>
+<p>
+    <b><a href="${baseUrl}/registro?token=${token}">${baseUrl}/registro</a></b>
+</p>
+
+<p>
+    <br>
+    <span class="style1">¡Mucha suerte, competidor!</span>
+    <br>
+</p>
+</body>
+</html>

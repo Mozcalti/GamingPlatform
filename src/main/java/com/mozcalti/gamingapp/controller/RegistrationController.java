@@ -47,4 +47,15 @@ public class RegistrationController {
     }
 
 
+    @PostMapping("/resetPassword")
+    public ResponseEntity<String> resetPassword(@RequestParam("email") String email){
+
+        verificationTokenService.resetPassword(email);
+
+        return ResponseEntity.ok("");
+
+    }
+
+
+
 }

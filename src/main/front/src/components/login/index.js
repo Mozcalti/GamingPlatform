@@ -62,7 +62,7 @@ const Login = () => {
                         loading: false,
                     });
 
-                    if(response.role === 'STAFF') {
+                    if(response.rol === 'STAFF') {
                         navigate("/usuarios")
                     } else {
                         navigate('/robots')

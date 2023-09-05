@@ -17,7 +17,7 @@ public final class Constantes {
     public static final String MAIL_ENCODING = "UTF-8";
     public static final String RECORD_INFO_INICIO = "^.+recordInfo.+$";
     public static final String RECORD_INFO_FIN = "^.+\\/recordInfo.+$";
-    public static final String IMAGES_PLAI_LOGO = "/img/logo_plai.png";
+    public static final String IMAGES_MOZCALTI_LOGO = "/img/logo_mozcalti.png";
     public static final String TODOS = "todos";
     public static final String COMA_ESPACIO = ", ";
     public static final String COMA = ",";
