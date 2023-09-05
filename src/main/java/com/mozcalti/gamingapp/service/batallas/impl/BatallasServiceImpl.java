@@ -8,12 +8,15 @@ import com.mozcalti.gamingapp.model.batallas.*;
 import com.mozcalti.gamingapp.model.catalogos.EtapasDTO;
 import com.mozcalti.gamingapp.model.catalogos.InstitucionDTO;
 import com.mozcalti.gamingapp.model.catalogos.ParticipanteDTO;
+import com.mozcalti.gamingapp.model.correos.DatosCorreoBatallaDTO;
 import com.mozcalti.gamingapp.model.participantes.EquiposDTO;
 import com.mozcalti.gamingapp.model.participantes.InstitucionEquiposDTO;
 import com.mozcalti.gamingapp.repository.*;
 import com.mozcalti.gamingapp.robocode.BattleRunner;
 import com.mozcalti.gamingapp.robocode.Robocode;
 import com.mozcalti.gamingapp.service.batallas.BatallasService;
+import com.mozcalti.gamingapp.service.correos.SendMailService;
+import com.mozcalti.gamingapp.service.correos.impl.SendMailBatallaImpl;
 import com.mozcalti.gamingapp.service.dashboard.DashboardService;
 import com.mozcalti.gamingapp.service.torneo.TorneosService;
 import com.mozcalti.gamingapp.utils.*;
@@ -44,6 +47,7 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
 
     @Autowired
     private EtapasRepository etapasRepository;
+
     @Autowired
     private EquiposRepository equiposRepository;
 
@@ -67,6 +71,9 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
 
     @Autowired
     private ResultadosRepository resultadosRepository;
+
+    @Autowired
+    private SendMailService sendMailService;
 
     @Override
     public CrudRepository<Batallas, Integer> getDao() {
@@ -297,6 +304,8 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
             List<List<BatallaParticipanteDTO>> lists = torneosService.obtieneParticipantes(
                     randomNumbers, numCompetidores);
 
+            BatallasValidation.validaGeneraBatallas(lists.size(), batallaFechaHoraInicioDTOS.size());
+
             for(int x=Numeros.CERO.getNumero(); x<lists.size(); x++) {
                 BatallaDTO batallaDTO = new BatallaDTO(batallaFechaHoraInicioDTOS.get(x));
                 batallaDTO.setIdEtapa(idEtapa);
@@ -428,6 +437,66 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
 
             etapaBatallaRepository.deleteById(etapaBatalla.getIdEtapaBatalla());
             batallasRepository.deleteById(batallas.getIdBatalla());
+        }
+
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void reenvioCorreoBatalla(ParticipantesDTO participantesDTO) throws ValidacionException, UtilsException {
+
+        if(participantesDTO.getIdParticipantes().isEmpty()){
+            throw new ValidacionException("Debe enviar por lo menos un participante");
+        }
+
+        List<DatosCorreoBatallaDTO> mailsbatallas = new ArrayList<>();
+        Integer numeroEtapa =  participantesDTO.getNumeroEtapa();
+        participantesDTO.getIdParticipantes().forEach(
+                id -> {
+                    ParticipanteCorreo participanteCorreo = participantesRepository.findByCorreoReenvio(id, numeroEtapa);
+
+                    if(participanteCorreo == null) {
+                        throw new ValidacionException("El participante " + id + " no existe en la etapa especificada");
+                    }
+
+                    Batallas batalla = batallasRepository.findById(participanteCorreo.getIdBatalla())
+                            .orElseThrow(() -> new ValidacionException("No existe batalla"));
+
+                    DatosCorreoBatallaDTO mailBatallasDTO = new DatosCorreoBatallaDTO(
+                            batalla.getFecha(),
+                            batalla.getHoraInicio(),
+                            batalla.getHoraFin(),
+                            batalla.getRondas());
+
+                    List<String> participantes = new ArrayList<>();
+                    batallaParticipantesRepository.findAllByIdBatalla(participanteCorreo.getIdBatalla())
+                            .forEach(batallaParticipantes ->
+                                participantes.add(batallaParticipantes.getNombre())
+                            );
+
+                    mailBatallasDTO.setMailToParticipantes(participanteCorreo.getCorreo());
+                    mailBatallasDTO.setParticipantes(participantes);
+                    mailBatallasDTO.setUrlViewBattle(batalla.getViewUrl());
+                    mailBatallasDTO.setBaseUrl(baseUrl);
+
+                    mailsbatallas.add(mailBatallasDTO);
+
+                }
+        );
+
+        // Envio Correo
+        try {
+            for(DatosCorreoBatallaDTO datosCorreoBatallaDTO : mailsbatallas) {
+                Map<String, Object> parameters = new HashMap<>();
+                parameters.put(SendMailBatallaImpl.ID_PARAMS_TEMPLATE_MAILS, datosCorreoBatallaDTO);
+                sendMailService.sendMail(
+                        datosCorreoBatallaDTO.getMailToParticipantes(),
+                        SendMailBatallaImpl.MAIL_TEMPLATE_KEY,
+                        parameters);
+                log.info("Correo reenviado correctamente: {}", datosCorreoBatallaDTO.getMailToParticipantes());
+            }
+        } catch (Exception e) {
+            log.error("Error en el reenvioCorreoBatalla(): {}", StackTraceUtils.getCustomStackTrace(e));
         }
 
     }

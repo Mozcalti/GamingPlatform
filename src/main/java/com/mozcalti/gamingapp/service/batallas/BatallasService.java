@@ -1,10 +1,12 @@
 package com.mozcalti.gamingapp.service.batallas;
 
 import com.mozcalti.gamingapp.commons.GenericServiceAPI;
+import com.mozcalti.gamingapp.exceptions.UtilsException;
 import com.mozcalti.gamingapp.exceptions.ValidacionException;
 import com.mozcalti.gamingapp.model.BatallaParticipantes;
 import com.mozcalti.gamingapp.model.Batallas;
 import com.mozcalti.gamingapp.model.batallas.BatallasDTO;
+import com.mozcalti.gamingapp.model.batallas.ParticipantesDTO;
 import com.mozcalti.gamingapp.model.batallas.RobotParticipanteDTO;
 import com.mozcalti.gamingapp.model.catalogos.EtapasDTO;
 import com.mozcalti.gamingapp.model.catalogos.InstitucionDTO;
@@ -32,5 +34,7 @@ public interface BatallasService extends GenericServiceAPI<Batallas, Integer> {
     void updateBatallas(BatallasDTO batallasDTO) throws ValidacionException;
 
     void deleteBatallas(Integer idEtapa) throws ValidacionException;
+
+    void reenvioCorreoBatalla(ParticipantesDTO participantesDTO) throws ValidacionException, UtilsException;
 
 }

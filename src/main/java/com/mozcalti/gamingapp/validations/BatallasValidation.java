@@ -51,6 +51,12 @@ public class BatallasValidation {
         }
     }
 
+    public static void validaGeneraBatallas(int totalParticipantes, int totalBatallasFechas) throws ValidacionException {
+        if(totalParticipantes > totalBatallasFechas) {
+            throw new ValidacionException("No es posible generar batallas, ya que se crearia una batalla con 1 participante");
+        }
+    }
+
     public static void validaExistenBatallas(Etapas etapas) throws ValidacionException {
         if(etapas.getEtapaBatallasByIdEtapa().isEmpty()) {
             throw new ValidacionException("No hay batallas para la estapa indicada");

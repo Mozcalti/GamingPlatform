@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class SendMailBatallaImpl implements SendMailBatalla {
 
-    private static final String MAIL_TEMPLATE_KEY = "torneo";
+    public static final String MAIL_TEMPLATE_KEY = "torneo";
 
     public static final String ID_PARAMS_TEMPLATE_MAILS = "mailBatalla";
 
