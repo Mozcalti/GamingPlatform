@@ -14,7 +14,6 @@ import AuthService from "../../services/auth.service";
 import {useLocation, useNavigate} from "react-router-dom";
 
 const pages = [
-    {title: 'Inicio', path: '#/', role: 'STAFF'},
     {title: 'Usuarios', path: '#/usuarios', role: 'STAFF'},
     {title: 'Instituciones', path: '#/instituciones', role: 'STAFF'},
     {title: 'Participantes', path: '#/participantes', role: 'STAFF'},
@@ -54,13 +53,11 @@ function ResponsiveAppBar() {
                 <Toolbar disableGutters>
                     <Typography
                         component="a"
-                        href="https://plai.mx/"
+                        href="https://mozcalti.com/"
                         sx={{
-                            mr: 10,
                             display: {xs: 'none', md: 'flex'},
-                        }}
-                    >
-                        <img src="/img/ui/logo_plai1.png" alt="Logo Plai" height={80}></img>
+                        }}>
+                        <img src="/img/ui/rojo_trans.png" alt="Logo MTI" height={80}></img>
                     </Typography>
                     <Box sx={{flexGrow: 1, display: {xs: 'flex', md: 'none', color: '#000'}}}>
                         <IconButton
@@ -142,15 +139,6 @@ function ResponsiveAppBar() {
                     <Typography
                         sx={{color: 'black'}}
                     >{user.nombre} {user.apellidos}</Typography>
-
-                    <Typography
-                        component="a"
-                        href="https://mozcalti.com/"
-                        sx={{
-                            display: {xs: 'none', md: 'flex'},
-                        }}>
-                        <img src="/img/ui/rojo_trans.png" alt="Logo MTI" height={80}></img>
-                    </Typography>
 
                 </Toolbar>
             </Container>

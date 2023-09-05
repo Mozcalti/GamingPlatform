@@ -16,6 +16,14 @@ class UsuariosService {
                 return response;
             });
     }
+
+    reset(email){
+        return axios
+            .post(`/users/resetPassword?email=${email}`)
+            .then(response => {
+                return response;
+            });
+    }
 }
 
 export default new UsuariosService();
