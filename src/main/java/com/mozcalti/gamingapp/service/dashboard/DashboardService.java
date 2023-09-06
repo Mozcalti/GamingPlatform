@@ -2,6 +2,7 @@ package com.mozcalti.gamingapp.service.dashboard;
 
 import com.mozcalti.gamingapp.model.Batallas;
 import com.mozcalti.gamingapp.model.Resultados;
+import com.mozcalti.gamingapp.model.batallas.resultado.ResultadoPorDiaDTO;
 import com.mozcalti.gamingapp.model.batallas.resultado.ResultadosDTO;
 import com.mozcalti.gamingapp.model.batallas.resultado.ResultadosInstitucionGpoDTO;
 import com.mozcalti.gamingapp.model.batallas.resultado.ResultadosParticipantesDTO;
@@ -26,5 +27,7 @@ public interface DashboardService {
     List<EtapaDTO> listaEtapas();
 
     Integer idInstitucion(Resultados resultados);
+
+    List<ResultadoPorDiaDTO> obtieneResultadosPorDia();
 
 }
