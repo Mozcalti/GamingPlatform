@@ -52,7 +52,7 @@ function AddParticipante(props) {
                 <DialogTitle align="center">Nuevo Participante</DialogTitle>
                 <Divider/>
                 <DialogContent>
-                    <form onReset>
+                    <form>
                         <Stack spacing={2}>
                             <TextField
                                 autoFocus

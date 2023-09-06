@@ -40,7 +40,7 @@ class ParticipantesService {
         return axios
             .post("/participante/cargarArchivo", participante, {headers: {"Content-Type": "multipart/form-data"}})
             .then(response => {
-                this.guardarListaParticipantes(response.data)
+                return response;
             });
     }
 
