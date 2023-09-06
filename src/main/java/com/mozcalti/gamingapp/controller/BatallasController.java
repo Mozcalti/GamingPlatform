@@ -1,6 +1,7 @@
 package com.mozcalti.gamingapp.controller;
 
 import com.mozcalti.gamingapp.model.batallas.BatallasDTO;
+import com.mozcalti.gamingapp.model.batallas.ParticipantesDTO;
 import com.mozcalti.gamingapp.service.batallas.BatallasService;
 import com.mozcalti.gamingapp.service.correos.SendMailBatalla;
 import lombok.AllArgsConstructor;
@@ -40,6 +41,11 @@ public class BatallasController {
     @DeleteMapping("/delete/{idEtapa}")
     public void deleteBatallas(@PathVariable Integer idEtapa) {
         batallasService.deleteBatallas(idEtapa);
+    }
+
+    @PostMapping("/reenvio/correo")
+    public void reenvioCorreoBatalla(@RequestBody ParticipantesDTO participantesDTO) {
+        batallasService.reenvioCorreoBatalla(participantesDTO);
     }
 
 }
