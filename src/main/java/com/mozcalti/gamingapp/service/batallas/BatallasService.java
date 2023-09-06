@@ -25,7 +25,7 @@ public interface BatallasService extends GenericServiceAPI<Batallas, Integer> {
 
     List<ParticipanteDTO> getParticipantesByIdInstitucion(Integer idInstitucion) throws ValidacionException;
 
-    BatallasDTO generaBatallas(Integer idEtapa);
+    BatallasDTO generaBatallas(Integer idEtapa, Integer idInstitucion);
 
     void saveBatallas(BatallasDTO batallasDTO) throws ValidacionException;
 

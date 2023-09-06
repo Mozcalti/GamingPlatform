@@ -261,7 +261,7 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public BatallasDTO generaBatallas(Integer idEtapa) {
+    public BatallasDTO generaBatallas(Integer idEtapa, Integer idInstitucion) {
 
         Etapas etapas = etapasRepository.findById(idEtapa).orElseThrow();
         BatallasDTO batallasDTO = new BatallasDTO();
@@ -271,7 +271,7 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
         Integer numCompetidores = etapas.getReglas().getNumCompetidores();
         Integer numRondas = etapas.getReglas().getNumRondas();
 
-        EquiposDTO equiposDTO = torneosService.obtieneInstitucionEquipos(idEtapa);
+        EquiposDTO equiposDTO = torneosService.obtieneInstitucionEquipos(idEtapa, idInstitucion);
 
         List<BatallaFechaHoraInicioDTO> batallaFechaHoraInicioDTOS =
                 torneosService.obtieneFechasBatalla(idEtapa, TorneoUtils
