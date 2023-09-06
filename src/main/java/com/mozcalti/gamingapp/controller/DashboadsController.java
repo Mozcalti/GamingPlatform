@@ -1,5 +1,6 @@
 package com.mozcalti.gamingapp.controller;
 
+import com.mozcalti.gamingapp.model.batallas.resultado.ResultadoPorDiaDTO;
 import com.mozcalti.gamingapp.model.batallas.resultado.ResultadosDTO;
 import com.mozcalti.gamingapp.model.batallas.resultado.ResultadosInstitucionGpoDTO;
 import com.mozcalti.gamingapp.model.batallas.resultado.ResultadosParticipantesDTO;
@@ -49,6 +50,11 @@ public class DashboadsController {
     @GetMapping("/obtenerEtapas")
     public List<EtapaDTO> getEtapas(){
         return dashboardService.listaEtapas();
+    }
+
+    @GetMapping("/porDia")
+    public List<ResultadoPorDiaDTO> getResultadosPorDia() {
+        return dashboardService.obtieneResultadosPorDia();
     }
 
 }

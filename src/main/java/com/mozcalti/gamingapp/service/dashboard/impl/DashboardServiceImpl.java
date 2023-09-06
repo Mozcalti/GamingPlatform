@@ -343,4 +343,22 @@ public class DashboardServiceImpl implements DashboardService {
 
         return institucion.orElseThrow().getId();
     }
+
+    @Override
+    public List<ResultadoPorDiaDTO> obtieneResultadosPorDia() {
+
+        List<ResultadoPorDiaDTO> resultadoPorDiaDTOS = new ArrayList<>();
+        batallasRepository.findAllResultadosPorDia().forEach(
+                resultadoPorDia ->
+                    resultadoPorDiaDTOS.add(new ResultadoPorDiaDTO(
+                            resultadoPorDia.getFecha(),
+                            resultadoPorDia.getNumeroEtapa(),
+                            resultadoPorDia.getScore(),
+                            resultadoPorDia.getNombre(),
+                            resultadoPorDia.getNombre()
+                    ))
+        );
+
+        return resultadoPorDiaDTOS;
+    }
 }
