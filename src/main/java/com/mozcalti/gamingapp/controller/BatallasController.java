@@ -17,9 +17,12 @@ public class BatallasController {
 
     private SendMailBatalla sendMailBatalla;
 
-    @GetMapping("/genera/{idEtapa}")
-    public BatallasDTO getBatallasByIdEtapa(@PathVariable Integer idEtapa) {
-        return batallasService.generaBatallas(idEtapa);
+    @GetMapping(path = {"/genera/{idEtapa}", "/genera/{idEtapa}/{idInstitucion}"})
+    public BatallasDTO getBatallasByIdEtapa(
+            @PathVariable Integer idEtapa,
+            @PathVariable(required = false) Integer idInstitucion) {
+
+        return batallasService.generaBatallas(idEtapa, idInstitucion);
     }
 
     @PostMapping("/save")

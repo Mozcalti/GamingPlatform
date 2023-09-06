@@ -134,7 +134,7 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public EquiposDTO obtieneInstitucionEquipos(int idEtapa) throws ValidacionException {
+    public EquiposDTO obtieneInstitucionEquipos(int idEtapa, Integer idInstitucion) throws ValidacionException {
 
         EquiposDTO equiposDTOS = new EquiposDTO();
         List<InstitucionEquiposDTO> institucionEquiposDTOS = new ArrayList<>();
@@ -155,9 +155,12 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
                 if(idEquipo != null && !equiposDTOS.getIdEquipos().contains(idEquipo)) {
                     equiposDTOS.getIdEquipos().add(idEquipo);
                 }
+
+                idEquiposActivos.add(participantes.getIdParticipante());
             }
 
-            if(!bndInsVacio) {
+            boolean exiteInstituto = idInstitucion != null ? idInstitucion.equals(institucion.getId()) : true;
+            if(!bndInsVacio && exiteInstituto) {
                 institucionEquiposDTOS.add(new InstitucionEquiposDTO(institucion.getId(),
                         idEquiposActivos));
             }
