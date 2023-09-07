@@ -355,7 +355,7 @@ public class DashboardServiceImpl implements DashboardService {
                             resultadoPorDia.getNumeroEtapa(),
                             resultadoPorDia.getScore(),
                             resultadoPorDia.getNombre(),
-                            resultadoPorDia.getNombre()
+                            resultadoPorDia.getRobot()
                     ))
         );
 

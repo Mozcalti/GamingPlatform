@@ -72,7 +72,19 @@ const ParticipantesList = () => {
             .then(
                 (response) => {
                     setResultado({...resultado, success: true})
-                    getParticipantes("")
+                    ParticipantesService
+                        .guardarListaParticipantes(response.data)
+                        .then(
+                            (response) => {
+                                setResultado({...resultado, success: true})
+                                getParticipantes('', '');
+                            },
+                            error => {
+                                setErrorResponse(error.response.data.message)
+                                setResultado({...resultado, error: true})
+                            }
+                        );
+
                 },
                 error => {
                     setErrorResponse(error.response.data.message)
@@ -88,7 +100,7 @@ const ParticipantesList = () => {
             .then(
                 (response) => {
                     setResultado({...resultado, success: true})
-                    getParticipantes('');
+                    getParticipantes('','');
                 },
                 error => {
                     console.error(error.response.data.message);
@@ -110,7 +122,7 @@ const ParticipantesList = () => {
             );
     }
     useEffect(() => {
-        getParticipantes("", "")
+        getParticipantes('', '');
         getInstituciones()
 
     }, []);

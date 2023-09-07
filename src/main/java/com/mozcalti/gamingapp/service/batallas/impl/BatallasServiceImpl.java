@@ -24,6 +24,7 @@ import com.mozcalti.gamingapp.validations.BatallasValidation;
 import com.mozcalti.gamingapp.validations.DashboardsGlobalResultadosValidation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.joda.time.DateTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.CrudRepository;
@@ -31,6 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -104,9 +106,8 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
             try {
                 DashboardsGlobalResultadosValidation.validaBatalla(batalla);
 
-                String fechaSistema = DateUtils
-                        .getDateFormat(DateUtils.addMinutos(Calendar.getInstance().getTime(), Numeros.CINCO.getNumero()),
-                                Constantes.FECHA_HORA_PATTERN);
+                SimpleDateFormat formatter = new SimpleDateFormat(Constantes.FECHA_HORA_PATTERN);
+                String fechaSistema = formatter.format(DateUtils.addMinutos(new Date(), Numeros.CINCO.getNumero()));
 
                 if(DateUtils.isHoursRangoValid(horaInicioBatalla, horaFinBatalla,
                     fechaSistema, Constantes.FECHA_HORA_PATTERN)

@@ -20,6 +20,7 @@ const DashboardStaff = () => {
     const [etapa, setEtapa] = useState([]);
     const [batallas, setBatallas] = useState([]);
     const [resultadosGlobal, setResultadosGlobal] = useState([]);
+    const [resultadosPorDia, setResultadosPorDia] = useState([]);
     const [showEtapaInfo, setShowEtapaInfo] = useState(false);
     const [etapaSearchMethod, setEtapaSearchMethod] = useState("");
     const getEtapas = () => {
@@ -43,7 +44,7 @@ const DashboardStaff = () => {
                     setBatallas(response.data);
                 },
                 error => {
-                    console.log(error)
+                    setShowEtapaInfo(false);
                 }
             )
     }
@@ -57,7 +58,21 @@ const DashboardStaff = () => {
                     setResultadosGlobal(response.data);
                     },
                 error => {
-                    console.log(error)
+                    setShowEtapaInfo(false);
+                }
+            )
+    }
+
+    const getDashboardRankinPorDia = () => {
+        DashboardStaffService.listaResultadosPorDia()
+            .then(
+                (response) => {
+                    setShowEtapaInfo(true);
+                    setEtapaSearchMethod("PORDIA");
+                    setResultadosPorDia(response.data);
+                },
+                error => {
+                    setShowEtapaInfo(false);
                 }
             )
     }
@@ -92,6 +107,24 @@ const DashboardStaff = () => {
         {field: 'score', headerName: 'Puntuación', filterable: false, flex: 3, headerAlign: 'center', align: 'center'},
 
     ]
+
+    const columnsRankinPorDia = [
+        {field: 'fecha', headerName: 'Fecha', filterable: false, flex: 3, headerAlign: 'center', align: 'center'},
+        {field: 'numeroEtapa', headerName: 'Numero de Etapa', filterable: false, flex: 3, headerAlign: 'center', align: 'center'},
+        {
+            field: 'nombre',
+            headerName: 'Participante',
+            filterable: false,
+            flex: 3,
+            headerAlign: 'center',
+            align: 'center'
+        },
+        {field: 'robot', headerName: 'Robot', filterable: false, flex: 3, headerAlign: 'center', align: 'center'},
+        {field: 'score', headerName: 'Puntuación', filterable: false, flex: 3, headerAlign: 'center', align: 'center'},
+
+    ]
+
+
     return (
         <>
             <ResponsiveAppBar/>
@@ -106,7 +139,7 @@ const DashboardStaff = () => {
                 <Divider/>
                 <br/>
                 <Grid container spacing={2}>
-                    <Grid item xs={8} md={8}>
+                    <Grid item xs={6} md={6}>
                         <FormControl fullWidth>
                             <InputLabel id="etapa-select-label">Etapa</InputLabel>
                             <Select
@@ -130,11 +163,16 @@ const DashboardStaff = () => {
                         <Button onClick={() => getDashboardGlobal(etapa)} variant="contained"
                                 size="large">BUSCAR GLOBALMENTE</Button>
                     </Grid>
+
+                    <Grid item xs={2} md={2}>
+                        <Button onClick={() => getDashboardRankinPorDia()} variant="contained"
+                                size="large">RANKING POR DÍA</Button>
+                    </Grid>
                 </Grid>
                 <br/>
                 {showEtapaInfo ?
                     <Grid container spacing={2}>
-                        {etapaSearchMethod.localeCompare("BATALLA") === 0 ?
+                        {etapaSearchMethod === "BATALLA" &&
                             <Grid container spacing={2}>
                                 {batallas.length !== 0 ?
                                     <Grid item xs={12} md={12}>
@@ -214,7 +252,9 @@ const DashboardStaff = () => {
                                     </Grid>
                                 }
                             </Grid>
-                            : <Grid container spacing={2}>
+                        }
+                        {etapaSearchMethod === "GLOBAL" &&
+                            <Grid container spacing={2}>
                                 {resultadosGlobal.length !== 0 ?
                                     <Grid item xs={12} md={12}>
 
@@ -226,29 +266,29 @@ const DashboardStaff = () => {
                                         }}>
                                             <Typography variant="h5" component="div">RESULTADOS GLOBALES</Typography>
                                         </Grid>
+                                        <Grid item xs={12} md={12}>
                                             <Grid item xs={12} md={12}>
-                                                    <Grid item xs={12} md={12}>
-                                                        <DataGrid
-                                                            rows={resultadosGlobal}
-                                                            columns={columnsResultadosGlobales}
-                                                            getRowId={row => row.nombreRobot}
-                                                            initialState={{sorting: {sortModel: [{field: 'puntuacion', sort: 'asc',},],}}}
-                                                            pageSize={50}
-                                                            rowsPerPageOptions={[50]}
-                                                            pagination
-                                                            autoHeight={true} hideFooter={false} style={gridStyle} sx={{
-                                                                      '& .MuiDataGrid-columnHeaderTitle': {
-                                                                          textOverflow: "clip",
-                                                                          whiteSpace: "break-spaces",
-                                                                          lineHeight: 1,
-                                                                          textAlign: "center"
-                                                                      }
-                                                                  }}
-                                                        />
-                                                        <br/>
-                                                        <br/>
-                                                    </Grid>
+                                                <DataGrid
+                                                    rows={resultadosGlobal}
+                                                    columns={columnsResultadosGlobales}
+                                                    getRowId={row => row.nombreRobot}
+                                                    initialState={{sorting: {sortModel: [{field: 'puntuacion', sort: 'asc',},],}}}
+                                                    pageSize={50}
+                                                    rowsPerPageOptions={[50]}
+                                                    pagination
+                                                    autoHeight={true} hideFooter={false} style={gridStyle} sx={{
+                                                    '& .MuiDataGrid-columnHeaderTitle': {
+                                                        textOverflow: "clip",
+                                                        whiteSpace: "break-spaces",
+                                                        lineHeight: 1,
+                                                        textAlign: "center"
+                                                    }
+                                                }}
+                                                />
+                                                <br/>
+                                                <br/>
                                             </Grid>
+                                        </Grid>
                                     </Grid>
                                     :
                                     <Grid item xs={12} md={12} sx={{
@@ -264,6 +304,59 @@ const DashboardStaff = () => {
                                 }
                             </Grid>
                         }
+                        {etapaSearchMethod === "PORDIA" &&
+                            <Grid container spacing={2}>
+                                {resultadosPorDia.length !== 0 ?
+                                    <Grid item xs={12} md={12}>
+
+                                        <Grid item xs={12} md={12} sx={{
+                                            backgroundColor: "#009294",
+                                            padding: "20px",
+                                            borderTopRightRadius: "10px",
+                                            color: "white"
+                                        }}>
+                                            <Typography variant="h5" component="div">MEJORES PUNTUACIONES POR DÍA</Typography>
+                                        </Grid>
+                                        <Grid item xs={12} md={12}>
+                                            <Grid item xs={12} md={12}>
+                                                <DataGrid
+                                                    rows={resultadosPorDia}
+                                                    columns={columnsRankinPorDia}
+                                                    getRowId={row => row.robot}
+                                                    initialState={{sorting: {sortModel: [{field: 'puntuacion', sort: 'asc',},],}}}
+                                                    pageSize={50}
+                                                    rowsPerPageOptions={[50]}
+                                                    pagination
+                                                    autoHeight={true} hideFooter={false} style={gridStyle} sx={{
+                                                    '& .MuiDataGrid-columnHeaderTitle': {
+                                                        textOverflow: "clip",
+                                                        whiteSpace: "break-spaces",
+                                                        lineHeight: 1,
+                                                        textAlign: "center"
+                                                    }
+                                                }}
+                                                />
+                                                <br/>
+                                                <br/>
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                    :
+                                    <Grid item xs={12} md={12} sx={{
+                                        padding: "20px",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        border: "1px solid lightGray",
+                                        borderRadius: "5px",
+                                        marginTop: "50px"
+                                    }}>
+                                        <Typography variant="h6" component="div">AÚN NO HAY MEJORES PUNTUACIONES POR DÍA</Typography>
+                                    </Grid>
+                                }
+                            </Grid>
+                        }
+
+
                     </Grid>
                     :
                     <Grid container spacing={2}>

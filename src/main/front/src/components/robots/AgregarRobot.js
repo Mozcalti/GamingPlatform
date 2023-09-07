@@ -49,7 +49,7 @@ function AgregarRobot(props) {
                 <DialogTitle align="center">Nuevo Robot</DialogTitle>
                 <Divider/>
                 <DialogContent>
-                    <form onReset>
+                    <form>
                         <Stack spacing={2}>
                             <input accept=".jar" id="robot" name="robot" type="file"
                                    {...register('file')} error={!!errors.file}/>

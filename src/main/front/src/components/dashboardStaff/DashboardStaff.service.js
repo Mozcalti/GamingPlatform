@@ -25,6 +25,14 @@ class DashboardStaffService {
                 return respuesta
             });
     }
+
+    listaResultadosPorDia() {
+        return axios
+            .get("/dashboads/porDia")
+            .then(respuesta => {
+                return respuesta
+            });
+    }
 }
 
 export default new DashboardStaffService();
