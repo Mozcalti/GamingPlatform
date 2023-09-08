@@ -189,7 +189,8 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
             }
 
             if(countCompetidores < totalParticipantes) {
-                Optional<Equipos> equipos = equiposRepository.findById(idEquipo);
+                ParticipanteEquipo pe =  participanteEquipoRepository.findByIdParticipante(idEquipo);
+                Optional<Equipos> equipos = equiposRepository.findById(pe.getIdEquipo());
                 StringBuilder nombreParticipantes = new StringBuilder();
 
                 if(equipos.isPresent()) {
@@ -202,8 +203,8 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
                 }
 
                 batallaParticipanteDTOS.add(new BatallaParticipanteDTO(
-                        idEquipo,
-                        nombreParticipantes.substring(Numeros.CERO.getNumero(), nombreParticipantes.length()-Numeros.DOS.getNumero())));
+                            idEquipo,
+                            nombreParticipantes.substring(Numeros.CERO.getNumero(), nombreParticipantes.length()-Numeros.DOS.getNumero())));
 
                 countCompetidores+=Numeros.UNO.getNumero();
             }
