@@ -106,8 +106,16 @@ public class BatallasServiceImpl extends GenericServiceImpl<Batallas, Integer> i
             try {
                 DashboardsGlobalResultadosValidation.validaBatalla(batalla);
 
-                SimpleDateFormat formatter = new SimpleDateFormat(Constantes.FECHA_HORA_PATTERN);
-                String fechaSistema = formatter.format(DateUtils.addMinutos(new Date(), Numeros.CINCO.getNumero()));
+                String fechaSistema;
+
+                if(System.getProperty("os.name").toUpperCase().contains("WINDOWS")) {
+                    fechaSistema = DateUtils
+                            .getDateFormat(DateUtils.addMinutos(Calendar.getInstance().getTime(), Numeros.CINCO.getNumero()),
+                                    Constantes.FECHA_HORA_PATTERN);
+                } else {
+                    SimpleDateFormat formatter = new SimpleDateFormat(Constantes.FECHA_HORA_PATTERN);
+                    fechaSistema = formatter.format(DateUtils.addMinutos(new Date(), Numeros.CINCO.getNumero()));
+                }
 
                 if(DateUtils.isHoursRangoValid(horaInicioBatalla, horaFinBatalla,
                     fechaSistema, Constantes.FECHA_HORA_PATTERN)

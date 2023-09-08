@@ -43,7 +43,7 @@ public final class DateUtils {
 
     public static void isValidDate(String fecha, String pattern, String msjError) throws ValidacionException {
         try {
-            DateTimeFormatter fmt = DateTimeFormat.forPattern(pattern).withLocale(Locale.getDefault());
+            DateTimeFormatter fmt = DateTimeFormat.forPattern(pattern).withLocale(Locale.ENGLISH);
             fmt.parseDateTime(fecha);
         } catch (Exception e) {
             throw new ValidacionException(msjError);
@@ -82,7 +82,7 @@ public final class DateUtils {
         Calendar fechaCalendar = Calendar.getInstance();
 
         try {
-            fmt = DateTimeFormat.forPattern(pattern).withLocale(Locale.getDefault());
+            fmt = DateTimeFormat.forPattern(pattern).withLocale(Locale.ENGLISH);
             fechaCalendar.setTime(fmt.parseDateTime(fecha).toDate());
         } catch (Exception e) {
             throw new ValidacionException("Error en el metodo getDateFormat(String fecha, String pattern)\n: " + e.getStackTrace());
@@ -94,7 +94,7 @@ public final class DateUtils {
     public static String getDateFormat(Date date, String pattern) throws ValidacionException {
         try {
             if (date != null) {
-                DateTimeFormatter fmt = DateTimeFormat.forPattern(pattern).withLocale(Locale.getDefault());
+                DateTimeFormatter fmt = DateTimeFormat.forPattern(pattern).withLocale(Locale.ENGLISH);
                 return fmt.print(new DateTime(date));
             } else {
                 return null;
@@ -159,7 +159,7 @@ public final class DateUtils {
 
     public static String addMinutos(String fecha, String pattern, int minutos) throws ValidacionException {
         if (fecha != null) {
-            DateTimeFormatter fmt = DateTimeFormat.forPattern(pattern).withLocale(Locale.getDefault());
+            DateTimeFormatter fmt = DateTimeFormat.forPattern(pattern).withLocale(Locale.ENGLISH);
             return getDateFormat(fmt.parseDateTime(fecha).plusMinutes(minutos).toDate(), pattern);
         } else {
             throw new ValidacionException(PARAMETRO_NOTNULL);
@@ -168,7 +168,7 @@ public final class DateUtils {
 
     public static String addDias(String fecha, String pattern, int dias) throws ValidacionException {
         if (fecha != null) {
-            DateTimeFormatter fmt = DateTimeFormat.forPattern(pattern).withLocale(Locale.getDefault());
+            DateTimeFormatter fmt = DateTimeFormat.forPattern(pattern).withLocale(Locale.ENGLISH);
             return getDateFormat(fmt.parseDateTime(fecha).plusDays(dias).toDate(), pattern);
         } else {
             throw new ValidacionException(PARAMETRO_NOTNULL);
@@ -177,7 +177,7 @@ public final class DateUtils {
 
     public static String addSegundos(String fecha, String pattern, int segundos) throws ValidacionException {
         if (fecha != null) {
-            DateTimeFormatter fmt = DateTimeFormat.forPattern(pattern).withLocale(Locale.getDefault());
+            DateTimeFormatter fmt = DateTimeFormat.forPattern(pattern).withLocale(Locale.ENGLISH);
             return getDateFormat(fmt.parseDateTime(fecha).plusSeconds(segundos).toDate(), pattern);
         } else {
             throw new ValidacionException(PARAMETRO_NOTNULL);

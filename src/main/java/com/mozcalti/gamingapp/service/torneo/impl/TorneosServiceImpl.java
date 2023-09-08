@@ -156,7 +156,7 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
                     equiposDTOS.getIdEquipos().add(idEquipo);
                 }
 
-                idEquiposActivos.add(participantes.getIdParticipante());
+                idEquiposActivos.add(idEquipo);
             }
 
             boolean exiteInstituto = idInstitucion != null ? idInstitucion.equals(institucion.getId()) : true;
@@ -189,8 +189,7 @@ public class TorneosServiceImpl extends GenericServiceImpl<Torneos, Integer> imp
             }
 
             if(countCompetidores < totalParticipantes) {
-                ParticipanteEquipo pe =  participanteEquipoRepository.findByIdParticipante(idEquipo);
-                Optional<Equipos> equipos = equiposRepository.findById(pe.getIdEquipo());
+                Optional<Equipos> equipos = equiposRepository.findById(idEquipo);
                 StringBuilder nombreParticipantes = new StringBuilder();
 
                 if(equipos.isPresent()) {
