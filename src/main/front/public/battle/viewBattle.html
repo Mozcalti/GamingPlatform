@@ -9,30 +9,81 @@
     <title>Batalla</title>
 </head>
 <body>
-    <div id="gameContainer">
-        <div id="canvasContainer" class="containerItem">        
-            <div id="dataContainer" class="containerItem">
-                <span id="streamMsg" class="containerItem">EN VIVO</span>
-                <span id="roundNumber"></span>
-                <button id="resultsButton">Ver Resultados</button>
-            </div>
-        <div id="animationContainer" class="containerItem">  
-            <canvas id="canvas1" class="containerItem"></canvas>
-        </div>
-        <div id="tableContainer" class="containerItem">
-            <img alt="close icon" id="closeIcon" src="../img/ui/close.png">
 
-        </div>
-        </div>
-        <div id="repeatInfoDiv">
-            <span class="containerItem" id="repeatInfoMsg"></span>
-            <span class="containerItem" id="participantsInfo"></span>
-        </div>
-        </div>
-        <div id="stateScreen" class="containterItem">
-            <p id="stateMsg" class="containerItem"></p>
+<div class="row" style="padding: 20px">
+    <div class="column left">
+        <div id="dataContainer">
+            <img src="../img/ui/rojo_trans.png" height="150" width="220" class="imagenBody1"/>
+            <div class="etiquetas">
+                <label><span id="streamMsg"></span></label>
             </div>
+            <br>
+            <span id="roundNumber"></span>
+            <br>
+            <br>
+            <div class="etiquetas">
+                <label><strong>RESULTADOS:</strong></label>
+            </div>
+            <button id="resultsButton">Ver Resultados</button>
+        </div>
     </div>
-        <script type="module" src="BattleAnimation.js"></script>
+    <div class="column right">
+        <div id="gameContainer">
+            <div id="tableContainer" class="containerItem">
+                <img alt="close icon" id="closeIcon" src="../img/ui/close.png">
+            </div>
+            <div class="containerItem">
+                <div id="animationContainer" class="containerItem">
+                    <canvas id="canvas1" class="containerItem"></canvas>
+                </div>
+            </div>
+
+            <div id="repeatInfoDiv">
+                <div class="etiquetas">
+                    <label><strong>ESTÁ BATALLA TUVO LUGAR EL DÍA:</strong></label>
+                </div>
+                <br>
+                <span id="repeatInfoMsg"></span>
+                <br>
+                <br>
+                <div class="etiquetas">
+                    <label><strong>LOS PARTICIPANTES FUERON:</strong></label>
+                </div>
+                <br>
+                <span id="participantsInfo"></span>
+                <br>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<div id="stateScreen" class="containterItem">
+    <div class="container">
+        <p id="stateMsg"></p>
+        <div id="contenedorInfo">
+            <img src="../img/ui/rojo_trans.png" height="180" width="320" class="imagenBody"/>
+            <div class="etiquetas">
+                <label><strong>PARTICIPANTES:</strong></label>
+            </div>
+            <div class="textoEtiqueta" id="participante"></div>
+
+            <div class="etiquetas">
+                <label>ESTA BATALLA ESTA PROGRAMADA PARA EL:</label>
+            </div>
+
+            <div class="textoEtiqueta" id="fechaHora"></div>
+
+            <div class="etiquetas">
+                <label>LA BATALLA INICIARA EN:</label>
+            </div>
+
+            <div class="textoEtiqueta" id="timer"></div>
+        </div>
+    </div>
+</div>
+</div>
+<script type="module" src="BattleAnimation.js"></script>
 </body>
 </html>
