@@ -1,13 +1,13 @@
-import { Turn } from './classes/Turn.js';
-import { Bullet } from './classes/Bullet.js';
-import { Record } from './classes/Record.js';
-import { RecordInfo } from './classes/RecordInfo.js';
-import { Rule } from './classes/Rule.js';
-import { Result } from './classes/Result.js';
-import { RobotData } from './classes/RobotData.js';
-import { RobotImages } from './classes/RobotImages.js';
-import { RobotAttributes } from './classes/RobotAttributes.js';
-import { AnimationControl } from './classes/AnimationControl.js';
+import {Turn} from './classes/Turn.js';
+import {Bullet} from './classes/Bullet.js';
+import {Record} from './classes/Record.js';
+import {RecordInfo} from './classes/RecordInfo.js';
+import {Rule} from './classes/Rule.js';
+import {Result} from './classes/Result.js';
+import {RobotData} from './classes/RobotData.js';
+import {RobotImages} from './classes/RobotImages.js';
+import {RobotAttributes} from './classes/RobotAttributes.js';
+import {AnimationControl} from './classes/AnimationControl.js';
 
 const hitVictimSound = new Audio();
 hitVictimSound.src = "sounds/bullet.wav";
@@ -27,12 +27,12 @@ let battleEstatus;
 let battleNombrePaticipanteDefault;
 
 function obtieneDatos() {
-
+    document.getElementById('contenedorInfo').style.display = 'none';
     document.getElementById("stateMsg").innerHTML = "CARGANDO...";
     document.getElementById("stateScreen").style.display = "flex";
 
     fetch("http://localhost:8080/visualizar/datos/" + getURLParameters("token"), {method: 'GET'})
-    //fetch("http://localhost:8080/visualizar/datos/" + getURLParameters("token"), {method: 'GET'})
+        //fetch("http://localhost:8080/visualizar/datos/" + getURLParameters("token"), {method: 'GET'})
         .then(function (resp) {
             return resp.json();
         })
@@ -45,20 +45,17 @@ function obtieneDatos() {
         });
 }
 
-function getURLParameters(paramName)
-{
+function getURLParameters(paramName) {
     let sURL = window.document.URL.toString();
 
-    if (sURL.indexOf("?") > 0)
-    {
+    if (sURL.indexOf("?") > 0) {
         let arrParams = sURL.split("?");
         let arrURLParams = arrParams[1].split("&");
         let arrParamNames = new Array(arrURLParams.length);
         let arrParamValues = new Array(arrURLParams.length);
 
-        for (let i = 0; i<arrURLParams.length; i++)
-        {
-            let sParam =  arrURLParams[i].split("=");
+        for (let i = 0; i < arrURLParams.length; i++) {
+            let sParam = arrURLParams[i].split("=");
             arrParamNames[i] = sParam[0];
             if (sParam[1] != "")
                 arrParamValues[i] = unescape(sParam[1]);
@@ -66,10 +63,8 @@ function getURLParameters(paramName)
                 arrParamValues[i] = "No Value";
         }
 
-        for (let i=0; i<arrURLParams.length; i++)
-        {
-            if (arrParamNames[i] == paramName)
-            {
+        for (let i = 0; i < arrURLParams.length; i++) {
+            if (arrParamNames[i] == paramName) {
                 return arrParamValues[i];
             }
         }
@@ -92,20 +87,22 @@ window.addEventListener('beforeunload', function (e) {
  * @param {Result[]} resultsArray Array of Result, containing a result for each robot that battled
  * @return
  */
-function showResults(resultsArray){
+function showResults(resultsArray) {
     if (document.getElementById("resultsTable") === null) {
         let tableContainer = createCustomElement("TABLE", "", "resultsTable", "");
         document.getElementById("tableContainer").appendChild(tableContainer);
     }
     if (document.getElementById("tableContainer").style.display.localeCompare("flex") !== 0) {
 
-        document.getElementById("dataContainer").style.opacity = "0.6";
-        document.getElementById("animationContainer").style.opacity = "0.6";
+        document.getElementById("dataContainer").style.opacity = "0.1";
+        document.getElementById("animationContainer").style.opacity = "0.1";
+        document.getElementById("repeatInfoDiv").style.opacity = "0.1";
         document.getElementById("tableContainer").style.display = "flex";
+        window.scrollBy(200,200)
         if (document.getElementById("resultsTable").childElementCount === 0) {
             createResults(resultsArray);
         }
-    }else{
+    } else {
         document.getElementById("dataContainer").style.opacity = "1";
         document.getElementById("animationContainer").style.opacity = "1";
         document.getElementById("tableContainer").style.display = "none";
@@ -120,12 +117,12 @@ function showResults(resultsArray){
  * @return
  */
 
-function createResults(resultsArray){
+function createResults(resultsArray) {
 
     //string consisting of Result's properties, for headers
     let propertyNames = Object.getOwnPropertyNames(resultsArray[0]);
     //put blank spaces between uppercase char occurrences in property names
-    let headerNames = propertyNames.map(function(item){
+    let headerNames = propertyNames.map(function (item) {
         return item.replace(/([a-z])([A-Z])/g, '$1 $2').trim();
     });
 
@@ -136,13 +133,13 @@ function createResults(resultsArray){
     //create headers
     for (let headerData of headerNames) {
         let newHeaderData = headerData.charAt(0).toUpperCase() + headerData.slice(1);
-        if(newHeaderData.localeCompare("Firsts") === 0){
+        if (newHeaderData.localeCompare("Firsts") === 0) {
             newHeaderData = "1sts";
-        }else{
-            if(headerData.localeCompare("Seconds") === 0){
+        } else {
+            if (headerData.localeCompare("Seconds") === 0) {
                 newHeaderData = "2nds";
-            }else{
-                if(newHeaderData.localeCompare("Thirds") === 0){
+            } else {
+                if (newHeaderData.localeCompare("Thirds") === 0) {
                     newHeaderData = "3rds";
                 }
             }
@@ -153,9 +150,9 @@ function createResults(resultsArray){
     refTbody.appendChild(refTrH);
 
     //create cells
-    for (let result of resultsArray){
+    for (let result of resultsArray) {
         let refTr = createCustomElement("TR", "", "", "");
-        for(const prop in result){
+        for (const prop in result) {
             let data = result[prop];
             let refCell = createCustomElement("TD", data, "", "resultTableCell");
             refTr.appendChild(refCell);
@@ -175,7 +172,7 @@ function createResults(resultsArray){
  * @return {HTMLElement} Customized HTML5 element
  */
 
-function createCustomElement(tag, value, id, className){
+function createCustomElement(tag, value, id, className) {
     let element = document.createElement(tag);
     element.innerHTML = value;
     element.id = id;
@@ -188,10 +185,34 @@ function createCustomElement(tag, value, id, className){
  * a loading screen, or initiate the battle animation
  */
 
-function init(battleFecha){
+function init(battleFecha) {
     let battleDate = new Date(battleFecha);
     let battleDateDisplay = new Date(battleFecha);
     let interval = 400;
+
+    var ul = document.createElement('ul');
+
+    battleParticipantes.forEach(function (participante) {
+        var li = document.createElement('li');
+        li.innerHTML = participante;
+        ul.appendChild(li);
+    })
+    document.getElementById('participante').appendChild(ul);
+    let fechaFormat = battleDate.toLocaleString(
+        'es-MX',
+        {
+            weekday: "long",
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hourCycle: 'h12',
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric'
+        }
+    );
+    document.getElementById('fechaHora').innerHTML = fechaFormat;
+
     let timer = window.setInterval(function () {
         let now = new Date().getTime();
         let distance = battleDate - now;
@@ -204,43 +225,54 @@ function init(battleFecha){
 
         console.log(battleEstatus);
 
-        if(now >= battleDate){
+        if (now >= battleDate) {
 
-            if(battleXml == null && (battleEstatus.localeCompare("PENDIENTE") === 0)) {
+            if (battleXml == null && (battleEstatus.localeCompare("PENDIENTE") === 0)) {
                 window.location.reload();
-            } else if(battleEstatus.localeCompare("CANCELADA") === 0) {
-                document.getElementById("stateMsg").innerHTML = "Batalla CANCELADA: ninguno de los participantes seleccionó a un robot";
-            } else if(battleEstatus.localeCompare("INCOMPLETA") === 0) {
-                document.getElementById("stateMsg").innerHTML = "Batalla NO COMPLETADA: el participante " + battleNombrePaticipanteDefault
+            } else if (battleEstatus.localeCompare("CANCELADA") === 0) {
+                document.getElementById("dataContainer").style.display = 'none';
+                document.getElementById("stateMsg").style.display = 'none';
+                document.getElementById('contenedorInfo').style.display = 'block';
+                document.getElementById("timer").innerHTML = "Batalla CANCELADA: ninguno de los participantes seleccionó a un robot";
+            } else if (battleEstatus.localeCompare("INCOMPLETA") === 0) {
+                document.getElementById("dataContainer").style.display = 'none';
+                document.getElementById("stateMsg").style.display = 'none';
+                document.getElementById('contenedorInfo').style.display = 'block';
+                document.getElementById("timer").innerHTML = "Batalla NO COMPLETADA: el participante " + battleNombrePaticipanteDefault
                     + " fue el único participante en la batalla que seleccionó a un robot";
             }
 
             //x minutes after battle date = replay, else it's a live battle
-            if(now >= battleDate.setMinutes(battleDate.getMinutes()) && battleXml != null){
+            if (now >= battleDate.setMinutes(battleDate.getMinutes()) && battleXml != null) {
+                document.getElementById("dataContainer").style.display = 'block';
                 document.getElementById("streamMsg").innerHTML = "REPETICIÓN";
-                document.getElementById("resultsButton").style.display = "flex";
-                document.getElementById("repeatInfoMsg").innerHTML = "Esta batalla tuvo lugar el día  " +
-                    battleDate.toLocaleDateString() + " a las " + battleDateDisplay.toLocaleTimeString() + " horas."
-                document.getElementById("participantsInfo").innerHTML = "Los participantes fueron: " + battleParticipantes.toString().replaceAll(",", ", ") + ".";
+                document.getElementById("resultsButton").style.display = "block";
+                document.getElementById("repeatInfoMsg").innerHTML = fechaFormat;
+                var ul = document.createElement('ul');
+
+                battleParticipantes.forEach(function (participante) {
+                    var li = document.createElement('li');
+                    li.innerHTML = participante;
+                    ul.appendChild(li);
+                })
+                document.getElementById('participantsInfo').appendChild(ul);
             } else if (battleXml != null) {
                 document.getElementById("streamMsg").innerHTML = "EN VIVO";
             }
 
             if (battleXml != null) {
                 window.clearInterval(timer);
+                document.getElementById('contenedorInfo').style.display = 'none';
                 document.getElementById("stateMsg").innerHTML = "CARGANDO...";
                 initBattle();
             }
 
         } else {
             //battle date info
-            document.getElementById("stateMsg").innerHTML = "La batalla entre los participantes:<br/>"+
-                battleParticipantes.toString().replaceAll(",", "<br/>") +
-                "<br/><br/>Esta programada para el día:<br/>"+
-                battleDate.getDate() + " / " + (battleDate.getMonth()+1) + " / " + battleDate.getUTCFullYear() + " a las "+battleDate.getHours()
-                +":"+battleDate.getMinutes()+" horas<br /><br />" +
-                "La batalla iniciará en:<br/>"  +
-                days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+            document.getElementById("dataContainer").style.display = 'none';
+            document.getElementById("stateMsg").style.display = 'none';
+            document.getElementById('contenedorInfo').style.display = 'block';
+            document.getElementById("timer").innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
         }
     }, interval);
 }
@@ -301,7 +333,6 @@ function getRecordArray(xmlDoc) {
         recordInfoDom.children[0].getAttribute('inactivityTime'),
         recordInfoDom.children[0].getAttribute('ver'),
         recordInfoDom.getAttribute('robotCount'),
-
     )
 
     let numTurnsArray = [];
@@ -328,7 +359,7 @@ function getRecordArray(xmlDoc) {
     }
 
     //battle results are not in order
-    resultsArray.sort((a,b) => b.totalScore - a.totalScore); // b - a for reverse sort
+    resultsArray.sort((a, b) => b.totalScore - a.totalScore); // b - a for reverse sort
     let resultRank = "1";
     resultsArray.forEach(element => {
         element.setRank(resultRank);
@@ -362,7 +393,7 @@ function getRecordArray(xmlDoc) {
                     so we obtain the last turn in which the robots will surely have all their colors set
                     colors shouldn't be changing through the battle
                 */
-                let turnColor = turnsDom.children[turnsDom.children.length-1];
+                let turnColor = turnsDom.children[turnsDom.children.length - 1];
                 let robotImages = new RobotImages(
                     selectPartImage(turnColor.children[0].children[j].getAttribute('bodyColor'), "body"),
                     selectPartImage(turnColor.children[0].children[j].getAttribute('bodyColor'), "body"),
@@ -434,11 +465,11 @@ function prepareAnimation(xmlDoc, callback) {
     //XML related
     let record = getRecordArray(xmlDoc);
     createPlayerList(record.getRobotData());
-    document.getElementById("resultsButton").addEventListener('click', function(){
+    document.getElementById("resultsButton").addEventListener('click', function () {
         showResults(record.getRecordInfo().getResults())
     });
 
-    document.getElementById("closeIcon").addEventListener("click", function(){
+    document.getElementById("closeIcon").addEventListener("click", function () {
         showResults(record.getRecordInfo().getResults());
     });
 
@@ -468,7 +499,7 @@ function prepareAnimation(xmlDoc, callback) {
     attackImagesArray.push(goneImage);
     attackImagesArray.push(explosionFramesArr);
     attackImagesArray.push(hitTargetFramesArr);
-    document.getElementById("repeatInfoDiv").style.display = "flex";
+    document.getElementById("repeatInfoDiv").style.display = "block";
     document.getElementById("gameContainer").style.display = "flex";
     document.getElementById("stateScreen").style.display = "none";
     window.requestAnimationFrame(function () {
@@ -491,7 +522,7 @@ function prepareAnimation(xmlDoc, callback) {
  * @return
  */
 
-function animate(record, control, ctx, attackImagesArray, callback){
+function animate(record, control, ctx, attackImagesArray, callback) {
 
     //finish current round
     if (control.getCurrentTurn() === control.getSumTurnsArr()[control.getCurrentRound()]) {
@@ -524,7 +555,7 @@ function animate(record, control, ctx, attackImagesArray, callback){
     }
 }
 
-function drawAllRobots(record, control, ctx, attackImagesArray){
+function drawAllRobots(record, control, ctx, attackImagesArray) {
     //iterate through current turn to draw every element
     for (let j = 0; j < record.getTurns()[control.getCurrentTurn()].getRobots()[0].length; j++) {
 
@@ -535,7 +566,7 @@ function drawAllRobots(record, control, ctx, attackImagesArray){
         //drawing a robot, depending on its state or explosion frame if it's dead
         if (robot.getState().localeCompare("DEAD") === 0) {
             drawRobotText(ctx, "", "", robot);
-            if(record.getRobotData()[j].getExplosionFrame() === 0) {
+            if (record.getRobotData()[j].getExplosionFrame() === 0) {
                 explodedSound.cloneNode(true).play();
             }
             if (record.getRobotData()[j].getExplosionFrame() <= 67) {
@@ -544,14 +575,14 @@ function drawAllRobots(record, control, ctx, attackImagesArray){
                 record.getRobotData()[j].getRobotImages().setCurrentRadarImage(attackImagesArray[1]);
                 drawExplosion(robot, ctx, record.getRobotData()[j].getRobotImages().getCurrentBodyImage(), 128, 128);
                 record.getRobotData()[j].setExplosionFrame(record.getRobotData()[j].getExplosionFrame() + 1);
-            }else{
+            } else {
                 record.getRobotData()[j].getRobotImages().setCurrentBodyImage(record.getRobotData()[j].getRobotImages().getDebrisImage());
                 record.getRobotData()[j].getRobotImages().setCurrentGunImage(attackImagesArray[1]);
                 record.getRobotData()[j].getRobotImages().setCurrentRadarImage(attackImagesArray[1]);
                 drawRobotText(ctx, "", "", robot);
                 drawRobot(ctx, record.getRobotData()[j], robot);
             }
-        }else {
+        } else {
             if (robot.getState().localeCompare("ACTIVE") !== 0) {
                 hitWallSound.cloneNode(true).play();
             }
@@ -562,12 +593,12 @@ function drawAllRobots(record, control, ctx, attackImagesArray){
     }
 }
 
-function drawBullets(record, control, ctx, attackImagesArray){
+function drawBullets(record, control, ctx, attackImagesArray) {
     //draw bullets
     for (let bullet of record.getTurns()[control.getCurrentTurn()].getBullets()[0]) {
         if (bullet.getState().localeCompare("MOVING") === 0) {
             drawBullet(bullet, ctx, attackImagesArray[0], 5, 5);
-        }else{
+        } else {
             if (bullet.getFrame() == null) {
                 hitVictimSound.cloneNode(true).play();
             } else {
@@ -603,7 +634,7 @@ function createFramesArr(framePath, totalFrames) {
  * @param {RobotData[]} robotDataArray
  * @return
  */
-function createPlayerList(robotDataArray){
+function createPlayerList(robotDataArray) {
     let dataContainer = document.getElementById("dataContainer");
     for (let robotData of robotDataArray) {
         let playerBox = createPlayerBox(robotData.getVsName(), robotData.getMaxEnergy());
@@ -619,7 +650,7 @@ function createPlayerList(robotDataArray){
  * @param {string} maxEnergy Player's robot's maximum energy points
  * @return {HTMLElement} DIV containing the name and health bar
  */
-function createPlayerBox(name, maxEnergy){
+function createPlayerBox(name, maxEnergy) {
     let playerBox = document.createElement("DIV");
     let playerBar = document.createElement("PROGRESS");
     let playerName = document.createElement("DIV");
@@ -627,7 +658,7 @@ function createPlayerBox(name, maxEnergy){
     playerName.innerHTML = name;
     playerBar.max = maxEnergy;
     playerBar.value = 0;
-    playerBar.id = name+"_bar";
+    playerBar.id = name + "_bar";
     playerBar.className = "healthBar";
     playerBox.append(playerName);
     playerBox.append(playerBar);
@@ -655,8 +686,8 @@ function resetRobotImage(robotDataArray) {
  * @param {string} energy Robot's current energy, displayed on screen
  * @return
  */
-function updateHealthBar(name, energy){
-    document.getElementById(name+"_bar").value = energy;
+function updateHealthBar(name, energy) {
+    document.getElementById(name + "_bar").value = energy;
 }
 
 
@@ -676,17 +707,16 @@ function drawRobotParts(robot, ctx, body, gun, radar) {
     drawParts(parseFloat(robot.getBodyHeading()), parseFloat(robot.getRadarHeading()), ctx, radar, 22, 16);
 }
 
-function drawRobot(ctx, robotData, robot){
+function drawRobot(ctx, robotData, robot) {
     drawRobotParts(robot, ctx, robotData.getRobotImages().getCurrentBodyImage(),
         robotData.getRobotImages().getCurrentGunImage(), robotData.getRobotImages().getCurrentRadarImage());
 
 }
 
-function drawRobotText(ctx, upperText, lowerText, robot){
+function drawRobotText(ctx, upperText, lowerText, robot) {
     ctx.fillText(upperText, parseInt(robot.getX()), (ctx.canvas.height + 40) - parseInt(robot.getY()));
     ctx.fillText(lowerText, parseInt(robot.getX()), (ctx.canvas.height - 30) - parseInt(robot.getY()));
 }
-
 
 
 /**
