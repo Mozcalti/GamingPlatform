@@ -31,7 +31,7 @@ function obtieneDatos() {
     document.getElementById("stateMsg").innerHTML = "CARGANDO...";
     document.getElementById("stateScreen").style.display = "flex";
 
-    fetch("http://localhost:8080/visualizar/datos/" + getURLParameters("token"), {method: 'GET'})
+    fetch("https://robocode.mozcalti.com/visualizar/datos/" + getURLParameters("token"), {method: 'GET'})
         //fetch("http://localhost:8080/visualizar/datos/" + getURLParameters("token"), {method: 'GET'})
         .then(function (resp) {
             return resp.json();
@@ -105,6 +105,7 @@ function showResults(resultsArray) {
     } else {
         document.getElementById("dataContainer").style.opacity = "1";
         document.getElementById("animationContainer").style.opacity = "1";
+        document.getElementById("repeatInfoDiv").style.opacity = "1";
         document.getElementById("tableContainer").style.display = "none";
     }
 }
