@@ -17,7 +17,7 @@ public interface BatallasRepository extends CrudRepository<Batallas, Integer> {
             "batalla_participantes bp, participante_equipo pe, " +
             "etapa_equipo ee, etapas e " +
             "WHERE b.id_batalla = res.id_batalla " +
-            "AND b.estatus = 'TERMINADA' " +
+            "AND b.estatus != 'CANCELADA'" +
             "AND res.rank = 1 " +
             "AND rob.class_name = res.teamleadername " +
             "AND bp.id_participante_equipo = rob.id_equipo " +
